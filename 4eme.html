@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Activités d'algorithmique et de programmation mathématique pour la classe de 4ème - La Salle 9.">
+  <meta name="author" content="Arnaud Collet">
+  <title>La Salle 9 - Classe de 4ème</title>
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo" id="nav-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h10"/></svg>
+        La Salle 9
+      </a>
+      
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link" id="link-accueil">Accueil</a></li>
+          <li><a href="3eme.html" class="nav-link" id="link-3eme">Classe de 3<sup>ème</sup></a></li>
+          <li><a href="4eme.html" class="nav-link active" id="link-4eme">Classe de 4<sup>ème</sup></a></li>
+          <li><a href="5eme.html" class="nav-link" id="link-5eme">Classe de 5<sup>ème</sup></a></li>
+        </ul>
+      </nav>
+      
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+          <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Retour à l'accueil
+      </a>
+      <div class="page-title-section">
+        <span class="page-emoji">📐</span>
+        <h1 class="page-title">Classe de 4<sup>ème</sup></h1>
+      </div>
+      <p class="page-subtitle">Algorithmique et programmation : explorer les repères de géométrie, les théorèmes de géométrie et le calcul algébrique sous Scratch.</p>
+    </div>
+  </section>
+
+  <!-- Main Content - List of Activities -->
+  <main class="container" style="padding-bottom: 6rem;">
+    <div class="assignments-list">
+      
+      <!-- Act 1 : La réciproque de Pythagore -->
+      <article class="card-assignment" id="act-4e-pythagore">
+        <div class="assignment-header">
+          <div class="assignment-title-area">
+            <span class="assignment-emoji">📐</span>
+            <h2 class="assignment-title">La réciproque de Pythagore</h2>
+          </div>
+          <div class="assignment-badges">
+            <span class="badge badge-consignes">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h-2v-2h4v8zm0-10h-2V5h2v2z"/></svg>
+              Les consignes
+            </span>
+            <span class="badge badge-programme">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Le programme à réaliser
+            </span>
+          </div>
+        </div>
+        
+        <!-- Document Embed Container -->
+        <div class="embed-container">
+          <div class="embed-toolbar">
+            <div class="embed-filename">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Réciproque de Pythagore.pdf
+            </div>
+            <div class="embed-actions">
+              <a href="https://drive.google.com/open?id=12RiKSMBQDK7RhGNgHucfMsUmDGckEUqc" target="_blank" class="btn-embed-action" title="Agrandir">
+                <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                Agrandir
+              </a>
+              <a href="https://drive.google.com/uc?id=12RiKSMBQDK7RhGNgHucfMsUmDGckEUqc&export=download" class="btn-embed-action" title="Télécharger">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Télécharger
+              </a>
+            </div>
+          </div>
+          <div class="embed-iframe-wrapper">
+            <div class="skeleton-loader">
+              <div class="spinner"></div>
+              <span class="loader-text">Chargement du document...</span>
+            </div>
+            <iframe class="embed-iframe" data-src="https://drive.google.com/file/d/12RiKSMBQDK7RhGNgHucfMsUmDGckEUqc/preview" allowfullscreen></iframe>
+          </div>
+        </div>
+      </article>
+
+      <!-- Act 2 : Conversion des £ en € -->
+      <article class="card-assignment" id="act-4e-angles">
+        <div class="assignment-header">
+          <div class="assignment-title-area">
+            <span class="assignment-emoji">🔄</span>
+            <h2 class="assignment-title">Conversion des £ en €</h2>
+          </div>
+          <div class="assignment-badges">
+            <span class="badge badge-consignes">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h-2v-2h4v8zm0-10h-2V5h2v2z"/></svg>
+              Les consignes
+            </span>
+            <span class="badge badge-programme">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Le programme à réaliser
+            </span>
+          </div>
+        </div>
+        
+        <!-- Document Embed Container -->
+        <div class="embed-container">
+          <div class="embed-toolbar">
+            <div class="embed-filename">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Convertisseur £ en €.pdf
+            </div>
+            <div class="embed-actions">
+              <a href="https://drive.google.com/open?id=1yY0nyouvS2E2AO8nWTuZUwspnD7Ov7jM" target="_blank" class="btn-embed-action" title="Agrandir">
+                <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                Agrandir
+              </a>
+              <a href="https://drive.google.com/uc?id=1yY0nyouvS2E2AO8nWTuZUwspnD7Ov7jM&export=download" class="btn-embed-action" title="Télécharger">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Télécharger
+              </a>
+            </div>
+          </div>
+          <div class="embed-iframe-wrapper">
+            <div class="skeleton-loader">
+              <div class="spinner"></div>
+              <span class="loader-text">Chargement du document...</span>
+            </div>
+            <iframe class="embed-iframe" data-src="https://drive.google.com/file/d/1yY0nyouvS2E2AO8nWTuZUwspnD7Ov7jM/preview" allowfullscreen></iframe>
+          </div>
+        </div>
+      </article>
+
+      <!-- Act 3 : Calcul de moyenne et médiane -->
+      <article class="card-assignment" id="act-4e-moyenne">
+        <div class="assignment-header">
+          <div class="assignment-title-area">
+            <span class="assignment-emoji">📊</span>
+            <h2 class="assignment-title">Calcul de moyenne et médiane</h2>
+          </div>
+          <div class="assignment-badges">
+            <span class="badge badge-consignes">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h-2v-2h4v8zm0-10h-2V5h2v2z"/></svg>
+              Les consignes
+            </span>
+            <span class="badge badge-programme">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Les programmes à réaliser
+            </span>
+          </div>
+        </div>
+        
+        <!-- Document Embed Container -->
+        <div class="embed-container">
+          <div class="embed-toolbar">
+            <div class="embed-filename">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Moyenne et médiane.pdf
+            </div>
+            <div class="embed-actions">
+              <a href="https://drive.google.com/open?id=1FJaegfP5gEymdV1MU2oIyXbtzttzqoMa" target="_blank" class="btn-embed-action" title="Agrandir">
+                <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                Agrandir
+              </a>
+              <a href="https://drive.google.com/uc?id=1FJaegfP5gEymdV1MU2oIyXbtzttzqoMa&export=download" class="btn-embed-action" title="Télécharger">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Télécharger
+              </a>
+            </div>
+          </div>
+          <div class="embed-iframe-wrapper">
+            <div class="skeleton-loader">
+              <div class="spinner"></div>
+              <span class="loader-text">Chargement du document...</span>
+            </div>
+            <iframe class="embed-iframe" data-src="https://drive.google.com/file/d/1FJaegfP5gEymdV1MU2oIyXbtzttzqoMa/preview" allowfullscreen></iframe>
+          </div>
+        </div>
+      </article>
+
+      <!-- Act 4 : Calcul Littéral -->
+      <article class="card-assignment" id="act-4e-litteral">
+        <div class="assignment-header">
+          <div class="assignment-title-area">
+            <span class="assignment-emoji">🔤</span>
+            <h2 class="assignment-title">Calcul Littéral</h2>
+          </div>
+          <div class="assignment-badges">
+            <span class="badge badge-consignes">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h-2v-2h4v8zm0-10h-2V5h2v2z"/></svg>
+              Les consignes
+            </span>
+            <span class="badge badge-programme">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Les programmes à réaliser
+            </span>
+          </div>
+        </div>
+        
+        <!-- Document Embed Container -->
+        <div class="embed-container">
+          <div class="embed-toolbar">
+            <div class="embed-filename">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Calcul littéral.pdf
+            </div>
+            <div class="embed-actions">
+              <a href="https://drive.google.com/open?id=1SRE3iE3TKG5JVEDsmw8LUxrwYkv-PxQp" target="_blank" class="btn-embed-action" title="Agrandir">
+                <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                Agrandir
+              </a>
+              <a href="https://drive.google.com/uc?id=1SRE3iE3TKG5JVEDsmw8LUxrwYkv-PxQp&export=download" class="btn-embed-action" title="Télécharger">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Télécharger
+              </a>
+            </div>
+          </div>
+          <div class="embed-iframe-wrapper">
+            <div class="skeleton-loader">
+              <div class="spinner"></div>
+              <span class="loader-text">Chargement du document...</span>
+            </div>
+            <iframe class="embed-iframe" data-src="https://drive.google.com/file/d/1SRE3iE3TKG5JVEDsmw8LUxrwYkv-PxQp/preview" allowfullscreen></iframe>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-logo">La Salle 9</div>
+      <div class="footer-nav">
+        <a href="index.html" class="footer-nav-link">Accueil</a>
+        <a href="3eme.html" class="footer-nav-link">3ème</a>
+        <a href="4eme.html" class="footer-nav-link">4ème</a>
+        <a href="5eme.html" class="footer-nav-link">5ème</a>
+      </div>
+      <div class="copyright">
+        <span>Arnaud COLLET</span>
+        <span class="divider">|</span>
+        <span>Février 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/main.js"></script>
+</body>
+</html>
