@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Theme Management (Dark / Light Mode)
   // ==========================================================================
   const themeToggleBtn = document.querySelector('.theme-toggle');
+  const favicon = document.querySelector('link[rel="icon"]');
+
+  const updateFavicon = theme => {
+    if (favicon) favicon.href = `assets/favicon-${theme}.svg`;
+  };
   
   // Retrieve saved theme or default to system preference
   const savedTheme = localStorage.getItem('theme');
@@ -11,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set initial theme
   document.documentElement.setAttribute('data-theme', initialTheme);
+  updateFavicon(initialTheme);
   
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
@@ -20,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update HTML attribute and save preference
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
+      updateFavicon(newTheme);
     });
   }
 
