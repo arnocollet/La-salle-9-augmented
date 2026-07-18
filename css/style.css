@@ -277,20 +277,25 @@ a {
 .hero {
   position: relative;
   padding: 10rem 0 6rem 0;
-  overflow: hidden;
+  overflow: visible;
   text-align: center;
 }
 
 .hero-glow {
   position: absolute;
-  top: -20%;
+  top: -10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
+  width: 850px;
+  height: 850px;
   background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
+}
+
+.hero > .container {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-title {
@@ -335,6 +340,8 @@ a {
    Cards & Grids (Grade Levels)
    ========================================================================== */
 .grid-grades {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
