@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src https://api.github.com; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="theme-color" content="#f8fafc">
+  <link rel="icon" href="assets/favicon-light.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/admin.css">
+  <title>Administration — La Salle 9</title>
+</head>
+<body>
+  <header class="admin-header">
+    <a href="index.html" class="admin-brand">
+      <img src="assets/favicon-light.svg" alt="" width="34" height="34">
+      <span>La Salle 9</span>
+      <small>Administration</small>
+    </a>
+    <button id="logout-btn" class="button button-quiet" type="button" hidden>Déconnexion</button>
+  </header>
+
+  <main class="admin-shell">
+    <section id="login-panel" class="panel login-panel">
+      <div class="panel-icon" aria-hidden="true">🔐</div>
+      <p class="eyebrow">Accès propriétaire</p>
+      <h1>Connexion à GitHub</h1>
+      <p class="intro">Le panneau publie directement les activités dans votre dépôt. Le jeton reste uniquement dans ce navigateur et n’est jamais ajouté au site.</p>
+
+      <form id="login-form" class="stack-form">
+        <label for="token">Jeton GitHub</label>
+        <div class="secret-field">
+          <input id="token" name="token" type="password" autocomplete="off" spellcheck="false" required placeholder="github_pat_…">
+          <button id="toggle-token" type="button" class="icon-button" aria-label="Afficher le jeton">👁</button>
+        </div>
+        <label class="checkbox-row">
+          <input id="remember-token" type="checkbox" checked>
+          <span>Mémoriser sur cet appareil</span>
+        </label>
+        <button class="button button-primary" type="submit">Se connecter</button>
+      </form>
+
+      <details class="token-help">
+        <summary>Créer le jeton une première fois</summary>
+        <ol>
+          <li>Ouvrez la création d’un <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">jeton finement limité</a>.</li>
+          <li>Sélectionnez uniquement le dépôt <strong>La-salle-9-augmented</strong>.</li>
+          <li>Dans <strong>Repository permissions</strong>, accordez <strong>Contents: Read and write</strong>.</li>
+          <li>Créez le jeton et collez-le ci-dessus.</li>
+        </ol>
+      </details>
+      <p id="login-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <div id="admin-app" hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Gestion des contenus</p>
+          <h1>Ajouter une activité</h1>
+          <p>Remplissez les quatre informations puis publiez. GitHub Pages fera le reste.</p>
+        </div>
+        <div id="connection-badge" class="connection-badge">Connecté</div>
+      </div>
+
+      <section class="panel editor-panel">
+        <form id="activity-form">
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="grade">Classe</label>
+              <select id="grade" name="grade" required>
+                <option value="3e">Classe de 3ème</option>
+                <option value="4e">Classe de 4ème</option>
+                <option value="5e">Classe de 5ème</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="emoji">Icône</label>
+              <select id="emoji" name="emoji">
+                <option value="💻">💻 Informatique</option>
+                <option value="🔢">🔢 Nombres</option>
+                <option value="📐">📐 Géométrie</option>
+                <option value="📊">📊 Statistiques</option>
+                <option value="🧩">🧩 Problème</option>
+                <option value="🚀">🚀 Défi</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="title">Titre de l’activité</label>
+            <input id="title" name="title" type="text" maxlength="160" required placeholder="Ex. Programme de calcul">
+          </div>
+
+          <fieldset class="resource-fieldset">
+            <legend>Consignes PDF</legend>
+            <label id="pdf-dropzone" class="dropzone" for="pdf-file">
+              <span class="dropzone-icon" aria-hidden="true">＋</span>
+              <strong>Glissez votre PDF ici</strong>
+              <span>ou cliquez pour choisir un fichier</span>
+              <small id="pdf-file-name">PDF uniquement — 20 Mo maximum</small>
+            </label>
+            <input id="pdf-file" name="pdfFile" type="file" accept="application/pdf,.pdf" hidden>
+
+            <div class="or-divider"><span>ou</span></div>
+
+            <label for="pdf-url">Lien vers le PDF</label>
+            <input id="pdf-url" name="pdfUrl" type="url" inputmode="url" placeholder="https://drive.google.com/… ou https://…/fichier.pdf">
+          </fieldset>
+
+          <div class="field-group">
+            <label for="scratch-url">Lien du projet Scratch</label>
+            <input id="scratch-url" name="scratchUrl" type="url" inputmode="url" required placeholder="https://scratch.mit.edu/projects/123456789/">
+            <small>Le projet doit être partagé publiquement sur Scratch.</small>
+          </div>
+
+          <div class="publish-row">
+            <p id="publish-status" class="status" role="status" aria-live="polite"></p>
+            <button id="publish-btn" class="button button-primary button-publish" type="submit">
+              <span>Publier l’activité</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="activities-section">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Activités administrées</p>
+            <h2>Déjà ajoutées</h2>
+          </div>
+          <button id="refresh-btn" class="button button-quiet" type="button">Actualiser</button>
+        </div>
+        <div id="activities-list" class="admin-activities-list"></div>
+        <p id="empty-activities" class="empty-state">Aucune nouvelle activité pour le moment.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
