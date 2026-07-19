@@ -25,7 +25,7 @@
 
 .brevet-grid {
   display: grid;
-  grid-template-columns: minmax(260px, 0.9fr) minmax(420px, 1.25fr) minmax(290px, 0.9fr);
+  grid-template-columns: repeat(2, minmax(360px, 1.25fr)) minmax(290px, 0.9fr);
   gap: 1.5rem;
   align-items: start;
 }
@@ -96,9 +96,13 @@
 .continuous-head,
 .continuous-row {
   display: grid;
-  grid-template-columns: minmax(145px, 1fr) 6.6rem;
+  grid-template-columns: minmax(145px, 1fr) 6.6rem 3.5rem;
   gap: 0.65rem;
   align-items: center;
+}
+
+.continuous-head::after {
+  content: 'Coef.';
 }
 
 .continuous-head {
@@ -176,13 +180,18 @@
   border-top: 1px solid var(--card-border);
 }
 
-.coefficient {
+.coefficient,
+.continuous-row::after {
   padding: 0.55rem 0.25rem;
   color: var(--accent);
   background: var(--accent-light);
   border-radius: 0.55rem;
   font-weight: 800;
   text-align: center;
+}
+
+.continuous-row::after {
+  content: '1';
 }
 
 .science-note {
@@ -193,6 +202,27 @@
   border: 1px solid var(--card-border);
   border-radius: 0.7rem;
   font-size: 0.8rem;
+}
+
+.block-average {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--card-border);
+  border-radius: 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.block-average strong {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 1rem;
 }
 
 .result-head {
@@ -428,7 +458,7 @@
 
   .continuous-head,
   .continuous-row {
-    grid-template-columns: minmax(145px, 1fr) 5.4rem;
+    grid-template-columns: minmax(115px, 1fr) 5.4rem 3rem;
     gap: 0.4rem;
     padding-right: 0;
     padding-left: 0;
@@ -436,5 +466,11 @@
 
   .continuous-row label {
     font-size: 0.8rem;
+  }
+
+  .block-average {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 }

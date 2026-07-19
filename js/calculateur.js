@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     minimumFractionDigits,
     maximumFractionDigits: 2
   });
+  const formatAverage = value => value.toLocaleString('fr-FR', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
 
   const calculate = () => {
     const continuousGrades = [...document.querySelectorAll('.continuous-input')]
@@ -57,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1
     })} / 20`;
+    document.getElementById('continuousAverage').textContent = `${formatAverage(continuousBase)} / 20`;
+    document.getElementById('examAverage').textContent = `${formatAverage(examAverage)} / 20`;
 
     const status = document.getElementById('status');
     const mentionBox = document.getElementById('mentionBox');
