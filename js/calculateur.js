@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const clamp = (value, min, max) => Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
-  const getValue = id => clamp(Number.parseFloat(document.getElementById(id).value), 0, 20);
+  const getValue = id => clamp(Math.round(Number.parseFloat(document.getElementById(id).value)), 0, 20);
   const formatNumber = (value, minimumFractionDigits = 0) => value.toLocaleString('fr-FR', {
     minimumFractionDigits,
     maximumFractionDigits: 2
@@ -39,7 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (finalScore >= 12) mention = 'Assez bien';
     else if (admitted) mention = 'Admis';
 
-    document.getElementById('finalScore').textContent = `${formatNumber(finalScore, 1)} / 20`;
+    document.getElementById('finalScore').textContent = `${finalScore.toLocaleString('fr-FR', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    })} / 20`;
 
     const status = document.getElementById('status');
     const mentionBox = document.getElementById('mentionBox');
@@ -51,7 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
       `Contrôle continu retenu : ${formatNumber(continuousScore)}/20 — Moyenne des épreuves : ${formatNumber(examAverage)}/20`;
   };
 
-  document.querySelectorAll('.calc-input').forEach(input => input.addEventListener('input', calculate));
+  document.querySelectorAll('.calc-input').forEach(input => {
+    input.addEventListener('input', calculate);
+    input.addEventListener('change', () => {
+      input.value = getValue(input.id);
+      calculate();
+    });
+  });
   document.getElementById('calculate').addEventListener('click', calculate);
   document.getElementById('reset').addEventListener('click', () => {
     Object.entries(defaults).forEach(([id, value]) => {
