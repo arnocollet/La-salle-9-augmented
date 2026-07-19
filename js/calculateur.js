@@ -30,16 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
       getValue('oral') * 2;
     const examAverage = weightedExams / 10;
     const finalScore = continuousScore * 0.4 + examAverage * 0.6;
-    const admitted = finalScore >= 10;
+    const roundedFinalScore = Math.round((finalScore + Number.EPSILON) * 10) / 10;
+    const admitted = roundedFinalScore >= 10;
 
     let mention = 'Non admis';
-    if (finalScore >= 18) mention = 'Très bien — Félicitations du jury';
-    else if (finalScore >= 16) mention = 'Très bien';
-    else if (finalScore >= 14) mention = 'Bien';
-    else if (finalScore >= 12) mention = 'Assez bien';
+    if (roundedFinalScore >= 18) mention = 'Très bien — Félicitations du jury';
+    else if (roundedFinalScore >= 16) mention = 'Très bien';
+    else if (roundedFinalScore >= 14) mention = 'Bien';
+    else if (roundedFinalScore >= 12) mention = 'Assez bien';
     else if (admitted) mention = 'Admis';
 
-    document.getElementById('finalScore').textContent = `${finalScore.toLocaleString('fr-FR', {
+    document.getElementById('finalScore').textContent = `${roundedFinalScore.toLocaleString('fr-FR', {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1
     })} / 20`;
