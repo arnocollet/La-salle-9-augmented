@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
   const defaults = {
-    cc: 13,
+    'cc-fr': 13,
+    'cc-math': 13,
+    'cc-hg': 13,
+    'cc-emc': 13,
+    'cc-lv1': 13,
+    'cc-lv2': 13,
+    'cc-arts': 13,
+    'cc-music': 13,
+    'cc-svt': 13,
+    'cc-physics': 13,
+    'cc-tech': 13,
+    'cc-eps': 13,
     option: 12,
     fr: 14,
     math: 13,
@@ -18,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const calculate = () => {
-    const continuousBase = getValue('cc');
+    const continuousGrades = [...document.querySelectorAll('.continuous-input')]
+      .map(input => getValue(input.id));
+    const continuousBase = continuousGrades.reduce((total, grade) => total + grade, 0) / continuousGrades.length;
     const optionBonus = Math.max(0, getValue('option') - 10);
     const continuousScore = Math.min(20, continuousBase + optionBonus);
     const weightedExams =
@@ -52,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mentionBox.classList.toggle('fail', !admitted);
     document.getElementById('mention').textContent = mention;
     document.getElementById('details').textContent =
-      `Contrôle continu retenu : ${formatNumber(continuousScore)}/20 — Moyenne des épreuves : ${formatNumber(examAverage)}/20`;
+      `Moyenne des 12 matières : ${formatNumber(continuousBase)}/20 — Contrôle continu retenu : ${formatNumber(continuousScore)}/20 — Moyenne des épreuves : ${formatNumber(examAverage)}/20`;
   };
 
   document.querySelectorAll('.calc-input').forEach(input => {

@@ -83,6 +83,7 @@
 }
 
 .brevet-field label,
+.continuous-row label,
 .exam-row label {
   font-weight: 650;
 }
@@ -90,6 +91,32 @@
 .brevet-field label span {
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+.continuous-head,
+.continuous-row {
+  display: grid;
+  grid-template-columns: minmax(145px, 1fr) 6.6rem;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.continuous-head {
+  padding: 0 0.6rem 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.continuous-row {
+  padding: 0.55rem 0.6rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.option-field {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--card-border);
 }
 
 .calc-input {
@@ -349,7 +376,7 @@
   }
 
   .brevet-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .formula-card,
@@ -396,6 +423,18 @@
   }
 
   .exam-row label {
+    font-size: 0.8rem;
+  }
+
+  .continuous-head,
+  .continuous-row {
+    grid-template-columns: minmax(145px, 1fr) 5.4rem;
+    gap: 0.4rem;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .continuous-row label {
     font-size: 0.8rem;
   }
 }
