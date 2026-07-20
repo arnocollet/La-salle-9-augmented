@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
       maximumFractionDigits: 1
     })} / 20`;
     document.getElementById('continuousAverage').textContent = `${formatAverage(continuousBase)} / 20`;
+    document.getElementById('continuousRetained').textContent = `${formatNumber(continuousScore, 2)} / 20`;
+    document.getElementById('continuousDetails').textContent =
+      `(${formatNumber(continuousGrades.reduce((total, grade) => total + grade, 0))} + ${formatNumber(optionBonus)}) ÷ 12`;
     document.getElementById('examAverage').textContent = `${formatAverage(examAverage)} / 20`;
 
     const status = document.getElementById('status');

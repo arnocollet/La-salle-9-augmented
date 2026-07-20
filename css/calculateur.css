@@ -225,6 +225,22 @@
   font-size: 1rem;
 }
 
+.retained-average {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--accent-light);
+}
+
+.retained-average span {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.retained-average small {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
 .result-head {
   padding: 1.15rem 1.3rem;
   color: #fff;
