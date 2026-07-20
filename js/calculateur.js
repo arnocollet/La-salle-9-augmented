@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
   const defaults = {
-    'cc-fr': 13,
-    'cc-math': 13,
-    'cc-hg': 13,
-    'cc-emc': 13,
-    'cc-lv1': 13,
-    'cc-lv2': 13,
-    'cc-arts': 13,
-    'cc-music': 13,
-    'cc-svt': 13,
-    'cc-physics': 13,
-    'cc-tech': 13,
-    'cc-eps': 13,
-    option: 12,
-    fr: 14,
-    math: 13,
-    hg: 15,
-    emc: 14,
-    sci: 14,
-    oral: 15
+    'cc-fr': 10,
+    'cc-math': 10,
+    'cc-hg': 10,
+    'cc-emc': 10,
+    'cc-lv1': 10,
+    'cc-lv2': 10,
+    'cc-arts': 10,
+    'cc-music': 10,
+    'cc-svt': 10,
+    'cc-physics': 10,
+    'cc-tech': 10,
+    'cc-eps': 10,
+    option: 10,
+    fr: 10,
+    math: 10,
+    hg: 10,
+    emc: 10,
+    sci: 10,
+    oral: 10
   };
 
   const clamp = (value, min, max) => Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
