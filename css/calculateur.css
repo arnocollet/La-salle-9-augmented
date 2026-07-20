@@ -3,7 +3,8 @@
 }
 
 .brevet-header .page-subtitle {
-  max-width: 760px;
+  max-width: none;
+  white-space: nowrap;
 }
 
 .brevet-main {
@@ -429,6 +430,10 @@
 }
 
 @media (max-width: 768px) {
+  .brevet-header .page-subtitle {
+    white-space: normal;
+  }
+
   .brevet-main {
     padding-bottom: 4rem;
   }
