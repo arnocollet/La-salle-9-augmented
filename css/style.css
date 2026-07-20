@@ -324,14 +324,6 @@ a {
   animation: fadeInUp 1s ease-out;
 }
 
-.hero-quote-mark {
-  flex: 0 0 auto;
-  font-size: 2.5rem;
-  color: var(--accent);
-  opacity: 0.3;
-  line-height: 1;
-}
-
 .hero-quote-text {
   line-height: 1.5;
 }
