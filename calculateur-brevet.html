@@ -81,6 +81,7 @@
     <p class="brevet-info"><span aria-hidden="true">ℹ️</span> Modifie les notes pour simuler ton résultat. Le calcul se met à jour automatiquement.</p>
 
     <section class="brevet-grid" aria-label="Calcul de la note du brevet">
+      <div class="brevet-column">
       <article class="brevet-card continuous-card">
         <div class="brevet-card-inner">
           <h2 class="brevet-section-title"><span aria-hidden="true">✅</span> 1. Contrôle continu <small>40 %</small></h2>
@@ -112,7 +113,9 @@
           </div>
         </div>
       </article>
+      </div>
 
+      <div class="brevet-column">
       <article class="brevet-card exam-card">
         <div class="brevet-card-inner">
           <h2 class="brevet-section-title"><span aria-hidden="true">⚖️</span> 2. Épreuves finales <small>60 %</small></h2>
@@ -139,13 +142,6 @@
         </div>
       </aside>
 
-      <article class="brevet-card formula-card">
-        <div class="brevet-card-inner">
-          <h2 class="brevet-section-title"><span aria-hidden="true">🧮</span> 3. Formule</h2>
-          <p class="formula-box">Note finale = (moyenne du contrôle continu × 0,40)<br>+ (moyenne pondérée des épreuves finales × 0,60)</p>
-        </div>
-      </article>
-
       <aside class="brevet-card mentions-card">
         <div class="brevet-card-inner">
           <h2 class="brevet-section-title"><span aria-hidden="true">⭐</span> Barème des mentions</h2>
@@ -158,9 +154,16 @@
           </div>
         </div>
       </aside>
+      </div>
+
+      <article class="brevet-card formula-card">
+        <div class="brevet-card-inner">
+          <h2 class="brevet-section-title"><span aria-hidden="true">🧮</span> 3. Formule</h2>
+          <p class="formula-box">Note finale = (moyenne du contrôle continu × 0,40)<br>+ (moyenne pondérée des épreuves finales × 0,60)</p>
+        </div>
+      </article>
 
       <div class="brevet-actions">
-        <button class="brevet-button primary-button" id="calculate" type="button">🧮 Calculer</button>
         <button class="brevet-button secondary-button" id="reset" type="button">↻ Réinitialiser</button>
       </div>
     </section>
@@ -180,6 +183,6 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="js/calculateur.js?v=6"></script>
+  <script src="js/calculateur.js?v=7"></script>
 </body>
 </html>

@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
       calculate();
     });
   });
-  document.getElementById('calculate').addEventListener('click', calculate);
   document.getElementById('reset').addEventListener('click', () => {
     Object.entries(defaults).forEach(([id, value]) => {
       document.getElementById(id).value = value;
