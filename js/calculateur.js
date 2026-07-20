@@ -27,10 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     minimumFractionDigits,
     maximumFractionDigits: 2
   });
-  const formatAverage = value => value.toLocaleString('fr-FR', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1
-  });
+  const roundToTenth = value => Math.round((value + Number.EPSILON) * 10) / 10;
+  const formatAverage = value => roundToTenth(value).toFixed(1).replace('.', ',');
 
   const calculate = () => {
     const continuousGrades = [...document.querySelectorAll('.continuous-input')]
@@ -49,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       getValue('oral') * 2;
     const examAverage = weightedExams / 10;
     const finalScore = continuousScore * 0.4 + examAverage * 0.6;
-    const roundedFinalScore = Math.round((finalScore + Number.EPSILON) * 10) / 10;
+    const roundedFinalScore = roundToTenth(finalScore);
     const admitted = roundedFinalScore >= 10;
 
     let mention = 'Non admis';
@@ -76,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mentionBox.classList.toggle('fail', !admitted);
     document.getElementById('mention').textContent = mention;
     document.getElementById('details').textContent =
-      `Moyenne des 12 matières : ${formatAverage(continuousBase)}/20 — Contrôle continu retenu : ${formatAverage(continuousScore)}/20 — Moyenne des épreuves : ${formatAverage(examAverage)}/20`;
+      `Moyenne des 12 matières : ${formatAverage(continuousBase)}/20 — Note de contrôle continu retenue : ${formatAverage(continuousScore)}/20 — Moyenne des épreuves : ${formatAverage(examAverage)}/20`;
   };
 
   document.querySelectorAll('.calc-input').forEach(input => {
