@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       maximumFractionDigits: 1
     })} / 20`;
     document.getElementById('continuousAverage').textContent = `${formatAverage(continuousBase)} / 20`;
-    document.getElementById('continuousRetained').textContent = `${formatNumber(continuousScore, 2)} / 20`;
+    document.getElementById('continuousRetained').textContent = `${formatAverage(continuousScore)} / 20`;
     document.getElementById('continuousDetails').textContent =
       `(${formatNumber(continuousGrades.reduce((total, grade) => total + grade, 0))} + ${formatNumber(optionBonus)}) ÷ 12`;
     document.getElementById('examAverage').textContent = `${formatAverage(examAverage)} / 20`;
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mentionBox.classList.toggle('fail', !admitted);
     document.getElementById('mention').textContent = mention;
     document.getElementById('details').textContent =
-      `Moyenne des 12 matières : ${formatNumber(continuousBase)}/20 — Contrôle continu retenu : ${formatNumber(continuousScore)}/20 — Moyenne des épreuves : ${formatNumber(examAverage)}/20`;
+      `Moyenne des 12 matières : ${formatAverage(continuousBase)}/20 — Contrôle continu retenu : ${formatAverage(continuousScore)}/20 — Moyenne des épreuves : ${formatAverage(examAverage)}/20`;
   };
 
   document.querySelectorAll('.calc-input').forEach(input => {
