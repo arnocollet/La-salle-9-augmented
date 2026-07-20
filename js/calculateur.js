@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .map(input => getValue(input.id));
     const continuousBase = continuousGrades.reduce((total, grade) => total + grade, 0) / continuousGrades.length;
     const optionBonus = Math.max(0, getValue('option') - 10);
-    const continuousScore = Math.min(20, continuousBase + optionBonus);
+    // La moyenne annuelle représente les 12 matières : le bonus d'option
+    // s'ajoute à leur total de points avant la division par 12.
+    const continuousScore = Math.min(20, continuousBase + optionBonus / 12);
     const weightedExams =
       getValue('fr') * 2 +
       getValue('math') * 2 +
