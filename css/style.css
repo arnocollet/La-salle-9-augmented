@@ -979,6 +979,10 @@ a {
     justify-content: flex-start;
   }
 
+  .home-page .nav-container {
+    max-width: 448px;
+  }
+
   .nav-container > nav {
     flex: 0 0 0;
     width: 0;
