@@ -897,7 +897,7 @@ a {
 .footer {
   background-color: var(--footer-bg);
   color: var(--footer-text);
-  padding: 4rem 0;
+  padding: 2rem 0;
   border-top: 1px solid var(--card-border);
 }
 
@@ -905,7 +905,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   text-align: center;
 }
 
@@ -933,9 +933,9 @@ a {
 
 .copyright {
   font-size: 0.85rem;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 1.5rem;
+  padding-top: 1rem;
   width: 100%;
   display: flex;
   justify-content: center;
