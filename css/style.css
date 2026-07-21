@@ -276,7 +276,7 @@ a {
    ========================================================================== */
 .hero {
   position: relative;
-  padding: 10rem 0 6rem 0;
+  padding: 10rem 0 2rem 0;
   overflow: visible;
   text-align: center;
 }
@@ -356,7 +356,7 @@ a {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
 }
 
 .card-grade {
@@ -1033,7 +1033,7 @@ a {
   .grid-grades {
     grid-template-columns: 1fr;
     max-width: 450px;
-    margin: 3rem auto 0 auto;
+    margin: 1.5rem auto 0 auto;
   }
 
   .hero-title {
