@@ -333,7 +333,6 @@ a {
   color: var(--text-secondary);
   font-size: 1.2rem;
   font-weight: 500;
-  white-space: nowrap;
   animation: fadeInUp 1s ease-out;
 }
 
@@ -623,8 +622,7 @@ a {
 .page-subtitle {
   font-size: 1.15rem;
   color: var(--text-secondary);
-  max-width: 100%;
-  white-space: nowrap;
+  max-width: 600px;
 }
 
 /* ==========================================================================
@@ -1048,12 +1046,6 @@ a {
 
   .page-title {
     font-size: 2.25rem;
-  }
-
-  .page-subtitle,
-  .hero-intro {
-    font-size: 0.85rem;
-    white-space: nowrap;
   }
 
   .card-assignment {
