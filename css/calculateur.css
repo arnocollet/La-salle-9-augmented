@@ -125,6 +125,13 @@
   border-top: 1px solid var(--card-border);
 }
 
+@media (min-width: 769px) {
+  .continuous-card .continuous-row {
+    padding-top: 0.05rem;
+    padding-bottom: 0.05rem;
+  }
+}
+
 .option-field {
   margin-top: 1.4rem;
   padding-top: 1.2rem;
