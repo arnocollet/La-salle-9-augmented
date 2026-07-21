@@ -333,6 +333,7 @@ a {
   color: var(--text-secondary);
   font-size: 1.2rem;
   font-weight: 500;
+  white-space: nowrap;
   animation: fadeInUp 1s ease-out;
 }
 
@@ -620,9 +621,17 @@ a {
 }
 
 .page-subtitle {
-  font-size: 1.15rem;
+  width: 100%;
+  max-width: none;
+  overflow-x: auto;
   color: var(--text-secondary);
-  max-width: 600px;
+  font-size: 1rem;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.page-subtitle::-webkit-scrollbar {
+  display: none;
 }
 
 /* ==========================================================================
