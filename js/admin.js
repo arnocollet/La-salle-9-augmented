@@ -163,6 +163,16 @@
     return match[1];
   };
 
+  const getPdfVariants = value => {
+    const pdfUrl = validateHttpUrl(value, 'Le lien PDF');
+    const driveId = pdfUrl.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]+)/)?.[1];
+    return {
+      pdfUrl,
+      pdfEmbedUrl: driveId ? `https://drive.google.com/file/d/${driveId}/preview` : undefined,
+      pdfDownloadUrl: driveId ? `https://drive.google.com/uc?id=${driveId}&export=download` : undefined
+    };
+  };
+
   const validatePdf = file => {
     const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
     if (!isPdf) throw new Error('Le fichier déposé doit être un PDF.');
@@ -207,8 +217,14 @@
     elements.form.elements.grade.value = activity.grade;
     elements.form.elements.emoji.value = activity.emoji || '💻';
     elements.form.elements.title.value = activity.title || '';
-    elements.form.elements.scratchUrl.value = activity.scratchId
-      ? `https://scratch.mit.edu/projects/${activity.scratchId}/`
+    const scratchIds = (Array.isArray(activity.scratchIds) ? activity.scratchIds : [activity.scratchId])
+      .map(value => String(value || '').replace(/\D/g, ''))
+      .filter(Boolean);
+    elements.form.elements.scratchUrl.value = scratchIds[0]
+      ? `https://scratch.mit.edu/projects/${scratchIds[0]}/`
+      : '';
+    elements.form.elements.scratchUrl2.value = scratchIds[1]
+      ? `https://scratch.mit.edu/projects/${scratchIds[1]}/`
       : '';
     elements.pdfUrl.value = /^https?:\/\//i.test(activity.pdfUrl || '') ? activity.pdfUrl : '';
     elements.pdfInput.value = '';
@@ -336,6 +352,11 @@
     const emoji = formData.get('emoji');
     const title = String(formData.get('title') || '').trim();
     const scratchId = getScratchId(String(formData.get('scratchUrl') || '').trim());
+    const secondScratchUrl = String(formData.get('scratchUrl2') || '').trim();
+    const scratchIds = [...new Set([
+      scratchId,
+      ...(secondScratchUrl ? [getScratchId(secondScratchUrl)] : [])
+    ])];
     const pdfFile = elements.pdfInput.files[0];
     const pdfLink = String(formData.get('pdfUrl') || '').trim();
 
@@ -349,6 +370,8 @@
 
     let pdfUrl;
     let pdfName;
+    let pdfEmbedUrl;
+    let pdfDownloadUrl;
 
     if (pdfFile) {
       validatePdf(pdfFile);
@@ -357,16 +380,26 @@
       await putContent(filePath, bytesToBase64(fileBytes), `Ajoute le PDF de l’activité ${title}`);
       pdfUrl = filePath;
       pdfName = pdfFile.name;
+      pdfEmbedUrl = filePath;
+      pdfDownloadUrl = filePath;
+    } else if (editedActivity && pdfLink === (/^https?:\/\//i.test(editedActivity.pdfUrl || '') ? editedActivity.pdfUrl : '')) {
+      pdfUrl = editedActivity.pdfUrl;
+      pdfName = editedActivity.pdfName;
+      pdfEmbedUrl = editedActivity.pdfEmbedUrl;
+      pdfDownloadUrl = editedActivity.pdfDownloadUrl;
     } else if (pdfLink) {
-      pdfUrl = validateHttpUrl(pdfLink, 'Le lien PDF');
+      ({ pdfUrl, pdfEmbedUrl, pdfDownloadUrl } = getPdfVariants(pdfLink));
       try {
-        pdfName = decodeURIComponent(new URL(pdfUrl).pathname.split('/').pop()) || 'Consignes.pdf';
+        const pathName = decodeURIComponent(new URL(pdfUrl).pathname.split('/').pop());
+        pdfName = pathName?.toLowerCase().endsWith('.pdf') ? pathName : 'Consignes.pdf';
       } catch {
         pdfName = 'Consignes.pdf';
       }
     } else {
       pdfUrl = editedActivity.pdfUrl;
       pdfName = editedActivity.pdfName;
+      pdfEmbedUrl = editedActivity.pdfEmbedUrl;
+      pdfDownloadUrl = editedActivity.pdfDownloadUrl;
     }
 
     // Reload after a possible PDF commit to minimize update conflicts.
@@ -375,7 +408,18 @@
     if (editingId) {
       const target = activities.find(activity => activity.id === editingId);
       if (!target) throw new Error('Cette activité n’existe plus. Actualisez la liste.');
-      Object.assign(target, { grade, title, emoji, pdfUrl, pdfName, scratchId, updatedAt: now });
+      Object.assign(target, {
+        grade,
+        title,
+        emoji,
+        pdfUrl,
+        pdfName,
+        pdfEmbedUrl,
+        pdfDownloadUrl,
+        scratchId: scratchIds[0],
+        scratchIds,
+        updatedAt: now
+      });
       await saveActivities(activities, `Modifie l’activité ${title} en ${grade}`, state.dataSha);
       return 'updated';
     }
@@ -387,7 +431,10 @@
       emoji,
       pdfUrl,
       pdfName,
-      scratchId,
+      pdfEmbedUrl,
+      pdfDownloadUrl,
+      scratchId: scratchIds[0],
+      scratchIds,
       active: true,
       createdAt: now,
       updatedAt: now

@@ -97,15 +97,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const title = escapeHtml(activity.title || 'Nouvelle activité');
     const emoji = escapeHtml(activity.emoji || '💻');
     const pdfUrl = safeUrl(activity.pdfUrl);
-    const pdfEmbedUrl = getPdfEmbedUrl(activity.pdfUrl);
+    const pdfEmbedUrl = safeUrl(activity.pdfEmbedUrl) || getPdfEmbedUrl(activity.pdfUrl);
+    const pdfDownloadUrl = safeUrl(activity.pdfDownloadUrl) || pdfUrl;
     const pdfName = escapeHtml(activity.pdfName || decodeURIComponent(pdfUrl.split('/').pop() || 'Consignes.pdf'));
-    const scratchId = String(activity.scratchId || '').replace(/\D/g, '');
+    const scratchIds = (Array.isArray(activity.scratchIds) ? activity.scratchIds : [activity.scratchId])
+      .map(value => String(value || '').replace(/\D/g, ''))
+      .filter(Boolean);
 
-    if (!id || !pdfUrl || !pdfEmbedUrl || !scratchId) return null;
+    if (!id || !pdfUrl || !pdfEmbedUrl || scratchIds.length === 0) return null;
 
     article.className = 'card-assignment';
     article.id = `custom-${id}`;
-    article.dataset.scratchProjects = scratchId;
+    article.dataset.scratchProjects = scratchIds.join(',');
     article.innerHTML = `
       <div class="assignment-header">
         <div class="assignment-title-area">
@@ -134,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
               Agrandir
             </a>
-            <a href="${escapeHtml(pdfUrl)}" download class="btn-embed-action" title="Télécharger">
+            <a href="${escapeHtml(pdfDownloadUrl)}" download class="btn-embed-action" title="Télécharger">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
               Télécharger
             </a>
@@ -162,6 +165,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const activities = await response.json();
+      activities.forEach(activity => {
+        const legacyCard = document.getElementById(activity.id);
+        if (legacyCard) legacyCard.remove();
+      });
+
       activities
         .filter(activity => activity.grade === grade && activity.active !== false)
         .sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''))

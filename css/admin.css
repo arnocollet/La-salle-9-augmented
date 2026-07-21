@@ -224,6 +224,7 @@ input:focus, select:focus {
 #activity-form { display: flex; flex-direction: column; gap: 1.4rem; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .field-group small { color: var(--muted); }
+.optional-label { color: var(--muted); font-weight: 550; }
 
 .resource-fieldset {
   margin: 0;
