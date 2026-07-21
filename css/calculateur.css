@@ -336,13 +336,6 @@
   color: #dc2626;
 }
 
-.result-details {
-  grid-column: 1 / -1;
-  margin-top: 0.65rem;
-  color: var(--text-secondary);
-  font-size: 0.72rem;
-}
-
 .score-gauge {
   --score-position: 50%;
   grid-column: 1 / -1;
@@ -446,21 +439,6 @@
   border-color: rgba(110, 231, 183, 0.35);
 }
 
-.formula-card {
-  grid-column: 1 / -1;
-}
-
-.formula-box {
-  padding: 1.1rem;
-  color: var(--accent);
-  background: var(--accent-light);
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-  border-radius: 0.9rem;
-  font-weight: 700;
-  line-height: 1.8;
-  text-align: center;
-}
-
 .mention-scale {
   display: grid;
   gap: 0.6rem;
@@ -545,7 +523,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .formula-card,
   .brevet-actions {
     grid-column: 1;
   }

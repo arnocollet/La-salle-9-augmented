@@ -80,8 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     status.classList.toggle('fail', !admitted);
     mentionBox.classList.toggle('fail', !admitted);
     document.getElementById('mention').textContent = mention;
-    document.getElementById('details').textContent =
-      `Moyenne des 12 matières : ${formatAverage(continuousBase)}/20 — Note de contrôle continu retenue : ${formatAverage(continuousScore)}/20 — Moyenne des épreuves : ${formatAverage(examAverage)}/20`;
 
     const gauge = document.getElementById('scoreGauge');
     const gaugePosition = clamp(roundedFinalScore / 20 * 100, 0, 100);
