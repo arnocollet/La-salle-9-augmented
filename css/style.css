@@ -977,7 +977,6 @@ a {
   .nav-container {
     position: relative;
     justify-content: flex-start;
-    padding-left: 0;
   }
 
   .nav-container > nav {
