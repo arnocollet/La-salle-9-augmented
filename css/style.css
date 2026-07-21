@@ -328,6 +328,14 @@ a {
   line-height: 1.5;
 }
 
+.hero-intro {
+  margin: 0 auto;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  font-weight: 500;
+  animation: fadeInUp 1s ease-out;
+}
+
 .hero-image {
   display: block;
   width: min(100%, 400px);
