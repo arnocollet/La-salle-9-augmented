@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <title>La Salle 9 - Simulateur Brevet</title>
   <link rel="stylesheet" href="css/style.css?v=13">
-  <link rel="stylesheet" href="css/calculateur.css?v=3">
+  <link rel="stylesheet" href="css/calculateur.css?v=4">
 </head>
 
 <body>
@@ -139,6 +139,22 @@
           <div id="status" class="result-status">✓ Admis</div>
           <div id="mentionBox" class="mention-box">Mention<strong id="mention">Admis</strong></div>
           <div class="result-details" id="details"></div>
+          <div class="score-gauge" id="scoreGauge" role="meter" aria-label="Position de la note finale sur le barème du brevet" aria-valuemin="0" aria-valuemax="20" aria-valuenow="10">
+            <div class="gauge-track" aria-hidden="true">
+              <div class="gauge-progress"></div>
+              <div class="gauge-marker"></div>
+            </div>
+            <div class="gauge-labels" aria-hidden="true">
+              <div class="gauge-label gauge-label-start"><strong>0</strong></div>
+              <div class="gauge-label gauge-label-10"><strong>10</strong><span>Admis</span></div>
+              <div class="gauge-label gauge-label-12"><strong>12</strong><span>Assez bien</span></div>
+              <div class="gauge-label gauge-label-14"><strong>14</strong><span>Bien</span></div>
+              <div class="gauge-label gauge-label-16"><strong>16</strong><span>Très bien</span></div>
+              <div class="gauge-label gauge-label-18"><strong>18</strong><span>Félicitations</span></div>
+              <div class="gauge-label gauge-label-end"><strong>20</strong></div>
+            </div>
+            <p class="next-mention" id="nextMention"></p>
+          </div>
         </div>
       </aside>
 
@@ -187,6 +203,6 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="js/calculateur.js?v=8"></script>
+  <script src="js/calculateur.js?v=9"></script>
 </body>
 </html>

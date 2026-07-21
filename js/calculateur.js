@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const roundToTenth = value => Math.round((value + Number.EPSILON) * 10) / 10;
   const formatAverage = value => roundToTenth(value).toFixed(1).replace('.', ',');
+  const mentionThresholds = [
+    { score: 10, label: 'être admis' },
+    { score: 12, label: 'obtenir la mention Assez bien' },
+    { score: 14, label: 'obtenir la mention Bien' },
+    { score: 16, label: 'obtenir la mention Très bien' },
+    { score: 18, label: 'obtenir les félicitations du jury' }
+  ];
 
   const calculate = () => {
     const continuousGrades = [...document.querySelectorAll('.continuous-input')]
@@ -75,6 +82,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('mention').textContent = mention;
     document.getElementById('details').textContent =
       `Moyenne des 12 matières : ${formatAverage(continuousBase)}/20 — Note de contrôle continu retenue : ${formatAverage(continuousScore)}/20 — Moyenne des épreuves : ${formatAverage(examAverage)}/20`;
+
+    const gauge = document.getElementById('scoreGauge');
+    const gaugePosition = clamp(roundedFinalScore / 20 * 100, 0, 100);
+    gauge.style.setProperty('--score-position', `${gaugePosition}%`);
+    gauge.setAttribute('aria-valuenow', roundedFinalScore);
+    gauge.setAttribute('aria-valuetext', `${formatAverage(roundedFinalScore)} sur 20, ${mention}`);
+
+    const nextThreshold = mentionThresholds.find(threshold => roundedFinalScore < threshold.score);
+    const nextMention = document.getElementById('nextMention');
+    if (nextThreshold) {
+      const missingPoints = roundToTenth(nextThreshold.score - roundedFinalScore);
+      const minimumDecimals = Number.isInteger(missingPoints) ? 0 : 1;
+      nextMention.textContent = `Encore ${formatNumber(missingPoints, minimumDecimals)} ${missingPoints === 1 ? 'point' : 'points'} pour ${nextThreshold.label}`;
+      nextMention.classList.remove('maximum');
+    } else {
+      nextMention.textContent = 'Niveau maximal atteint : félicitations du jury !';
+      nextMention.classList.add('maximum');
+    }
   };
 
   document.querySelectorAll('.calc-input').forEach(input => {

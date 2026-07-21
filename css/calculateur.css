@@ -343,6 +343,109 @@
   font-size: 0.72rem;
 }
 
+.score-gauge {
+  --score-position: 50%;
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 1.35rem;
+  padding-top: 0.35rem;
+  text-align: left;
+}
+
+.gauge-track {
+  position: relative;
+  height: 1.45rem;
+  background: color-mix(in srgb, var(--text-secondary) 15%, var(--bg-secondary));
+  border-radius: 999px;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.16);
+}
+
+.gauge-progress {
+  width: var(--score-position);
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(90deg, #ef4444 0%, #f97316 35%, #facc15 58%, #65a30d 76%, #10b981 100%);
+  border-radius: 999px 0 0 999px;
+  transition: width var(--transition-normal);
+}
+
+.gauge-marker {
+  position: absolute;
+  top: -0.38rem;
+  bottom: -0.38rem;
+  left: var(--score-position);
+  width: 0.28rem;
+  background: #0f2940;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.45);
+  transform: translateX(-50%);
+  transition: left var(--transition-normal);
+  z-index: 2;
+}
+
+.gauge-labels {
+  position: relative;
+  height: 3.6rem;
+}
+
+.gauge-label {
+  position: absolute;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  color: var(--text-secondary);
+  font-size: 0.64rem;
+  line-height: 1.15;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.gauge-label::before {
+  width: 1px;
+  height: 0.55rem;
+  margin-bottom: 0.12rem;
+  background: var(--card-border);
+  content: "";
+}
+
+.gauge-label strong {
+  color: var(--text-primary);
+  font-size: 0.68rem;
+}
+
+.gauge-label-start { left: 0; align-items: start; transform: none; }
+.gauge-label-10 { left: 50%; color: #b45309; }
+.gauge-label-12 { left: 60%; color: #3f8f68; }
+.gauge-label-14 { left: 70%; color: #27857c; }
+.gauge-label-16 { left: 80%; color: #4167b1; }
+.gauge-label-18 { left: 90%; color: #9a6428; }
+.gauge-label-end { right: 0; align-items: end; transform: none; }
+
+.next-mention {
+  display: inline-block;
+  margin: 0.7rem 0 0;
+  padding: 0.55rem 0.8rem;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.next-mention.maximum {
+  color: #047857;
+  background: #d1fae5;
+  border-color: #6ee7b7;
+}
+
+[data-theme="dark"] .next-mention.maximum {
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(110, 231, 183, 0.35);
+}
+
 .formula-card {
   grid-column: 1 / -1;
 }
@@ -503,5 +606,27 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .result-body {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .gauge-label {
+    font-size: 0.55rem;
+  }
+
+  .gauge-label strong {
+    font-size: 0.62rem;
+  }
+
+  .gauge-label-18 span {
+    font-size: 0;
+  }
+
+  .gauge-label-18 span::after {
+    font-size: 0.55rem;
+    content: "Félicit.";
   }
 }
