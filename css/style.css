@@ -320,7 +320,7 @@ a {
   color: var(--text-secondary);
   line-height: 1.5;
   font-style: italic;
-  white-space: nowrap;
+  white-space: nowrap !important;
   animation: fadeInUp 1s ease-out;
 }
 
@@ -336,7 +336,7 @@ a {
   color: var(--text-secondary);
   font-size: 1.2rem;
   font-weight: 500;
-  white-space: nowrap;
+  white-space: nowrap !important;
   scrollbar-width: none;
   animation: fadeInUp 1s ease-out;
 }
@@ -634,7 +634,7 @@ a {
   overflow-x: auto;
   color: var(--text-secondary);
   font-size: 1rem;
-  white-space: nowrap;
+  white-space: nowrap !important;
   scrollbar-width: none;
 }
 
@@ -996,6 +996,12 @@ a {
 @media (max-width: 768px) {
   .section-padding {
     padding: 4rem 0;
+  }
+
+  .page-subtitle,
+  .hero-intro {
+    overflow-x: visible;
+    white-space: normal !important;
   }
 
   /* Mobile Navbar */
