@@ -439,34 +439,6 @@
   border-color: rgba(110, 231, 183, 0.35);
 }
 
-.mention-scale {
-  display: grid;
-  gap: 0.6rem;
-}
-
-.mention-scale > div {
-  display: grid;
-  grid-template-columns: 4.3rem 1fr;
-  gap: 0.7rem;
-  align-items: center;
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-}
-
-.threshold {
-  padding: 0.3rem 0.4rem;
-  color: #fff;
-  border-radius: 0.45rem;
-  font-weight: 800;
-  text-align: center;
-}
-
-.threshold-10 { background: #059669; }
-.threshold-12 { background: #65a30d; }
-.threshold-14 { background: #ca8a04; }
-.threshold-16 { background: #ea580c; }
-.threshold-18 { background: #dc2626; }
-
 .brevet-actions {
   grid-column: 1 / -1;
   display: flex;
