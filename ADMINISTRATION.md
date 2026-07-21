@@ -33,4 +33,4 @@ Les nouvelles activités sont décrites dans `data/activities.json`. Les PDF dé
 
 GitHub Pages met généralement quelques instants à publier le nouveau commit. Si une activité n’apparaît pas immédiatement, patienter une à deux minutes puis actualiser la page de la classe avec `Ctrl + F5`.
 
-Les activités présentes historiquement dans les fichiers HTML restent inchangées. Le bouton **Masquer** concerne uniquement les activités ajoutées depuis le panneau.
+Les activités historiques et celles ajoutées ultérieurement apparaissent toutes dans la section **Déjà ajoutées**. Le bouton **Modifier** charge l’activité dans le formulaire ; le bouton **Masquer** la retire temporairement de la page de classe sans supprimer ses données.
