@@ -220,6 +220,7 @@ input:focus, select:focus {
 }
 
 .editor-panel { padding: clamp(1.25rem, 4vw, 2.5rem); }
+.editor-panel.is-editing { border-color: #818cf8; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), var(--shadow); }
 #activity-form { display: flex; flex-direction: column; gap: 1.4rem; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .field-group small { color: var(--muted); }
@@ -231,6 +232,7 @@ input:focus, select:focus {
   border-radius: 16px;
 }
 .resource-fieldset legend { padding: 0 0.45rem; }
+.current-pdf { display: block; margin-top: 0.55rem; color: var(--success); font-weight: 700; }
 
 .dropzone {
   display: flex;
@@ -257,6 +259,7 @@ input:focus, select:focus {
 
 .publish-row { margin-top: 0.4rem; }
 .publish-row .status { flex: 1; margin: 0; }
+.editor-actions, .admin-activity-actions { display: flex; align-items: center; gap: 0.6rem; }
 .button-publish { min-width: 200px; }
 
 .activities-section { margin-top: 4rem; }
@@ -319,9 +322,11 @@ input:focus, select:focus {
   .page-heading, .publish-row { align-items: stretch; flex-direction: column; }
   .connection-badge { align-self: flex-start; }
   .form-grid { grid-template-columns: 1fr; }
-  .button-publish { width: 100%; }
+  .editor-actions, .button-publish { width: 100%; }
+  .editor-actions .button { flex: 1; }
   .admin-activity { grid-template-columns: auto minmax(0, 1fr); }
-  .admin-activity .button { grid-column: 1 / -1; width: 100%; }
+  .admin-activity-actions { grid-column: 1 / -1; width: 100%; }
+  .admin-activity-actions .button { flex: 1; }
   .footer-nav { flex-direction: column; align-items: center; gap: 1rem; }
   .copyright { flex-direction: column; }
 }

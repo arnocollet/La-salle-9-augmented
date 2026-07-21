@@ -11,6 +11,7 @@ Il permet d’ajouter une activité sans modifier manuellement les pages HTML :
 - dépôt d’un fichier PDF de 20 Mo maximum ou saisie d’un lien PDF ;
 - saisie du lien d’un projet Scratch public ;
 - publication directe dans le dépôt GitHub ;
+- modification des activités déjà publiées ;
 - masquage et réactivation des activités ajoutées.
 
 ## Première connexion

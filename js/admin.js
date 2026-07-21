@@ -15,7 +15,8 @@
     token: '',
     user: null,
     activities: [],
-    dataSha: ''
+    dataSha: '',
+    editingId: null
   };
 
   const elements = {
@@ -28,11 +29,16 @@
     logout: document.querySelector('#logout-btn'),
     app: document.querySelector('#admin-app'),
     connectionBadge: document.querySelector('#connection-badge'),
+    editorTitle: document.querySelector('#editor-title'),
+    editorDescription: document.querySelector('#editor-description'),
+    editorPanel: document.querySelector('.editor-panel'),
     form: document.querySelector('#activity-form'),
     publishButton: document.querySelector('#publish-btn'),
+    cancelEdit: document.querySelector('#cancel-edit-btn'),
     publishStatus: document.querySelector('#publish-status'),
     pdfInput: document.querySelector('#pdf-file'),
     pdfUrl: document.querySelector('#pdf-url'),
+    currentPdf: document.querySelector('#current-pdf'),
     dropzone: document.querySelector('#pdf-dropzone'),
     pdfFileName: document.querySelector('#pdf-file-name'),
     list: document.querySelector('#activities-list'),
@@ -168,9 +174,57 @@
     elements.pdfFileName.textContent = file
       ? `${file.name} — ${(file.size / (1024 * 1024)).toFixed(1)} Mo`
       : 'PDF uniquement — 20 Mo maximum';
+    if (state.editingId && elements.currentPdf.textContent) {
+      elements.currentPdf.hidden = Boolean(file || elements.pdfUrl.value.trim());
+    }
   };
 
   const gradeLabel = grade => ({ '3e': '3ème', '4e': '4ème', '5e': '5ème' }[grade] || grade);
+
+  const resetEditor = (clearStatus = false) => {
+    state.editingId = null;
+    elements.form.reset();
+    setSelectedPdf(null);
+    elements.currentPdf.hidden = true;
+    elements.currentPdf.textContent = '';
+    elements.editorTitle.textContent = 'Ajouter une activité';
+    elements.editorDescription.textContent = 'Remplissez les quatre informations puis publiez. GitHub Pages fera le reste.';
+    elements.publishButton.textContent = 'Publier l’activité';
+    elements.publishButton.dataset.defaultLabel = 'Publier l’activité';
+    elements.cancelEdit.hidden = true;
+    elements.editorPanel.classList.remove('is-editing');
+    if (clearStatus) setStatus(elements.publishStatus);
+  };
+
+  const editActivity = id => {
+    const activity = state.activities.find(item => item.id === id);
+    if (!activity) {
+      setStatus(elements.publishStatus, 'Cette activité n’existe plus. Actualisez la liste.', 'error');
+      return;
+    }
+
+    state.editingId = id;
+    elements.form.elements.grade.value = activity.grade;
+    elements.form.elements.emoji.value = activity.emoji || '💻';
+    elements.form.elements.title.value = activity.title || '';
+    elements.form.elements.scratchUrl.value = activity.scratchId
+      ? `https://scratch.mit.edu/projects/${activity.scratchId}/`
+      : '';
+    elements.pdfUrl.value = /^https?:\/\//i.test(activity.pdfUrl || '') ? activity.pdfUrl : '';
+    elements.pdfInput.value = '';
+    setSelectedPdf(null);
+    elements.currentPdf.textContent = `PDF actuel conservé : ${activity.pdfName || activity.pdfUrl || 'document existant'}`;
+    elements.currentPdf.hidden = false;
+    elements.editorTitle.textContent = 'Modifier une activité';
+    elements.editorDescription.textContent = 'Modifiez les informations souhaitées puis enregistrez. Le PDF actuel reste utilisé si vous n’en choisissez pas un nouveau.';
+    elements.publishButton.textContent = 'Enregistrer les modifications';
+    elements.publishButton.dataset.defaultLabel = 'Enregistrer les modifications';
+    elements.cancelEdit.hidden = false;
+    elements.editorPanel.classList.add('is-editing');
+    setStatus(elements.publishStatus, `Modification de « ${activity.title} ».`);
+    elements.editorPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    elements.form.elements.title.focus({ preventScroll: true });
+  };
 
   const renderActivities = () => {
     elements.list.replaceChildren();
@@ -202,7 +256,17 @@
         toggle.textContent = activity.active === false ? 'Réactiver' : 'Masquer';
         toggle.addEventListener('click', () => toggleActivity(activity.id, toggle));
 
-        row.append(icon, info, toggle);
+        const edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'button button-quiet button-edit';
+        edit.textContent = 'Modifier';
+        edit.addEventListener('click', () => editActivity(activity.id));
+
+        const actions = document.createElement('div');
+        actions.className = 'admin-activity-actions';
+        actions.append(edit, toggle);
+
+        row.append(icon, info, actions);
         elements.list.appendChild(row);
       });
   };
@@ -237,6 +301,7 @@
     state.token = '';
     state.user = null;
     state.activities = [];
+    resetEditor(true);
     elements.token.value = '';
     elements.app.hidden = true;
     elements.logout.hidden = true;
@@ -264,7 +329,8 @@
     }
   };
 
-  const publishActivity = async form => {
+  const saveActivity = async form => {
+    const editingId = state.editingId;
     const formData = new FormData(form);
     const grade = formData.get('grade');
     const emoji = formData.get('emoji');
@@ -275,7 +341,11 @@
 
     if (!['3e', '4e', '5e'].includes(grade)) throw new Error('Sélectionnez une classe.');
     if (!title) throw new Error('Saisissez le titre de l’activité.');
-    if (!pdfFile && !pdfLink) throw new Error('Déposez un PDF ou indiquez son lien.');
+    const editedActivity = editingId
+      ? state.activities.find(activity => activity.id === editingId)
+      : null;
+    if (editingId && !editedActivity) throw new Error('Cette activité n’existe plus. Actualisez la liste.');
+    if (!pdfFile && !pdfLink && !editedActivity?.pdfUrl) throw new Error('Déposez un PDF ou indiquez son lien.');
 
     let pdfUrl;
     let pdfName;
@@ -287,18 +357,29 @@
       await putContent(filePath, bytesToBase64(fileBytes), `Ajoute le PDF de l’activité ${title}`);
       pdfUrl = filePath;
       pdfName = pdfFile.name;
-    } else {
+    } else if (pdfLink) {
       pdfUrl = validateHttpUrl(pdfLink, 'Le lien PDF');
       try {
         pdfName = decodeURIComponent(new URL(pdfUrl).pathname.split('/').pop()) || 'Consignes.pdf';
       } catch {
         pdfName = 'Consignes.pdf';
       }
+    } else {
+      pdfUrl = editedActivity.pdfUrl;
+      pdfName = editedActivity.pdfName;
     }
 
     // Reload after a possible PDF commit to minimize update conflicts.
     const activities = await getActivitiesFile();
     const now = new Date().toISOString();
+    if (editingId) {
+      const target = activities.find(activity => activity.id === editingId);
+      if (!target) throw new Error('Cette activité n’existe plus. Actualisez la liste.');
+      Object.assign(target, { grade, title, emoji, pdfUrl, pdfName, scratchId, updatedAt: now });
+      await saveActivities(activities, `Modifie l’activité ${title} en ${grade}`, state.dataSha);
+      return 'updated';
+    }
+
     activities.push({
       id: `${grade}-${slugify(title)}-${Date.now()}`,
       grade,
@@ -313,6 +394,7 @@
     });
 
     await saveActivities(activities, `Ajoute l’activité ${title} en ${grade}`, state.dataSha);
+    return 'created';
   };
 
   elements.loginForm.addEventListener('submit', async event => {
@@ -334,19 +416,27 @@
 
   elements.form.addEventListener('submit', async event => {
     event.preventDefault();
-    setBusy(elements.publishButton, true, 'Publication…');
-    setStatus(elements.publishStatus, 'Envoi des fichiers vers GitHub…');
+    const isEditing = Boolean(state.editingId);
+    setBusy(elements.publishButton, true, isEditing ? 'Enregistrement…' : 'Publication…');
+    elements.cancelEdit.disabled = true;
+    setStatus(elements.publishStatus, isEditing ? 'Mise à jour sur GitHub…' : 'Envoi des fichiers vers GitHub…');
 
     try {
-      await publishActivity(elements.form);
-      elements.form.reset();
-      setSelectedPdf(null);
+      const result = await saveActivity(elements.form);
+      resetEditor();
       renderActivities();
-      setStatus(elements.publishStatus, 'Activité publiée ! GitHub Pages sera actualisé dans une à deux minutes.', 'success');
+      setStatus(
+        elements.publishStatus,
+        result === 'updated'
+          ? 'Activité mise à jour ! GitHub Pages sera actualisé dans une à deux minutes.'
+          : 'Activité publiée ! GitHub Pages sera actualisé dans une à deux minutes.',
+        'success'
+      );
     } catch (error) {
       setStatus(elements.publishStatus, error.message, 'error');
     } finally {
       setBusy(elements.publishButton, false);
+      elements.cancelEdit.disabled = false;
     }
   });
 
@@ -357,6 +447,12 @@
   });
 
   elements.pdfInput.addEventListener('change', () => setSelectedPdf(elements.pdfInput.files[0] || null));
+  elements.pdfUrl.addEventListener('input', () => {
+    if (state.editingId && elements.currentPdf.textContent) {
+      elements.currentPdf.hidden = Boolean(elements.pdfUrl.value.trim() || elements.pdfInput.files[0]);
+    }
+  });
+  elements.cancelEdit.addEventListener('click', () => resetEditor(true));
 
   ['dragenter', 'dragover'].forEach(type => elements.dropzone.addEventListener(type, event => {
     event.preventDefault();
