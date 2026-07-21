@@ -329,12 +329,20 @@ a {
 }
 
 .hero-intro {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   margin: 0 auto;
   color: var(--text-secondary);
   font-size: 1.2rem;
   font-weight: 500;
   white-space: nowrap;
+  scrollbar-width: none;
   animation: fadeInUp 1s ease-out;
+}
+
+.hero-intro::-webkit-scrollbar {
+  display: none;
 }
 
 .hero-image {
