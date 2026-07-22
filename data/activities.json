@@ -90,17 +90,17 @@
     "grade": "4e",
     "title": "Conversion des £ en €",
     "emoji": "🔄",
-    "pdfUrl": "https://drive.google.com/open?id=1yY0nyouvS2E2AO8nWTuZUwspnD7Ov7jM",
-    "pdfName": "Convertisseur £ en €.pdf",
-    "pdfEmbedUrl": "https://drive.google.com/file/d/1yY0nyouvS2E2AO8nWTuZUwspnD7Ov7jM/preview",
-    "pdfDownloadUrl": "https://drive.google.com/uc?id=1yY0nyouvS2E2AO8nWTuZUwspnD7Ov7jM&export=download",
+    "pdfUrl": "https://drive.google.com/file/d/1eu5VNdx0y9boWEBVAAUtjTGy-dkre-eG/view?usp=drive_link",
+    "pdfName": "Consignes.pdf",
+    "pdfEmbedUrl": "https://drive.google.com/file/d/1eu5VNdx0y9boWEBVAAUtjTGy-dkre-eG/preview",
+    "pdfDownloadUrl": "https://drive.google.com/uc?id=1eu5VNdx0y9boWEBVAAUtjTGy-dkre-eG&export=download",
     "scratchId": "173898198",
     "scratchIds": [
       "173898198"
     ],
     "active": true,
     "createdAt": "2026-01-01T09:01:00.000Z",
-    "updatedAt": "2026-01-01T09:01:00.000Z"
+    "updatedAt": "2026-07-22T06:30:30.946Z"
   },
   {
     "id": "act-4e-moyenne",
