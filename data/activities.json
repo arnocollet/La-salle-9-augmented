@@ -20,18 +20,18 @@
     "id": "act-3e-images",
     "grade": "3e",
     "title": "Images et antécédents",
-    "emoji": "📊",
-    "pdfUrl": "https://drive.google.com/open?id=1SzfFnJpUUqKs-jgfQ53eB-f7hFhjlNLi",
-    "pdfName": "Images et antécédents.pdf",
-    "pdfEmbedUrl": "https://drive.google.com/file/d/1SzfFnJpUUqKs-jgfQ53eB-f7hFhjlNLi/preview",
-    "pdfDownloadUrl": "https://drive.google.com/uc?id=1SzfFnJpUUqKs-jgfQ53eB-f7hFhjlNLi&export=download",
+    "emoji": "💻",
+    "pdfUrl": "https://drive.google.com/file/d/11eWwxX4JbuoF-OqJ9WNAmdSK8YSeW4ul/view?usp=drive_link",
+    "pdfName": "Consignes.pdf",
+    "pdfEmbedUrl": "https://drive.google.com/file/d/11eWwxX4JbuoF-OqJ9WNAmdSK8YSeW4ul/preview",
+    "pdfDownloadUrl": "https://drive.google.com/uc?id=11eWwxX4JbuoF-OqJ9WNAmdSK8YSeW4ul&export=download",
     "scratchId": "282542420",
     "scratchIds": [
       "282542420"
     ],
     "active": true,
     "createdAt": "2026-01-01T08:01:00.000Z",
-    "updatedAt": "2026-01-01T08:01:00.000Z"
+    "updatedAt": "2026-07-22T05:52:05.479Z"
   },
   {
     "id": "act-3e-temperatures",
