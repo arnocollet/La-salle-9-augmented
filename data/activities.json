@@ -55,10 +55,10 @@
     "grade": "3e",
     "title": "Moyennes et Médianes",
     "emoji": "📈",
-    "pdfUrl": "https://drive.google.com/open?id=1O4moJe_bzBScq-ctHUf-7p7YxjpyK1SG",
-    "pdfName": "Moyenne et médiane.pdf",
-    "pdfEmbedUrl": "https://drive.google.com/file/d/1O4moJe_bzBScq-ctHUf-7p7YxjpyK1SG/preview",
-    "pdfDownloadUrl": "https://drive.google.com/uc?id=1O4moJe_bzBScq-ctHUf-7p7YxjpyK1SG&export=download",
+    "pdfUrl": "https://drive.google.com/file/d/1TlZRilt9C4UI7u9K3HloqzkEW121fr72/view?usp=drive_link",
+    "pdfName": "Consignes.pdf",
+    "pdfEmbedUrl": "https://drive.google.com/file/d/1TlZRilt9C4UI7u9K3HloqzkEW121fr72/preview",
+    "pdfDownloadUrl": "https://drive.google.com/uc?id=1TlZRilt9C4UI7u9K3HloqzkEW121fr72&export=download",
     "scratchId": "522457753",
     "scratchIds": [
       "522457753",
@@ -66,7 +66,7 @@
     ],
     "active": false,
     "createdAt": "2026-01-01T08:03:00.000Z",
-    "updatedAt": "2026-07-22T06:07:16.510Z"
+    "updatedAt": "2026-07-22T06:14:42.561Z"
   },
   {
     "id": "act-4e-pythagore",
