@@ -142,8 +142,8 @@
     "grade": "5e",
     "title": "Priorités dans les calculs",
     "emoji": "🔢",
-    "pdfUrl": "https://drive.google.com/open?id=1MY_1qajyD8NjDZ5ANxcDbcj3x24JP4TC",
-    "pdfName": "Priorités dans les calculs V1.pdf",
+    "pdfUrl": "https://drive.google.com/file/d/1MY_1qajyD8NjDZ5ANxcDbcj3x24JP4TC/view?usp=drive_link",
+    "pdfName": "Consignes.pdf",
     "pdfEmbedUrl": "https://drive.google.com/file/d/1MY_1qajyD8NjDZ5ANxcDbcj3x24JP4TC/preview",
     "pdfDownloadUrl": "https://drive.google.com/uc?id=1MY_1qajyD8NjDZ5ANxcDbcj3x24JP4TC&export=download",
     "scratchId": "1074074100",
@@ -152,7 +152,7 @@
     ],
     "active": true,
     "createdAt": "2026-01-01T10:00:00.000Z",
-    "updatedAt": "2026-01-01T10:00:00.000Z"
+    "updatedAt": "2026-07-23T05:39:51.177Z"
   },
   {
     "id": "act-5e-fractions",
