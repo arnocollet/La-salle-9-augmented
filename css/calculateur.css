@@ -1,5 +1,10 @@
 .brevet-header {
+  padding-top: 6.5rem;
   padding-bottom: 2rem;
+}
+
+.brevet-header .page-title-section {
+  gap: 0;
 }
 
 .brevet-header .page-subtitle {
