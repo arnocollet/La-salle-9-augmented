@@ -75,13 +75,11 @@
 
 .portal-illustration {
   display: block;
-  width: min(100%, 620px);
-  height: 270px;
+  width: min(100%, 360px);
+  height: auto;
   margin: 1.5rem auto 1.35rem;
   border: 1px solid var(--card-border);
   border-radius: 1.5rem;
-  object-fit: cover;
-  object-position: center;
   box-shadow: var(--shadow-md);
 }
 
@@ -258,7 +256,8 @@
   }
 
   .portal-illustration {
-    height: 190px;
+    width: min(88%, 330px);
+    height: auto;
     margin: 1.25rem auto;
     border-radius: 1.15rem;
   }
