@@ -6,7 +6,7 @@
   <meta name="description" content="Entraînement aux automatismes mathématiques de la 6e à la 3e." />
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <aside class="sidebar">
@@ -18,6 +18,7 @@
     <nav>
       <button class="nav-btn active" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Accueil</span></button>
       <button class="nav-btn" data-view="training"><span class="nav-icon" aria-hidden="true">◎</span><span class="nav-label">Entraînement</span></button>
+      <button class="nav-btn" data-view="worksheets"><span class="nav-icon" aria-hidden="true">▧</span><span class="nav-label">Fiches à imprimer</span></button>
       <button class="nav-btn" data-view="progress"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">Suivi</span></button>
       <button class="nav-btn" data-view="notions"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-label">Notions</span></button>
     </nav>
@@ -88,6 +89,12 @@
             <p>Le site privilégie les notions les moins réussies.</p>
             <button id="startReview">Commencer</button>
           </div>
+          <div class="routine orangeish">
+            <div class="emoji">🖨️</div>
+            <h3>Fiches à imprimer</h3>
+            <p>Crée des routines papier de 5 exercices au format PDF.</p>
+            <button id="openWorksheets">Créer des fiches</button>
+          </div>
         </div>
       </article>
 
@@ -116,6 +123,64 @@
           </div>
         </div>
       </article>
+    </section>
+
+    <section id="worksheets" class="view">
+      <div class="worksheet-layout">
+        <article class="card worksheet-settings">
+          <div class="section-title">
+            <span class="step">1</span>
+            <h2>Créer des fiches d’entraînement</h2>
+          </div>
+          <p class="muted">Chaque fiche reprend la routine aléatoire avec 5 exercices du niveau sélectionné.</p>
+
+          <label class="field-label" for="worksheetCount">Nombre de fiches</label>
+          <div class="count-control">
+            <button id="decreaseWorksheetCount" type="button" aria-label="Retirer une fiche">−</button>
+            <input id="worksheetCount" type="number" value="1" min="1" max="20" inputmode="numeric" />
+            <button id="increaseWorksheetCount" type="button" aria-label="Ajouter une fiche">+</button>
+          </div>
+
+          <label class="check-option">
+            <input id="includeAnswers" type="checkbox" checked />
+            <span>Ajouter le corrigé à la fin du PDF</span>
+          </label>
+
+          <div class="worksheet-summary">
+            <span>Niveau</span>
+            <strong id="worksheetLevelLabel">5e</strong>
+            <span>Contenu</span>
+            <strong>5 exercices par fiche</strong>
+          </div>
+
+          <button id="downloadWorksheets" class="primary worksheet-download">
+            <span aria-hidden="true">⇩</span> Créer et télécharger le PDF
+          </button>
+          <p id="pdfStatus" class="pdf-status" role="status" aria-live="polite"></p>
+        </article>
+
+        <article class="card preview-card">
+          <div class="preview-heading">
+            <div class="section-title">
+              <span class="step">2</span>
+              <h2>Aperçu de la fiche 1</h2>
+            </div>
+            <button id="refreshWorksheet" class="refresh-button" type="button">↻ Nouveaux exercices</button>
+          </div>
+          <div class="paper-preview">
+            <div class="paper-header">
+              <div>
+                <span>AUTOMATISMES</span>
+                <strong>Routine papier · niveau <b id="previewLevelLabel">5e</b></strong>
+              </div>
+              <small>Fiche 1</small>
+            </div>
+            <div class="student-fields"><span>Nom : ....................................</span><span>Date : ........................</span></div>
+            <ol id="worksheetPreview"></ol>
+          </div>
+          <p class="preview-note">L’aperçu affiche la première fiche. Le PDF contient toutes les fiches demandées, chacune sur une page A4.</p>
+        </article>
+      </div>
     </section>
 
     <section id="progress" class="view">
@@ -166,6 +231,6 @@
       </div>
     </div>
   </main>
-  <script src="app.js"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

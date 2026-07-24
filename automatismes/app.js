@@ -268,6 +268,7 @@ if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,his
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
 let currentQuiz=[],index=0,score=0,answered=false;
+let printableSheets=[],printableLevel="";
 
 function levelState(){return state.levels[currentLevel]}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));
@@ -278,6 +279,9 @@ function selectLevel(level){
   document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("selected",b.dataset.level===level));
   document.getElementById("currentLevelLabel").textContent=level;
   document.getElementById("notionsLevelLabel").textContent=level;
+  document.getElementById("worksheetLevelLabel").textContent=level;
+  document.getElementById("previewLevelLabel").textContent=level;
+  preparePrintableSheets();
   makeThemeButtons(); renderNotions(); renderAll();
 }
 function showView(id){
@@ -285,6 +289,7 @@ function showView(id){
   document.getElementById(id).classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
   if(id==="progress") renderProgress();
+  if(id==="worksheets"&&printableLevel!==currentLevel) preparePrintableSheets();
 }
 function availableThemes(){
   return Object.keys(NOTIONS[currentLevel]).filter(t=>GENERATORS[currentLevel].some(g=>g.theme===t));
@@ -297,6 +302,7 @@ function makeThemeButtons(){
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=()=>startQuiz("review");
+document.getElementById("openWorksheets").onclick=()=>showView("worksheets");
 document.getElementById("openThemes").onclick=()=>document.getElementById("themeModal").classList.remove("hidden");
 document.getElementById("closeModal").onclick=()=>document.getElementById("themeModal").classList.add("hidden");
 document.getElementById("quitQuiz").onclick=()=>showView("home");
@@ -304,6 +310,199 @@ document.getElementById("returnHome").onclick=()=>{document.getElementById("resu
 document.getElementById("validateAnswer").onclick=validate;
 document.getElementById("nextQuestion").onclick=next;
 document.getElementById("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter"){answered?next():validate()}});
+document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCount(-1);
+document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
+document.getElementById("worksheetCount").addEventListener("change",preparePrintableSheets);
+document.getElementById("worksheetCount").addEventListener("blur",preparePrintableSheets);
+document.getElementById("refreshWorksheet").onclick=preparePrintableSheets;
+document.getElementById("downloadWorksheets").onclick=downloadWorksheetsPdf;
+
+function worksheetCount(){
+  const input=document.getElementById("worksheetCount");
+  const value=Math.min(20,Math.max(1,parseInt(input.value,10)||1));
+  input.value=value;
+  return value;
+}
+function changeWorksheetCount(change){
+  document.getElementById("worksheetCount").value=worksheetCount()+change;
+  preparePrintableSheets();
+}
+function makeRandomRoutine(){
+  const pool=[...GENERATORS[currentLevel]],routine=[];
+  for(let i=0;i<5;i++){
+    const pick=pool.splice(rand(0,pool.length-1),1)[0];
+    routine.push({...pick.make(),theme:pick.theme,notion:pick.notion});
+  }
+  return routine;
+}
+function preparePrintableSheets(){
+  printableSheets=Array.from({length:worksheetCount()},makeRandomRoutine);
+  printableLevel=currentLevel;
+  renderWorksheetPreview();
+  document.getElementById("pdfStatus").textContent="";
+}
+function renderWorksheetPreview(){
+  const preview=document.getElementById("worksheetPreview");
+  preview.innerHTML="";
+  (printableSheets[0]||[]).forEach(exercise=>{
+    const item=document.createElement("li");
+    const notion=document.createElement("span");
+    const line=document.createElement("span");
+    notion.textContent=`${exercise.theme} · ${exercise.notion}`;
+    line.className="answer-line";
+    item.append(notion,document.createTextNode(exercise.text),line);
+    preview.appendChild(item);
+  });
+}
+function wrapCanvasText(context,text,maxWidth){
+  const words=String(text).split(/\s+/),lines=[];
+  let line="";
+  words.forEach(word=>{
+    const test=line?`${line} ${word}`:word;
+    if(line&&context.measureText(test).width>maxWidth){lines.push(line);line=word}
+    else line=test;
+  });
+  if(line) lines.push(line);
+  return lines;
+}
+function drawLines(context,text,x,y,maxWidth,lineHeight,maxLines=4){
+  const lines=wrapCanvasText(context,text,maxWidth).slice(0,maxLines);
+  lines.forEach((line,i)=>context.fillText(line,x,y+i*lineHeight));
+  return y+lines.length*lineHeight;
+}
+function drawRoundedBox(context,x,y,width,height,radius,fill,stroke){
+  context.beginPath();
+  context.moveTo(x+radius,y);
+  context.lineTo(x+width-radius,y);
+  context.quadraticCurveTo(x+width,y,x+width,y+radius);
+  context.lineTo(x+width,y+height-radius);
+  context.quadraticCurveTo(x+width,y+height,x+width-radius,y+height);
+  context.lineTo(x+radius,y+height);
+  context.quadraticCurveTo(x,y+height,x,y+height-radius);
+  context.lineTo(x,y+radius);
+  context.quadraticCurveTo(x,y,x+radius,y);
+  context.closePath();
+  if(fill){context.fillStyle=fill;context.fill()}
+  if(stroke){context.strokeStyle=stroke;context.lineWidth=2;context.stroke()}
+}
+function renderWorksheetPage(sheet,sheetNumber,isCorrection){
+  const canvas=document.createElement("canvas");
+  canvas.width=1240;canvas.height=1754;
+  const context=canvas.getContext("2d");
+  context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
+  context.fillStyle="#092553";context.fillRect(0,0,canvas.width,158);
+  context.fillStyle="#74a7ff";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
+  context.fillStyle="#ffffff";context.font="700 43px Arial";
+  context.fillText(isCorrection?"Corrigé de la routine papier":"Routine papier",82,116);
+  drawRoundedBox(context,1000,50,155,58,14,"#2368e8");
+  context.fillStyle="#ffffff";context.font="700 22px Arial";context.textAlign="center";
+  context.fillText(`Niveau ${currentLevel}`,1077,87);context.textAlign="left";
+
+  context.fillStyle="#14213d";
+  if(isCorrection){
+    context.font="700 23px Arial";context.fillText(`Corrigé de la fiche ${sheetNumber}`,82,218);
+  }else{
+    context.font="22px Arial";context.fillText("Nom : ______________________________________",82,218);
+    context.fillText("Date : ____________________",780,218);
+  }
+
+  sheet.forEach((exercise,i)=>{
+    const y=260+i*278;
+    drawRoundedBox(context,72,y,1096,246,18,isCorrection?"#f7f9fc":"#ffffff","#dce5f1");
+    drawRoundedBox(context,94,y+22,48,48,24,"#2368e8");
+    context.fillStyle="#ffffff";context.font="700 24px Arial";context.textAlign="center";
+    context.fillText(String(i+1),118,y+54);context.textAlign="left";
+    context.fillStyle="#2368e8";context.font="700 19px Arial";
+    drawLines(context,`${exercise.theme} · ${exercise.notion}`,164,y+49,940,25,2);
+    context.fillStyle="#14213d";context.font=isCorrection?"23px Arial":"26px Arial";
+    const questionBottom=drawLines(context,exercise.text,104,y+111,1020,isCorrection?31:34,3);
+    if(isCorrection){
+      context.fillStyle="#167333";context.font="700 25px Arial";
+      context.fillText(`Réponse : ${exercise.answer}`,104,Math.min(y+226,Math.max(y+180,questionBottom+8)));
+    }else{
+      context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);
+      const lineY=Math.max(y+186,questionBottom+28);
+      context.beginPath();context.moveTo(104,lineY);context.lineTo(1136,lineY);context.stroke();
+      context.setLineDash([]);
+    }
+  });
+  context.fillStyle="#68778e";context.font="18px Arial";
+  context.fillText(isCorrection?"Les réponses correspondent aux exercices de chaque fiche.":"5 exercices · Une fiche générée aléatoirement",72,1710);
+  context.textAlign="right";context.fillText(`${isCorrection?"Corrigé · ":""}Fiche ${sheetNumber}`,1168,1710);
+  return canvas;
+}
+function canvasToJpegBytes(canvas){
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(async blob=>{
+      if(!blob){reject(new Error("Impossible de créer la page PDF."));return}
+      resolve(new Uint8Array(await blob.arrayBuffer()));
+    },"image/jpeg",0.9);
+  });
+}
+function asciiBytes(text){return new TextEncoder().encode(text)}
+function joinBytes(parts,total){
+  const result=new Uint8Array(total);let offset=0;
+  parts.forEach(part=>{result.set(part,offset);offset+=part.length});
+  return result;
+}
+function makeImagePdf(images){
+  const parts=[],offsets=[0];let length=0;
+  const add=part=>{parts.push(part);length+=part.length};
+  const addText=text=>add(asciiBytes(text));
+  const objectCount=2+images.length*3;
+  add(new Uint8Array([37,80,68,70,45,49,46,52,10,37,226,227,207,211,10]));
+  const beginObject=id=>{offsets[id]=length;addText(`${id} 0 obj\n`)};
+  const endObject=()=>addText("endobj\n");
+
+  beginObject(1);addText("<< /Type /Catalog /Pages 2 0 R >>\n");endObject();
+  const kids=images.map((_,i)=>`${3+i*3} 0 R`).join(" ");
+  beginObject(2);addText(`<< /Type /Pages /Count ${images.length} /Kids [${kids}] >>\n`);endObject();
+
+  images.forEach((image,i)=>{
+    const pageId=3+i*3,contentId=pageId+1,imageId=pageId+2;
+    beginObject(pageId);
+    addText(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im1 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\n`);
+    endObject();
+    const stream="q\n595.28 0 0 841.89 0 0 cm\n/Im1 Do\nQ\n";
+    beginObject(contentId);addText(`<< /Length ${asciiBytes(stream).length} >>\nstream\n${stream}endstream\n`);endObject();
+    beginObject(imageId);
+    addText(`<< /Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.length} >>\nstream\n`);
+    add(image);addText("\nendstream\n");endObject();
+  });
+
+  const xrefOffset=length;
+  addText(`xref\n0 ${objectCount+1}\n0000000000 65535 f \n`);
+  for(let id=1;id<=objectCount;id++) addText(`${String(offsets[id]).padStart(10,"0")} 00000 n \n`);
+  addText(`trailer\n<< /Size ${objectCount+1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`);
+  return joinBytes(parts,length);
+}
+async function downloadWorksheetsPdf(){
+  const button=document.getElementById("downloadWorksheets"),status=document.getElementById("pdfStatus");
+  if(printableLevel!==currentLevel||printableSheets.length!==worksheetCount()) preparePrintableSheets();
+  button.disabled=true;status.textContent="Préparation du PDF…";
+  await new Promise(resolve=>setTimeout(resolve,20));
+  try{
+    const images=[];
+    for(let i=0;i<printableSheets.length;i++){
+      status.textContent=`Création de la fiche ${i+1} sur ${printableSheets.length}…`;
+      images.push(await canvasToJpegBytes(renderWorksheetPage(printableSheets[i],i+1,false)));
+    }
+    if(document.getElementById("includeAnswers").checked){
+      for(let i=0;i<printableSheets.length;i++){
+        status.textContent=`Création du corrigé ${i+1} sur ${printableSheets.length}…`;
+        images.push(await canvasToJpegBytes(renderWorksheetPage(printableSheets[i],i+1,true)));
+      }
+    }
+    const pdf=makeImagePdf(images),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
+    const link=document.createElement("a");
+    link.href=url;link.download=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}.pdf`;
+    document.body.appendChild(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    status.textContent=`PDF prêt : ${printableSheets.length} fiche${printableSheets.length>1?"s":""}${document.getElementById("includeAnswers").checked?" avec corrigé":""}.`;
+  }catch(error){
+    console.error(error);status.textContent="Le PDF n’a pas pu être créé. Réessaie avec moins de fiches.";
+  }finally{button.disabled=false}
+}
 
 function startQuiz(mode,theme){
   let pool=[...GENERATORS[currentLevel]];
