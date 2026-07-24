@@ -427,6 +427,10 @@
 .gauge-label-18 { left: 90%; color: #9a6428; }
 .gauge-label-end { right: 0; align-items: end; transform: none; }
 
+.gauge-mobile-legend {
+  display: none;
+}
+
 .next-mention {
   display: inline-block;
   margin: 0.7rem 0 0;
@@ -892,6 +896,53 @@
   .brevet-header .page-title {
     font-size: 2rem;
   }
+
+  .gauge-labels {
+    height: 1.9rem;
+  }
+
+  .gauge-label span {
+    display: none;
+  }
+
+  .gauge-mobile-legend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem 0.65rem;
+    margin-top: 0.35rem;
+    padding: 0.65rem 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--card-border);
+    border-radius: 0.7rem;
+    font-size: 0.7rem;
+    text-align: left;
+  }
+
+  .gauge-mobile-legend span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+
+  .gauge-mobile-legend span::before {
+    width: 0.45rem;
+    height: 0.45rem;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: currentColor;
+    content: '';
+  }
+
+  .gauge-mobile-legend strong {
+    color: var(--text-primary);
+  }
+
+  .legend-admitted { color: #b45309; }
+  .legend-fair { color: #3f8f68; }
+  .legend-good { color: #27857c; }
+  .legend-very-good { color: #4167b1; }
+  .legend-congrats { color: #9a6428; }
 
   .brevet-card-inner {
     padding: 1.15rem;
