@@ -392,7 +392,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
   context.fillStyle="#52637b";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
   context.fillStyle="#14213d";context.font="700 43px Arial";
-  context.fillText(isCorrection?"Corrigé de la routine papier":"Routine papier",82,116);
+  context.fillText(isCorrection?"Corrigé":"Fiche d’entraînement",82,116);
   context.fillStyle="#14213d";context.font="700 22px Arial";context.textAlign="center";
   context.fillText(`Niveau ${currentLevel}`,1077,87);context.textAlign="left";
   context.strokeStyle="#52637b";context.lineWidth=2;
