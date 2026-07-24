@@ -390,13 +390,13 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   canvas.width=1240;canvas.height=1754;
   const context=canvas.getContext("2d");
   context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
-  context.fillStyle="#092553";context.fillRect(0,0,canvas.width,158);
-  context.fillStyle="#74a7ff";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
-  context.fillStyle="#ffffff";context.font="700 43px Arial";
+  context.fillStyle="#52637b";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
+  context.fillStyle="#14213d";context.font="700 43px Arial";
   context.fillText(isCorrection?"Corrigé de la routine papier":"Routine papier",82,116);
-  drawRoundedBox(context,1000,50,155,58,14,"#2368e8");
-  context.fillStyle="#ffffff";context.font="700 22px Arial";context.textAlign="center";
+  context.fillStyle="#14213d";context.font="700 22px Arial";context.textAlign="center";
   context.fillText(`Niveau ${currentLevel}`,1077,87);context.textAlign="left";
+  context.strokeStyle="#52637b";context.lineWidth=2;
+  context.beginPath();context.moveTo(82,150);context.lineTo(1158,150);context.stroke();
 
   context.fillStyle="#14213d";
   if(isCorrection){
