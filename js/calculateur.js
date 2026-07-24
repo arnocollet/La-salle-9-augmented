@@ -37,6 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
     { score: 18, label: 'obtenir les félicitations du jury' }
   ];
 
+  const syncPrintSummary = () => {
+    Object.keys(defaults).forEach(id => {
+      const output = document.getElementById(`print-${id}`);
+      if (output) output.textContent = `${getValue(id)} / 20`;
+    });
+    document.getElementById('printContinuous').textContent = document.getElementById('continuousRetained').textContent;
+    document.getElementById('printExam').textContent = document.getElementById('examAverage').textContent;
+    document.getElementById('printFinalScore').textContent = document.getElementById('finalScore').textContent;
+    document.getElementById('printStatus').textContent = document.getElementById('status').textContent;
+    document.getElementById('printMention').textContent = document.getElementById('mention').textContent;
+    document.getElementById('printDate').textContent = new Intl.DateTimeFormat('fr-FR').format(new Date());
+  };
+
   const calculate = () => {
     const continuousGrades = [...document.querySelectorAll('.continuous-input')]
       .map(input => getValue(input.id));
@@ -98,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
       nextMention.textContent = 'Niveau maximal atteint : félicitations du jury !';
       nextMention.classList.add('maximum');
     }
+    syncPrintSummary();
   };
 
   document.querySelectorAll('.calc-input').forEach(input => {
@@ -113,6 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     calculate();
   });
+  document.getElementById('exportPdf').addEventListener('click', () => {
+    calculate();
+    window.print();
+  });
+  window.addEventListener('beforeprint', calculate);
 
   calculate();
 });

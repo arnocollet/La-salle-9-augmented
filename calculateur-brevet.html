@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <title>La Salle 9 - Simulateur Brevet</title>
   <link rel="stylesheet" href="css/style.css?v=13">
-  <link rel="stylesheet" href="css/calculateur.css?v=9">
+  <link rel="stylesheet" href="css/calculateur.css?v=10">
 </head>
 
 <body>
@@ -76,6 +76,72 @@
   </section>
 
   <main class="container brevet-main">
+    <section class="print-summary" id="printSummary">
+      <header class="print-summary-header">
+        <div>
+          <h1>Simulateur Brevet</h1>
+          <p>Récapitulatif de la simulation</p>
+        </div>
+        <p>Édité le <span id="printDate"></span></p>
+      </header>
+
+      <div class="print-summary-grid">
+        <section class="print-summary-section">
+          <h2>1. Contrôle continu <span>40 %</span></h2>
+          <table>
+            <thead><tr><th>Matière</th><th>Note /20</th></tr></thead>
+            <tbody>
+              <tr><td>Français</td><td id="print-cc-fr"></td></tr>
+              <tr><td>Mathématiques</td><td id="print-cc-math"></td></tr>
+              <tr><td>Histoire-géographie</td><td id="print-cc-hg"></td></tr>
+              <tr><td>EMC</td><td id="print-cc-emc"></td></tr>
+              <tr><td>Langue vivante 1</td><td id="print-cc-lv1"></td></tr>
+              <tr><td>Langue vivante 2</td><td id="print-cc-lv2"></td></tr>
+              <tr><td>Arts plastiques</td><td id="print-cc-arts"></td></tr>
+              <tr><td>Éducation musicale</td><td id="print-cc-music"></td></tr>
+              <tr><td>SVT</td><td id="print-cc-svt"></td></tr>
+              <tr><td>Physique-chimie</td><td id="print-cc-physics"></td></tr>
+              <tr><td>Technologie</td><td id="print-cc-tech"></td></tr>
+              <tr><td>EPS</td><td id="print-cc-eps"></td></tr>
+              <tr class="print-option"><td>Option facultative</td><td id="print-option"></td></tr>
+            </tbody>
+          </table>
+          <div class="print-total">
+            <span>Note de contrôle continu retenue</span>
+            <strong id="printContinuous"></strong>
+          </div>
+        </section>
+
+        <section class="print-summary-section">
+          <h2>2. Épreuves finales <span>60 %</span></h2>
+          <table>
+            <thead><tr><th>Épreuve</th><th>Note /20</th><th>Coef.</th></tr></thead>
+            <tbody>
+              <tr><td>Français</td><td id="print-fr"></td><td>2</td></tr>
+              <tr><td>Mathématiques</td><td id="print-math"></td><td>2</td></tr>
+              <tr><td>Histoire-géographie</td><td id="print-hg"></td><td>1,5</td></tr>
+              <tr><td>EMC</td><td id="print-emc"></td><td>0,5</td></tr>
+              <tr><td>Sciences</td><td id="print-sci"></td><td>2</td></tr>
+              <tr><td>Oral</td><td id="print-oral"></td><td>2</td></tr>
+            </tbody>
+          </table>
+          <div class="print-total">
+            <span>Moyenne des épreuves finales</span>
+            <strong id="printExam"></strong>
+          </div>
+
+          <div class="print-result">
+            <p>Résultat de la simulation</p>
+            <strong id="printFinalScore"></strong>
+            <span id="printStatus"></span>
+            <div>Mention : <b id="printMention"></b></div>
+          </div>
+        </section>
+      </div>
+
+      <p class="print-disclaimer">Simulation indicative réalisée avec La Salle 9.</p>
+    </section>
+
     <p class="brevet-info"><span aria-hidden="true">ℹ️</span> Modifie les notes pour simuler ton résultat. Le calcul se met à jour automatiquement.</p>
 
     <section class="brevet-grid" aria-label="Calcul de la note du brevet">
@@ -158,6 +224,7 @@
       </div>
 
       <div class="brevet-actions">
+        <button class="brevet-button secondary-button" id="exportPdf" type="button">🖨️ Exporter en PDF</button>
         <button class="brevet-button primary-button" id="reset" type="button">↻ Réinitialiser</button>
       </div>
     </section>
@@ -180,6 +247,6 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="js/calculateur.js?v=10"></script>
+  <script src="js/calculateur.js?v=11"></script>
 </body>
 </html>
