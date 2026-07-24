@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Entraînement aux automatismes mathématiques de la 6e à la 3e." />
+  <title>Maths Automatismes — 6e à 3e</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="portal-return" href="../index.html">← La Salle 9</a>
+    <div class="brand">
+      <div class="brand-icon">∑</div>
+      <div><strong>Maths</strong><span>Automatismes</span></div>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-view="home">⌂ <span>Accueil</span></button>
+      <button class="nav-btn" data-view="training">◎ <span>Entraînement</span></button>
+      <button class="nav-btn" data-view="progress">▥ <span>Suivi</span></button>
+      <button class="nav-btn" data-view="notions">▤ <span>Notions</span></button>
+    </nav>
+    <div class="streak-card">
+      <div class="flame">🔥</div>
+      <strong>Série actuelle</strong>
+      <span id="sidebarStreak">0 jour</span>
+      <small>5 questions par jour</small>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div>
+        <h1>Bonjour ! 👋</h1>
+        <p>Prêt(e) pour tes 5 automatismes du jour ?</p>
+      </div>
+      <div class="points">⭐ <span id="points">0</span> pts</div>
+    </header>
+
+    <section id="home" class="view active">
+      <div class="grid two-cols">
+        <article class="card">
+          <div class="section-title">
+            <span class="step">1</span>
+            <h2>Choisis ton niveau</h2>
+          </div>
+          <div class="levels">
+            <button class="level-btn" data-level="6e">6e <small>Disponible</small></button>
+            <button class="level-btn selected" data-level="5e">5e <small>Disponible</small></button>
+            <button class="level-btn" data-level="4e">4e <small>Disponible</small></button>
+            <button class="level-btn" data-level="3e">3e <small>Disponible</small></button>
+          </div>
+        </article>
+
+        <article class="card progress-summary">
+          <div class="section-title"><h2>Ma progression</h2></div>
+          <div class="ring" id="homeRing"><span>0%</span></div>
+          <div class="legend">
+            <span><i class="green"></i><b id="masteredCount">0</b> maîtrisées</span>
+            <span><i class="orange"></i><b id="inProgressCount">0</b> en cours</span>
+            <span><i class="red"></i><b id="reviewCount">0</b> à revoir</span>
+          </div>
+        </article>
+      </div>
+
+      <article class="card">
+        <div class="section-title">
+          <span class="step">2</span>
+          <h2>Choisis ta routine du jour</h2>
+        </div>
+        <div class="routines">
+          <div class="routine blue">
+            <div class="emoji">🎲</div>
+            <h3>Routine aléatoire</h3>
+            <p>5 questions choisies parmi plusieurs domaines.</p>
+            <button id="startRandom">Commencer</button>
+          </div>
+          <div class="routine greenish">
+            <div class="emoji">🎯</div>
+            <h3>Choisir un thème</h3>
+            <p>Travaille uniquement la notion de ton choix.</p>
+            <button id="openThemes">Choisir un thème</button>
+          </div>
+          <div class="routine purple">
+            <div class="emoji">↻</div>
+            <h3>Réviser mes difficultés</h3>
+            <p>Le site privilégie les notions les moins réussies.</p>
+            <button id="startReview">Commencer</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="section-title"><h2>Thèmes disponibles en <span id="currentLevelLabel">5e</span></h2></div>
+        <div class="theme-chips" id="homeThemes"></div>
+      </article>
+    </section>
+
+    <section id="training" class="view">
+      <article class="card quiz-card">
+        <div class="quiz-head">
+          <button class="back-link" id="quitQuiz">← Quitter</button>
+          <div class="quiz-progress"><span id="questionCounter">Question 1 sur 5</span><div><i id="progressBar"></i></div></div>
+          <span class="badge" id="questionTheme">Nombres et calculs</span>
+        </div>
+        <div class="question-zone">
+          <p class="notion" id="questionNotion"></p>
+          <h2 id="questionText">Choisis une routine pour commencer.</h2>
+          <div id="questionVisual"></div>
+          <input id="answerInput" type="text" autocomplete="off" placeholder="Écris ta réponse" />
+          <div id="feedback" class="feedback hidden"></div>
+          <div class="quiz-actions">
+            <button id="validateAnswer" class="primary">Valider</button>
+            <button id="nextQuestion" class="secondary hidden">Question suivante</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="progress" class="view">
+      <article class="card">
+        <div class="section-title"><h2>Suivi de progression</h2></div>
+        <div class="stats-grid">
+          <div><strong id="statSessions">0</strong><span>routines terminées</span></div>
+          <div><strong id="statQuestions">0</strong><span>questions répondues</span></div>
+          <div><strong id="statSuccess">0%</strong><span>de réussite</span></div>
+          <div><strong id="statStreak">0</strong><span>jours consécutifs</span></div>
+        </div>
+      </article>
+      <article class="card">
+        <div class="section-title"><h2>Résultats par thème</h2></div>
+        <div id="themeProgress"></div>
+      </article>
+      <article class="card">
+        <div class="section-title"><h2>Dernières routines</h2></div>
+        <div id="history"></div>
+      </article>
+    </section>
+
+    <section id="notions" class="view">
+      <article class="card">
+        <div class="section-title"><h2>Référentiel des automatismes de <span id="notionsLevelLabel">5e</span></h2></div>
+        <p class="muted">Les notions sont regroupées selon les quatre domaines du document fourni.</p>
+        <div id="notionsList" class="notions-list"></div>
+      </article>
+    </section>
+
+    <div id="themeModal" class="modal hidden">
+      <div class="modal-box">
+        <button class="close" id="closeModal">×</button>
+        <h2>Choisir un thème</h2>
+        <p>La routine comportera 5 questions du même domaine.</p>
+        <div id="modalThemes" class="modal-themes"></div>
+      </div>
+    </div>
+
+    <div id="resultModal" class="modal hidden">
+      <div class="modal-box result-box">
+        <div class="trophy">🏆</div>
+        <h2>Routine terminée</h2>
+        <p>Ton score :</p>
+        <strong id="finalScore">0 / 5</strong>
+        <div id="resultMessage"></div>
+        <button id="returnHome" class="primary">Retour à l’accueil</button>
+      </div>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

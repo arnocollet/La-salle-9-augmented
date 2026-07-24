@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="La Salle 9 - Site d'activités d'algorithmique et de programmation mathématique pour les classes de 3ème, 4ème et 5ème.">
+  <meta name="author" content="Arnaud Collet">
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <title>La Salle 9 - Scratch</title>
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=14">
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo" id="nav-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+          <path d="M6 6h10" />
+          <path d="M6 10h10" />
+          <path d="M6 14h10" />
+        </svg>
+        La Salle 9
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link" id="link-accueil">Accueil</a></li>
+          <li><a href="scratch.html" class="nav-link active" id="link-scratch" aria-current="page">Scratch</a></li>
+          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes">Automatismes</a></li>
+          <li><a href="calculateur-brevet.html" class="nav-link" id="link-calculateur">Simulateur Brevet</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+          <svg class="moon-icon" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="container">
+      <p class="hero-intro">Activités d’entraînement au logiciel Scratch, de la 5<sup>e</sup> à la 3<sup>e</sup>.</p>
+      <img class="hero-image" src="assets/logo-accueil.png?v=2"
+        alt="Illustration : les maths, c'est comme le sport" width="1122" height="1402" decoding="async">
+    </div>
+  </section>
+
+  <!-- Grade Level Grid -->
+  <main class="container section-padding" style="padding-top: 1rem;">
+    <div class="grid-grades" id="grades-grid">
+
+      <!-- Classe de 3ème -->
+      <article class="card-grade" id="card-3e">
+        <div class="card-icon-container">
+          <svg width="42" height="42" viewBox="0 0 48 48" role="img" aria-label="Terminal informatique">
+            <rect class="icon-surface" x="5" y="7" width="38" height="34" rx="7" />
+            <circle class="icon-dot icon-dot-one" cx="12" cy="14" r="2" />
+            <circle class="icon-dot icon-dot-two" cx="18" cy="14" r="2" />
+            <path class="icon-primary" d="m13 24 5 5-5 5" />
+            <path class="icon-secondary" d="M23 34h12" />
+          </svg>
+        </div>
+        <h2 class="card-title">Classe de 3<sup>ème</sup></h2>
+        <p class="card-desc">Suivez les activités algorithmiques avancées, les nombres premiers, les antécédents, et
+          approfondissez la gestion de variables complexes sous Scratch.</p>
+        <a href="3eme.html" class="card-button" id="btn-explore-3e">
+          Explorer les activités
+          <svg viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </article>
+
+      <!-- Classe de 4ème -->
+      <article class="card-grade" id="card-4e">
+        <div class="card-icon-container">
+          <svg width="42" height="42" viewBox="0 0 48 48" role="img" aria-label="Microprocesseur">
+            <rect class="icon-surface" x="11" y="11" width="26" height="26" rx="6" />
+            <rect class="icon-chip" x="18" y="18" width="12" height="12" rx="3" />
+            <path class="icon-primary"
+              d="M17 5v6m7-6v6m7-6v6M17 37v6m7-6v6m7-6v6M5 17h6m-6 7h6m-6 7h6m26-14h6m-6 7h6m-6 7h6" />
+            <circle class="icon-secondary-fill" cx="24" cy="24" r="3" />
+          </svg>
+        </div>
+        <h2 class="card-title">Classe de 4<sup>ème</sup></h2>
+        <p class="card-desc">Explorez les géométries algorithmiques, la réciproque de Pythagore, le calcul littéral et
+          le traitement des moyennes et médianes à l'aide de scripts structurés.</p>
+        <a href="4eme.html" class="card-button" id="btn-explore-4e">
+          Explorer les activités
+          <svg viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </article>
+
+      <!-- Classe de 5ème -->
+      <article class="card-grade" id="card-5e">
+        <div class="card-icon-container">
+          <svg width="42" height="42" viewBox="0 0 48 48" role="img" aria-label="Robot informatique">
+            <path class="icon-primary" d="M24 5v6" />
+            <circle class="icon-secondary-fill" cx="24" cy="5" r="3" />
+            <rect class="icon-surface" x="8" y="12" width="32" height="28" rx="9" />
+            <circle class="icon-eye icon-eye-one" cx="18" cy="24" r="3" />
+            <circle class="icon-eye icon-eye-two" cx="30" cy="24" r="3" />
+            <path class="icon-secondary" d="M17 33c4 3 10 3 14 0" />
+            <path class="icon-primary" d="M8 23H4v8h4m32-8h4v8h-4" />
+          </svg>
+        </div>
+        <h2 class="card-title">Classe de 5<sup>ème</sup></h2>
+        <p class="card-desc">Initiez-vous aux priorités de calcul, aux opérations sur les nombres relatifs, aux
+          fractions, et appliquez vos compétences d'algorithmes à des situations réelles.</p>
+        <a href="5eme.html" class="card-button" id="btn-explore-5e">
+          Explorer les activités
+          <svg viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-nav">
+        <a href="index.html" class="footer-nav-link">Accueil</a>
+        <a href="scratch.html" class="footer-nav-link">Scratch</a>
+        <a href="automatismes/index.html" class="footer-nav-link">Automatismes</a>
+        <a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+      </div>
+      <div class="copyright">
+        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span class="divider">|</span>
+        <span>08/2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/main.js?v=2"></script>
+</body>
+
+</html>
