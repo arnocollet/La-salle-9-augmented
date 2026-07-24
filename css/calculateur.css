@@ -911,7 +911,8 @@
     gap: 0.4rem 0.65rem;
     margin-top: 0.35rem;
     padding: 0.65rem 0.75rem;
-    background: var(--bg-primary);
+    color: #000;
+    background: #fff;
     border: 1px solid var(--card-border);
     border-radius: 0.7rem;
     font-size: 0.7rem;
@@ -935,14 +936,16 @@
   }
 
   .gauge-mobile-legend strong {
-    color: var(--text-primary);
+    color: #000;
   }
 
-  .legend-admitted { color: #b45309; }
-  .legend-fair { color: #3f8f68; }
-  .legend-good { color: #27857c; }
-  .legend-very-good { color: #4167b1; }
-  .legend-congrats { color: #9a6428; }
+  .legend-admitted,
+  .legend-fair,
+  .legend-good,
+  .legend-very-good,
+  .legend-congrats {
+    color: #000;
+  }
 
   .brevet-card-inner {
     padding: 1.15rem;
