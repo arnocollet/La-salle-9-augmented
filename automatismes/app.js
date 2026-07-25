@@ -322,9 +322,9 @@ function availableThemes(){
   return Object.keys(NOTIONS[currentLevel]);
 }
 function makeThemeButtons(){
-  const html=availableThemes().map(t=>`<button class="theme-chip" data-theme="${t}">${THEMES[t]} ${t}</button>`).join("");
+  const html=availableThemes().map(t=>`<button class="theme-chip" data-quiz-theme="${t}">${THEMES[t]} ${t}</button>`).join("");
   document.getElementById("modalThemes").innerHTML=html;
-  document.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>startQuiz("theme",b.dataset.theme));
+  document.querySelectorAll("[data-quiz-theme]").forEach(b=>b.onclick=()=>startQuiz("theme",b.dataset.quizTheme));
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=()=>startQuiz("review");
