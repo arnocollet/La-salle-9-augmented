@@ -273,6 +273,7 @@ let printableSheets=[],printableLevel="";
 function levelState(){return state.levels[currentLevel]}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll(".level-btn").forEach(b=>b.onclick=()=>selectLevel(b.dataset.level));
+document.querySelectorAll("[data-return-home]").forEach(b=>b.onclick=()=>showView("home"));
 
 function selectLevel(level){
   currentLevel=level; state.selectedLevel=level; save();
