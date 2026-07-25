@@ -92,7 +92,7 @@
 
 .portal-section {
   margin-top: -3.5rem;
-  padding-bottom: 7rem;
+  padding-bottom: 5rem;
   position: relative;
   z-index: 2;
 }
@@ -109,8 +109,8 @@
   position: relative;
   display: flex;
   min-width: 0;
-  min-height: 25rem;
-  padding: 2rem;
+  min-height: 19rem;
+  padding: 1.5rem;
   flex-direction: column;
   align-items: flex-start;
   overflow: hidden;
@@ -124,10 +124,10 @@
 .portal-card::before {
   content: '';
   position: absolute;
-  width: 12rem;
-  height: 12rem;
-  right: -5rem;
-  top: -5rem;
+  width: 10rem;
+  height: 10rem;
+  right: -4rem;
+  top: -4rem;
   border-radius: 50%;
   background: var(--card-accent);
   opacity: 0.08;
@@ -159,10 +159,10 @@
 
 .portal-card-icon {
   display: grid;
-  width: 4.75rem;
-  height: 4.75rem;
+  width: 4rem;
+  height: 4rem;
   place-items: center;
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   color: var(--card-accent);
   background: var(--card-soft);
 }
@@ -172,8 +172,8 @@
 }
 
 .portal-card-icon svg {
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 2.25rem;
+  height: 2.25rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 3;
@@ -184,7 +184,7 @@
 .portal-card-copy {
   display: flex;
   min-width: 0;
-  margin-top: 2rem;
+  margin-top: 1.25rem;
   flex-direction: column;
 }
 
@@ -198,26 +198,28 @@
 }
 
 .portal-card-copy strong {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.55rem;
   color: var(--text-primary);
-  font-size: clamp(1.65rem, 3vw, 2.2rem);
+  font-size: clamp(1.45rem, 2.5vw, 1.85rem);
   line-height: 1.1;
 }
 
 .portal-card-copy > span:last-child {
   color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .portal-arrow {
   display: grid;
-  width: 2.8rem;
-  height: 2.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
   margin-top: auto;
   place-items: center;
   border-radius: 50%;
   color: #fff;
   background: var(--card-accent);
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 700;
   transition: transform var(--transition-fast);
 }
@@ -245,7 +247,7 @@
   }
 
   .portal-card {
-    min-height: 20rem;
+    min-height: 15rem;
   }
 }
 
