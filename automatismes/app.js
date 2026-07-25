@@ -391,7 +391,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   const context=canvas.getContext("2d");
   context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
   context.fillStyle="#52637b";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
-  context.fillStyle="#14213d";context.font="700 43px Arial";
+  context.fillStyle=isCorrection?"#b91c1c":"#14213d";context.font="700 43px Arial";
   context.fillText(isCorrection?"Corrigé":"Fiche d’entraînement",82,116);
   context.fillStyle="#14213d";context.textAlign="right";
   context.font="700 30px Arial";context.fillText(`FICHE N° ${sheetNumber}`,1158,78);
@@ -401,9 +401,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   context.beginPath();context.moveTo(82,150);context.lineTo(1158,150);context.stroke();
 
   context.fillStyle="#14213d";
-  if(isCorrection){
-    context.font="700 23px Arial";context.fillText("Réponses",82,218);
-  }else{
+  if(!isCorrection){
     context.font="22px Arial";context.fillText("Nom : ______________________________________",82,218);
     context.fillText("Date : ____________________",780,218);
   }
