@@ -332,15 +332,25 @@ function changeWorksheetCount(change){
   document.getElementById("worksheetCount").value=worksheetCount()+change;
   preparePrintableSheets();
 }
+function worksheetExerciseCount(){
+  return currentLevel==="4e"||currentLevel==="3e"?10:5;
+}
+function updateWorksheetExerciseCount(){
+  const count=worksheetExerciseCount();
+  document.getElementById("worksheetDescriptionCount").textContent=count;
+  document.getElementById("worksheetExerciseCount").textContent=`${count} exercices par fiche`;
+}
 function makeRandomRoutine(){
   const pool=[...GENERATORS[currentLevel]],routine=[];
-  for(let i=0;i<5;i++){
+  for(let i=0;i<worksheetExerciseCount();i++){
+    if(!pool.length) pool.push(...GENERATORS[currentLevel]);
     const pick=pool.splice(rand(0,pool.length-1),1)[0];
     routine.push({...pick.make(),theme:pick.theme,notion:pick.notion});
   }
   return routine;
 }
 function preparePrintableSheets(){
+  updateWorksheetExerciseCount();
   printableSheets=Array.from({length:worksheetCount()},makeRandomRoutine);
   printableLevel=currentLevel;
   renderWorksheetPreview();
@@ -405,23 +415,30 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
     context.fillText("Date : ____________________",780,218);
   }
 
+  const dense=sheet.length>5;
+  const columns=dense?2:1;
+  const columnGap=dense?20:0;
+  const boxWidth=(1096-columnGap*(columns-1))/columns;
   sheet.forEach((exercise,i)=>{
-    const y=260+i*278;
-    drawRoundedBox(context,72,y,1096,246,18,isCorrection?"#f7f9fc":"#ffffff","#dce5f1");
-    drawRoundedBox(context,94,y+22,48,48,24,"#2368e8");
+    const column=dense?i%columns:0;
+    const row=dense?Math.floor(i/columns):i;
+    const x=72+column*(boxWidth+columnGap);
+    const y=260+row*278;
+    drawRoundedBox(context,x,y,boxWidth,246,18,isCorrection?"#f7f9fc":"#ffffff","#dce5f1");
+    drawRoundedBox(context,x+22,y+22,48,48,24,"#2368e8");
     context.fillStyle="#ffffff";context.font="700 24px Arial";context.textAlign="center";
-    context.fillText(String(i+1),118,y+54);context.textAlign="left";
-    context.fillStyle="#2368e8";context.font="700 19px Arial";
-    drawLines(context,`${exercise.theme} · ${exercise.notion}`,164,y+49,940,25,2);
-    context.fillStyle="#14213d";context.font=isCorrection?"23px Arial":"26px Arial";
-    const questionBottom=drawLines(context,exercise.text,104,y+111,1020,isCorrection?31:34,3);
+    context.fillText(String(i+1),x+46,y+54);context.textAlign="left";
+    context.fillStyle="#2368e8";context.font=dense?"700 16px Arial":"700 19px Arial";
+    drawLines(context,`${exercise.theme} · ${exercise.notion}`,x+92,y+49,boxWidth-114,dense?21:25,2);
+    context.fillStyle="#14213d";context.font=isCorrection?(dense?"19px Arial":"23px Arial"):(dense?"21px Arial":"26px Arial");
+    const questionBottom=drawLines(context,exercise.text,x+32,y+111,boxWidth-64,dense?28:(isCorrection?31:34),dense?4:3);
     if(isCorrection){
-      context.fillStyle="#167333";context.font="700 25px Arial";
-      context.fillText(`Réponse : ${exercise.answer}`,104,Math.min(y+226,Math.max(y+180,questionBottom+8)));
+      context.fillStyle="#167333";context.font=dense?"700 19px Arial":"700 25px Arial";
+      context.fillText(`Réponse : ${exercise.answer}`,x+32,Math.min(y+226,Math.max(y+180,questionBottom+8)));
     }else{
       context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);
-      const lineY=Math.max(y+186,questionBottom+28);
-      context.beginPath();context.moveTo(104,lineY);context.lineTo(1136,lineY);context.stroke();
+      const lineY=dense?Math.min(y+224,Math.max(y+186,questionBottom+8)):Math.max(y+186,questionBottom+28);
+      context.beginPath();context.moveTo(x+32,lineY);context.lineTo(x+boxWidth-32,lineY);context.stroke();
       context.setLineDash([]);
     }
   });

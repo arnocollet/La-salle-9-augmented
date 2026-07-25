@@ -94,7 +94,7 @@
               <div class="emoji">🖨️</div>
               <h3>Imprimer</h3>
             </div>
-            <p>Crée des routines papier de 5 exercices au format PDF.</p>
+            <p>Crée des routines papier adaptées à ton niveau au format PDF.</p>
             <button id="openWorksheets">Créer des fiches</button>
           </div>
         </div>
@@ -134,7 +134,7 @@
             <span class="step">1</span>
             <h2>Créer des fiches d’entraînement</h2>
           </div>
-          <p class="muted">Chaque fiche reprend la routine aléatoire avec 5 exercices du niveau sélectionné.</p>
+          <p class="muted">Chaque fiche reprend la routine aléatoire avec <span id="worksheetDescriptionCount">5</span> exercices du niveau sélectionné.</p>
 
           <label class="field-label" for="worksheetCount">Nombre de fiches</label>
           <div class="count-control">
@@ -152,7 +152,7 @@
             <span>Niveau</span>
             <strong id="worksheetLevelLabel">5e</strong>
             <span>Contenu</span>
-            <strong>5 exercices par fiche</strong>
+            <strong id="worksheetExerciseCount">5 exercices par fiche</strong>
           </div>
 
           <button id="downloadWorksheets" class="primary worksheet-download">
@@ -228,6 +228,6 @@
       </div>
     </div>
   </main>
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>
