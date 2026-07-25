@@ -317,6 +317,7 @@ function showView(id){
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
   if(id==="progress") renderProgress();
   if(id==="worksheets"&&printableLevel!==currentLevel) preparePrintableSheets();
+  window.scrollTo(0,0);
 }
 function availableThemes(){
   return Object.keys(NOTIONS[currentLevel]);
