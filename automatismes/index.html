@@ -6,28 +6,21 @@
   <meta name="description" content="Entraînement aux automatismes mathématiques de la 6e à la 3e." />
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=26" />
+  <link rel="stylesheet" href="styles.css?v=28" />
 </head>
 <body>
-  <aside class="sidebar">
-    <a class="portal-return" href="../index.html">← Retour</a>
-    <nav>
-      <button class="nav-btn active" data-view="home"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Accueil</span></button>
-      <button class="nav-btn" data-view="progress"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">Suivi</span></button>
-    </nav>
-    <div class="streak-card">
-      <div class="flame">🔥</div>
-      <strong>Série actuelle</strong>
-      <span id="sidebarStreak">0 jour</span>
-      <small>5 questions par jour</small>
-    </div>
-  </aside>
-
   <main>
+    <a class="portal-return" href="../index.html">← Retour</a>
     <header class="topbar">
       <h1>Automatismes</h1>
       <p class="privacy-note">🔒 Données enregistrées uniquement dans votre navigateur — Rien n’est envoyé au site.</p>
-      <div class="points">⭐ <span id="points">0</span> pts</div>
+      <div class="topbar-actions">
+        <div class="streak-summary">
+          <span aria-hidden="true">🔥</span>
+          <span><strong>Série actuelle</strong><small id="sidebarStreak">0 jour</small></span>
+        </div>
+        <div class="points">⭐ <span id="points">0</span> pts</div>
+      </div>
     </header>
 
     <section id="home" class="view active">
