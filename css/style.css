@@ -650,8 +650,20 @@ a {
   line-height: 1.6;
 }
 
-.scratch-product-header .hero-image {
-  margin-top: 1.5rem;
+.scratch-header-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2rem;
+}
+
+.scratch-header-image {
+  width: 9rem;
+  height: 9rem;
+  margin: 0;
+  object-fit: cover;
+  border-radius: 1.15rem;
+  box-shadow: var(--shadow-md);
 }
 
 .page-header {
@@ -1100,6 +1112,16 @@ body[data-grade="3e"] .page-header {
   .product-header-card {
     min-height: 8rem;
     padding: 1.25rem;
+  }
+
+  .scratch-header-card {
+    gap: 1rem;
+  }
+
+  .scratch-header-image {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 0.9rem;
   }
 
   .page-subtitle,
