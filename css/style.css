@@ -368,6 +368,12 @@ a {
   margin-top: 1.5rem;
 }
 
+.scratch-level-grid {
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .card-grade {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -1079,6 +1085,10 @@ body[data-grade="3e"] .page-header {
 }
 
 @media (max-width: 768px) {
+  .scratch-level-grid {
+    width: 100%;
+  }
+
   .section-padding {
     padding: 4rem 0;
   }
