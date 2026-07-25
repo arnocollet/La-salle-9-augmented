@@ -393,14 +393,16 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   context.fillStyle="#52637b";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
   context.fillStyle="#14213d";context.font="700 43px Arial";
   context.fillText(isCorrection?"Corrigé":"Fiche d’entraînement",82,116);
-  context.fillStyle="#14213d";context.font="700 22px Arial";context.textAlign="center";
-  context.fillText(`Niveau ${currentLevel}`,1077,87);context.textAlign="left";
+  context.fillStyle="#14213d";context.textAlign="right";
+  context.font="700 30px Arial";context.fillText(`FICHE N° ${sheetNumber}`,1158,78);
+  context.font="20px Arial";context.fillText(`Niveau ${currentLevel}`,1158,112);
+  context.textAlign="left";
   context.strokeStyle="#52637b";context.lineWidth=2;
   context.beginPath();context.moveTo(82,150);context.lineTo(1158,150);context.stroke();
 
   context.fillStyle="#14213d";
   if(isCorrection){
-    context.font="700 23px Arial";context.fillText(`Corrigé de la fiche ${sheetNumber}`,82,218);
+    context.font="700 23px Arial";context.fillText("Réponses",82,218);
   }else{
     context.font="22px Arial";context.fillText("Nom : ______________________________________",82,218);
     context.fillText("Date : ____________________",780,218);
@@ -428,7 +430,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   });
   context.fillStyle="#68778e";context.font="18px Arial";
   context.fillText(isCorrection?"Les réponses correspondent aux exercices de chaque fiche.":"5 exercices · Une fiche générée aléatoirement",72,1710);
-  context.textAlign="right";context.fillText(`${isCorrection?"Corrigé · ":""}Fiche ${sheetNumber}`,1168,1710);
+  context.textAlign="right";context.fillText(isCorrection?"Corrigé":`Fiche ${sheetNumber}`,1168,1710);
   return canvas;
 }
 function canvasToJpegBytes(canvas){
