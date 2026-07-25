@@ -1,5 +1,37 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // ==========================================================================
+  // Homepage illustration alternation
+  // ==========================================================================
+  const portalIllustration = document.querySelector('.portal-illustration');
+
+  if (portalIllustration) {
+    const homepageImages = [
+      {
+        src: 'assets/accueil-effort.jpg',
+        alt: 'Les maths, c’est comme le sport : pour progresser, il faut s’entraîner'
+      },
+      {
+        src: 'assets/accueil-effort-gars.png',
+        alt: 'Un garçon s’entraîne : en mathématiques comme dans le sport, chaque effort compte'
+      }
+    ];
+    let imageIndex = 0;
+
+    try {
+      const savedIndex = Number.parseInt(localStorage.getItem('homepageImageIndex'), 10);
+      imageIndex = Number.isInteger(savedIndex) && savedIndex >= 0
+        ? savedIndex % homepageImages.length
+        : 0;
+      localStorage.setItem('homepageImageIndex', String((imageIndex + 1) % homepageImages.length));
+    } catch {
+      imageIndex = Math.floor(Math.random() * homepageImages.length);
+    }
+
+    portalIllustration.src = homepageImages[imageIndex].src;
+    portalIllustration.alt = homepageImages[imageIndex].alt;
+  }
+
+  // ==========================================================================
   // Theme Management (Dark / Light Mode)
   // ==========================================================================
   const themeToggleBtn = document.querySelector('.theme-toggle');
