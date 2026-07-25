@@ -1106,6 +1106,19 @@ body[data-grade="3e"] .page-header {
     height: 450px;
   }
 
+  .embed-container:not(.scratch-view) .embed-filename {
+    display: none;
+  }
+
+  .embed-container:not(.scratch-view) .embed-actions {
+    width: 100%;
+  }
+
+  .embed-container:not(.scratch-view) .btn-embed-action {
+    flex: 1;
+    justify-content: center;
+  }
+
   .embed-container.scratch-view.scratch-multiple {
     height: 850px;
   }
