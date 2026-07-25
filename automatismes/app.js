@@ -315,6 +315,12 @@ document.getElementById("worksheetCount").addEventListener("change",preparePrint
 document.getElementById("worksheetCount").addEventListener("blur",preparePrintableSheets);
 document.getElementById("refreshWorksheet").onclick=preparePrintableSheets;
 document.getElementById("downloadWorksheets").onclick=downloadWorksheetsPdf;
+document.getElementById("clearLocalData").onclick=()=>{
+  const confirmed=window.confirm("Effacer définitivement vos points, votre progression et votre historique sur tous les niveaux dans ce navigateur ?");
+  if(!confirmed) return;
+  localStorage.removeItem("mathsAutoCycle4");
+  window.location.reload();
+};
 
 function worksheetCount(){
   const input=document.getElementById("worksheetCount");
