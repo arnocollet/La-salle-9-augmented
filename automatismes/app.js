@@ -426,9 +426,6 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
       context.setLineDash([]);
     }
   });
-  context.fillStyle="#68778e";context.font="18px Arial";
-  context.fillText(isCorrection?"Les réponses correspondent aux exercices de chaque fiche.":"5 exercices · Une fiche générée aléatoirement",72,1710);
-  context.textAlign="right";context.fillText(isCorrection?"Corrigé":`Fiche ${sheetNumber}`,1168,1710);
   return canvas;
 }
 function canvasToJpegBytes(canvas){
