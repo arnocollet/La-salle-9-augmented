@@ -299,6 +299,7 @@ function makeThemeButtons(){
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=()=>startQuiz("review");
+document.getElementById("openProgress").onclick=()=>showView("progress");
 document.getElementById("openWorksheets").onclick=()=>showView("worksheets");
 document.getElementById("openNotions").onclick=()=>showView("notions");
 document.getElementById("openThemes").onclick=()=>document.getElementById("themeModal").classList.remove("hidden");
