@@ -664,6 +664,10 @@ a {
   gap: 2rem;
 }
 
+.scratch-product-header::before {
+  display: none;
+}
+
 .scratch-header-image {
   width: 9rem;
   height: 9rem;
