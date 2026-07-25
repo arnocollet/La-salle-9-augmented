@@ -1,16 +1,58 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Entraînement aux automatismes mathématiques de la 6e à la 3e." />
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)" />
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=28" />
+  <link rel="stylesheet" href="../css/style.css?v=15" />
+  <link rel="stylesheet" href="styles.css?v=29" />
 </head>
 <body>
-  <main>
-    <a class="portal-return" href="../index.html">← Retour</a>
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="logo" aria-label="La Salle 9 - Accueil">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" class="logo-icon" aria-hidden="true">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+          <path d="M6 6h10M6 10h10M6 14h10" />
+        </svg>
+        La Salle 9
+      </a>
+
+      <nav aria-label="Navigation principale">
+        <ul class="nav-links">
+          <li><a href="../index.html" class="nav-link">Accueil</a></li>
+          <li><a href="../scratch.html" class="nav-link">Scratch</a></li>
+          <li><a href="index.html" class="nav-link active" aria-current="page">Automatismes</a></li>
+          <li><a href="../calculateur-brevet.html" class="nav-link">Simulateur Brevet</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+        </button>
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="auto-main">
     <header class="topbar">
       <h1>Automatismes</h1>
       <p class="privacy-note">🔒 Données enregistrées uniquement dans votre navigateur — Rien n’est envoyé au site.</p>
@@ -242,6 +284,23 @@
       </div>
     </div>
   </main>
-  <script src="app.js?v=19"></script>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-nav">
+        <a href="../index.html" class="footer-nav-link">Accueil</a>
+        <a href="../scratch.html" class="footer-nav-link">Scratch</a>
+        <a href="index.html" class="footer-nav-link">Automatismes</a>
+        <a href="../calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+      </div>
+      <div class="copyright">
+        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span class="divider">|</span>
+        <span>08/2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js?v=20"></script>
 </body>
 </html>

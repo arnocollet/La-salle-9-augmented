@@ -15,6 +15,34 @@ const THEMES = {
   "Calcul mental": "🧠"
 };
 
+const themeToggleButton=document.getElementById("theme-btn");
+const mobileMenuButton=document.getElementById("menu-btn");
+const mainNavigation=document.querySelector(".nav-links");
+const siteFavicon=document.querySelector('link[rel="icon"]');
+const savedSiteTheme=localStorage.getItem("theme");
+const initialSiteTheme=savedSiteTheme||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+function applySiteTheme(theme){
+  document.documentElement.setAttribute("data-theme",theme);
+  if(siteFavicon) siteFavicon.href=`../assets/favicon-${theme}.svg`;
+}
+applySiteTheme(initialSiteTheme);
+themeToggleButton?.addEventListener("click",()=>{
+  const theme=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  applySiteTheme(theme);
+  localStorage.setItem("theme",theme);
+});
+mobileMenuButton?.addEventListener("click",event=>{
+  event.stopPropagation();
+  const isOpen=mainNavigation?.classList.toggle("open")||false;
+  mobileMenuButton.setAttribute("aria-expanded",String(isOpen));
+});
+document.addEventListener("click",event=>{
+  if(mainNavigation?.classList.contains("open")&&!mainNavigation.contains(event.target)){
+    mainNavigation.classList.remove("open");
+    mobileMenuButton?.setAttribute("aria-expanded","false");
+  }
+});
+
 const NOTIONS = {
 "5e":{
 "Nombres et calculs":[
