@@ -585,17 +585,38 @@ a {
   background: radial-gradient(circle at 10% 10%, var(--accent-glow) 0%, transparent 40%);
 }
 
+body[data-grade="5e"] .page-header,
+body[data-grade="4e"] .page-header,
+body[data-grade="3e"] .page-header {
+  padding-top: 7.5rem;
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-sm);
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
+  transition: color var(--transition-fast), border-color var(--transition-fast),
+    background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .back-link:hover {
   color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-light);
+  transform: translateY(-1px);
+}
+
+.back-link:focus-visible {
+  outline: 3px solid var(--accent-glow);
+  outline-offset: 3px;
 }
 
 .back-link svg {
@@ -617,10 +638,6 @@ a {
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
-}
-
-.page-emoji {
-  font-size: 2.5rem;
 }
 
 .page-title {
