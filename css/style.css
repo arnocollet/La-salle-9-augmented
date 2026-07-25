@@ -580,6 +580,74 @@ a {
 /* ==========================================================================
    Page Header
    ========================================================================== */
+.product-header {
+  position: relative;
+  padding: 8rem 0 1.5rem;
+  overflow: hidden;
+}
+
+.product-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 8% 25%, var(--accent-glow), transparent 32rem),
+    radial-gradient(circle at 92% 75%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 26rem);
+}
+
+.product-header-card {
+  position: relative;
+  min-height: 10rem;
+  padding: 2rem;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 1.5rem;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.product-header-card::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 14rem;
+  height: 14rem;
+  top: -9rem;
+  left: -5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.08;
+}
+
+.product-title {
+  width: fit-content;
+  margin: 0;
+  color: transparent;
+  background: var(--accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.08;
+}
+
+.product-subtitle {
+  max-width: 900px;
+  margin-top: 0.8rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.scratch-product-header .hero-image {
+  margin-top: 1.5rem;
+}
+
 .page-header {
   padding: 10rem 0 3rem 0;
   background: radial-gradient(circle at 10% 10%, var(--accent-glow) 0%, transparent 40%);
@@ -1013,6 +1081,15 @@ body[data-grade="3e"] .page-header {
 @media (max-width: 768px) {
   .section-padding {
     padding: 4rem 0;
+  }
+
+  .product-header {
+    padding: 6.5rem 0 1rem;
+  }
+
+  .product-header-card {
+    min-height: 8rem;
+    padding: 1.25rem;
   }
 
   .page-subtitle,

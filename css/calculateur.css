@@ -1,15 +1,11 @@
 .brevet-header {
-  padding-top: 6.5rem;
-  padding-bottom: 2rem;
-}
-
-.brevet-header .page-title-section {
-  gap: 0;
+  padding-top: 8rem;
+  padding-bottom: 1.5rem;
 }
 
 .brevet-header .page-subtitle {
-  max-width: none;
-  white-space: nowrap;
+  max-width: 900px;
+  white-space: normal;
 }
 
 .brevet-main {
