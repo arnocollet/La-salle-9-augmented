@@ -290,7 +290,7 @@ function showView(id){
   if(id==="worksheets"&&printableLevel!==currentLevel) preparePrintableSheets();
 }
 function availableThemes(){
-  return Object.keys(NOTIONS[currentLevel]).filter(t=>GENERATORS[currentLevel].some(g=>g.theme===t));
+  return Object.keys(NOTIONS[currentLevel]);
 }
 function makeThemeButtons(){
   const html=availableThemes().map(t=>`<button class="theme-chip" data-theme="${t}">${THEMES[t]} ${t}</button>`).join("");
@@ -300,6 +300,7 @@ function makeThemeButtons(){
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=()=>startQuiz("review");
 document.getElementById("openWorksheets").onclick=()=>showView("worksheets");
+document.getElementById("openNotions").onclick=()=>showView("notions");
 document.getElementById("openThemes").onclick=()=>document.getElementById("themeModal").classList.remove("hidden");
 document.getElementById("closeModal").onclick=()=>document.getElementById("themeModal").classList.add("hidden");
 document.getElementById("quitQuiz").onclick=()=>showView("home");
