@@ -87,6 +87,13 @@ body {
   overflow-x: hidden;
 }
 
+body.scratch-page {
+  background:
+    radial-gradient(circle at 7% 12%, var(--accent-glow), transparent 30rem),
+    radial-gradient(circle at 94% 55%, color-mix(in srgb, #06b6d4 10%, transparent), transparent 28rem),
+    var(--bg-primary);
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
