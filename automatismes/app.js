@@ -277,7 +277,6 @@ document.querySelectorAll(".level-btn").forEach(b=>b.onclick=()=>selectLevel(b.d
 function selectLevel(level){
   currentLevel=level; state.selectedLevel=level; save();
   document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("selected",b.dataset.level===level));
-  document.getElementById("currentLevelLabel").textContent=level;
   document.getElementById("notionsLevelLabel").textContent=level;
   document.getElementById("worksheetLevelLabel").textContent=level;
   preparePrintableSheets();
@@ -295,7 +294,6 @@ function availableThemes(){
 }
 function makeThemeButtons(){
   const html=availableThemes().map(t=>`<button class="theme-chip" data-theme="${t}">${THEMES[t]} ${t}</button>`).join("");
-  document.getElementById("homeThemes").innerHTML=html;
   document.getElementById("modalThemes").innerHTML=html;
   document.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>startQuiz("theme",b.dataset.theme));
 }
