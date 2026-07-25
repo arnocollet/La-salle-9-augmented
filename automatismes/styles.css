@@ -34,19 +34,25 @@ main{margin-left:230px;width:calc(100% - 230px);padding:30px;max-width:1500px}
   align-items: center;
   width: fit-content;
   margin: 0 0 1.25rem;
-  padding: 0.55rem 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.65rem 1rem;
+  border: 1px solid #ffffff;
   border-radius: 999px;
-  color: inherit;
-  font-size: 0.82rem;
+  background: #ffffff;
+  color: var(--navy);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .portal-return:hover,
 .portal-return:focus-visible {
-  background: rgba(255, 255, 255, 0.12);
+  background: #dbeafe;
+  color: #123f84;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
   transform: translateX(-3px);
-  outline: none;
+  outline: 3px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 3px;
 }
