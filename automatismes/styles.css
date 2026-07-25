@@ -30,6 +30,27 @@ main{margin-left:230px;width:calc(100% - 230px);padding:30px;max-width:1500px}
 @media(max-width:950px){.sidebar{width:84px;padding:20px 10px}.nav-label,.streak-card strong,.streak-card small{display:none}.portal-return{align-self:center;font-size:.65rem;padding:.4rem .45rem;white-space:nowrap;margin-bottom:1.35rem}.nav-btn{justify-content:center;padding:12px 0}.nav-icon{width:auto;font-size:25px}.streak-card{width:64px;align-self:center;padding:12px 4px;justify-items:center}.flame{font-size:34px;line-height:1}.streak-card span{width:100%;font-size:13px;text-align:center}main{margin-left:84px;width:calc(100% - 84px)}.grid.two-cols,.routines,.worksheet-layout{grid-template-columns:1fr}.notions-list{grid-template-columns:1fr}.worksheet-settings{position:static}}
 @media(max-width:650px){main{padding:16px}.topbar{gap:8px}.topbar h1{font-size:23px;gap:7px}.topbar-math-icon{width:34px;height:34px;border-radius:9px;font-size:21px}.points{flex-shrink:0;padding:8px 9px;border-radius:10px;font-size:12px;white-space:nowrap}.levels{grid-template-columns:repeat(2,1fr)}.stats-grid{grid-template-columns:repeat(2,1fr)}.progress-summary{grid-template-columns:1fr}.ring{margin:auto}.theme-chips{display:grid;grid-template-columns:1fr}.theme-chip{width:100%;text-align:left}.modal-themes{grid-template-columns:1fr}.quiz-head{flex-wrap:wrap}.question-zone h2{font-size:24px}.progress-row{grid-template-columns:1fr}.progress-row .bar{grid-row:2}.progress-row b{position:absolute;right:36px}}
 @media(max-width:650px){.preview-heading{display:block}.refresh-button{margin:-8px 0 14px}}
+@media(max-width:650px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{font-size:15px}
+  main{width:calc(100vw - 84px);max-width:calc(100vw - 84px);min-width:0}
+  .sidebar .portal-return{width:100%;max-width:64px;justify-content:center;padding:.5rem .15rem;margin-bottom:1.1rem;font-size:.7rem;line-height:1;overflow:hidden;box-shadow:none}
+  .sidebar .portal-return:hover,.sidebar .portal-return:focus-visible{transform:none;box-shadow:none;outline-width:2px;outline-offset:1px}
+  .topbar h1{font-size:1.35rem}
+  .topbar p{font-size:.9rem}
+  .topbar .privacy-note{font-size:.78rem;line-height:1.35}
+  .section-title h2{font-size:1.2rem}
+  .card{min-width:0}
+  .levels{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .levels button{min-width:0;padding:14px 6px;font-size:1.55rem}
+  .levels small,.badge,.preview-note,.pdf-status{font-size:.78rem}
+  .routine h3,.notion-group h3{font-size:1.05rem}
+  .routine p,.muted,.check-option,.worksheet-summary,.history-item{font-size:.92rem}
+  .routine button,.primary,.secondary,.theme-chip,.refresh-button,.danger-button{font-size:.95rem}
+  .question-zone h2{font-size:1.35rem}
+  .question-zone input{font-size:1.05rem}
+  .stats-grid strong{font-size:1.7rem}
+}
 .portal-return {
   display: inline-flex;
   align-items: center;
