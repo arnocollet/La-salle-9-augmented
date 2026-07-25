@@ -3,7 +3,7 @@
   padding-bottom: 1.5rem;
 }
 
-.brevet-header .page-subtitle {
+.brevet-header .product-subtitle {
   max-width: 900px;
   white-space: normal;
 }
@@ -518,7 +518,7 @@
   }
 
   .navbar,
-  .page-header,
+  .brevet-header,
   .brevet-info,
   .brevet-grid,
   .brevet-actions,
@@ -526,30 +526,10 @@
     display: none !important;
   }
 
-  .page-header {
-    padding: 0 0 4mm !important;
-    background: none !important;
-  }
-
-  .brevet-header .container,
   .brevet-main.container {
     width: 100%;
     max-width: none;
     padding: 0;
-  }
-
-  .brevet-header .page-title-section {
-    margin-bottom: 1mm;
-  }
-
-  .brevet-header .page-title {
-    font-size: 18pt;
-  }
-
-  .brevet-header .page-subtitle {
-    color: #475569 !important;
-    font-size: 8.5pt;
-    white-space: normal;
   }
 
   .brevet-main {
@@ -862,7 +842,7 @@
     margin-top: 0;
   }
 
-  .brevet-header .page-subtitle {
+  .brevet-header .product-subtitle {
     white-space: normal;
   }
 
@@ -888,16 +868,6 @@
 }
 
 @media (max-width: 520px) {
-  .brevet-header .page-title-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .brevet-header .page-title {
-    font-size: 2rem;
-  }
-
   .gauge-labels {
     height: 1.9rem;
   }
