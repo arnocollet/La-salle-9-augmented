@@ -280,7 +280,6 @@ function selectLevel(level){
   document.getElementById("currentLevelLabel").textContent=level;
   document.getElementById("notionsLevelLabel").textContent=level;
   document.getElementById("worksheetLevelLabel").textContent=level;
-  document.getElementById("previewLevelLabel").textContent=level;
   preparePrintableSheets();
   makeThemeButtons(); renderNotions(); renderAll();
 }
@@ -342,17 +341,12 @@ function preparePrintableSheets(){
   document.getElementById("pdfStatus").textContent="";
 }
 function renderWorksheetPreview(){
+  if(!printableSheets[0]) return;
   const preview=document.getElementById("worksheetPreview");
-  preview.innerHTML="";
-  (printableSheets[0]||[]).forEach(exercise=>{
-    const item=document.createElement("li");
-    const notion=document.createElement("span");
-    const line=document.createElement("span");
-    notion.textContent=`${exercise.theme} · ${exercise.notion}`;
-    line.className="answer-line";
-    item.append(notion,document.createTextNode(exercise.text),line);
-    preview.appendChild(item);
-  });
+  const renderedPage=renderWorksheetPage(printableSheets[0],1,false);
+  const context=preview.getContext("2d");
+  context.clearRect(0,0,preview.width,preview.height);
+  context.drawImage(renderedPage,0,0);
 }
 function wrapCanvasText(context,text,maxWidth){
   const words=String(text).split(/\s+/),lines=[];
@@ -390,9 +384,8 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   canvas.width=1240;canvas.height=1754;
   const context=canvas.getContext("2d");
   context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
-  context.fillStyle="#52637b";context.font="700 22px Arial";context.fillText("LA SALLE 9 · AUTOMATISMES",82,58);
   context.fillStyle=isCorrection?"#b91c1c":"#14213d";context.font="700 43px Arial";
-  context.fillText(isCorrection?"Corrigé":"Fiche d’entraînement",82,116);
+  context.fillText(isCorrection?"Corrigé":"Automatismes Entraînement",82,100);
   context.fillStyle="#14213d";context.textAlign="right";
   context.font="700 30px Arial";context.fillText(`FICHE N° ${sheetNumber}`,1158,78);
   context.font="20px Arial";context.fillText(`Niveau ${currentLevel}`,1158,112);

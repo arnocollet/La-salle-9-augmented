@@ -6,7 +6,7 @@
   <meta name="description" content="Entraînement aux automatismes mathématiques de la 6e à la 3e." />
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=13" />
 </head>
 <body>
   <aside class="sidebar">
@@ -167,17 +167,7 @@
             </div>
             <button id="refreshWorksheet" class="refresh-button" type="button">↻ Nouveaux exercices</button>
           </div>
-          <div class="paper-preview">
-            <div class="paper-header">
-              <div>
-                <span>AUTOMATISMES</span>
-                <strong>Fiche d’entraînement · niveau <b id="previewLevelLabel">5e</b></strong>
-              </div>
-              <small>Fiche 1</small>
-            </div>
-            <div class="student-fields"><span>Nom : ....................................</span><span>Date : ........................</span></div>
-            <ol id="worksheetPreview"></ol>
-          </div>
+          <canvas id="worksheetPreview" class="paper-preview" width="1240" height="1754" aria-label="Aperçu exact de la première fiche PDF"></canvas>
           <p class="preview-note">L’aperçu affiche la première fiche. Le PDF contient toutes les fiches demandées, chacune sur une page A4.</p>
         </article>
       </div>
@@ -231,6 +221,6 @@
       </div>
     </div>
   </main>
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>
