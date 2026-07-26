@@ -307,15 +307,20 @@ body{
 }
 @media(max-width:650px){
   .auto-main{width:100%;max-width:100%;padding:6rem 1rem 3rem}
-  .progress-summary{grid-template-columns:auto minmax(0,1fr);column-gap:1rem;padding:1rem}
-  .progress-heading{gap:.5rem;margin-bottom:.75rem}
+  .level-progress-card{padding:1rem}
+  .level-progress-card>.section-title{margin-bottom:.75rem}
+  .level-progress-layout{gap:.75rem}
+  .level-progress-card .levels button{padding:.5rem .25rem;border-radius:.75rem;font-size:1.2rem}
+  .progress-summary{grid-template-columns:auto minmax(0,1fr);column-gap:.75rem;padding:.75rem 0 0}
+  .progress-heading{gap:.35rem;margin-bottom:.5rem}
+  .progress-heading h3{font-size:1rem}
   .progress-badges{width:100%;gap:.5rem}
   .progress-badges .streak-summary,.progress-badges .points{justify-content:center}
   .streak-summary strong{display:inline}
-  .progress-summary .ring{width:88px;height:88px;margin:0}
-  .progress-summary .ring::after{width:60px;height:60px}
-  .progress-summary .ring span{font-size:1.1rem}
-  .progress-summary .legend{gap:.35rem;font-size:.82rem}
+  .progress-summary .ring{width:72px;height:72px;margin:0}
+  .progress-summary .ring::after{width:50px;height:50px}
+  .progress-summary .ring span{font-size:1rem}
+  .progress-summary .legend{gap:.25rem;font-size:.78rem}
   .progress-summary .legend span{gap:.4rem}
   .progress-summary .legend i{width:9px;height:9px}
 }

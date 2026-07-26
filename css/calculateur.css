@@ -10,16 +10,19 @@
 
 .brevet-header-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
   align-items: center;
   gap: 2rem;
 }
 
 .brevet-header-image {
-  width: clamp(16rem, 30vw, 23rem);
+  display: block;
+  width: 100%;
   height: auto;
+  aspect-ratio: 1916 / 821;
   margin: 0;
-  border-radius: 1.15rem;
+  border: 1px solid var(--card-border);
+  border-radius: 1rem;
   box-shadow: var(--shadow-md);
 }
 
