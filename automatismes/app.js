@@ -22,6 +22,21 @@ const WORKSHEET_COLORS = {
   "3e": "#16a34a"
 };
 
+const DOMAIN_COLORS = {
+  "Nombres et calculs": "#2563eb",
+  "Espace et géométrie": "#7c3aed",
+  "Données et probabilités": "#ea580c",
+  "Proportionnalité et fonctions": "#059669",
+  "Nombres entiers et décimaux": "#2563eb",
+  "Fractions": "#7c3aed",
+  "Longueurs et aires": "#ea580c",
+  "Repérage dans le temps et durées": "#0891b2",
+  "Organisation et gestion de données": "#db2777",
+  "Proportionnalité": "#059669",
+  "Géométrie plane et espace": "#4f46e5",
+  "Calcul mental": "#dc2626"
+};
+
 const themeToggleButton=document.getElementById("theme-btn");
 const mobileMenuButton=document.getElementById("menu-btn");
 const mainNavigation=document.querySelector(".nav-links");
@@ -648,6 +663,9 @@ function renderProgress(){
   document.getElementById("history").innerHTML=s.history.length?s.history.map(h=>`<div class="history-item"><span>${new Date(h.date).toLocaleDateString("fr-FR")} — ${h.level||currentLevel}</span><strong>${h.score}/5</strong></div>`).join(""):"<p class='muted'>Aucune routine terminée pour le moment.</p>";
 }
 function renderNotions(){
-  document.getElementById("notionsList").innerHTML=Object.entries(NOTIONS[currentLevel]).map(([t,list])=>`<div class="notion-group"><h3>${THEMES[t]} ${t}</h3><ol>${list.map(x=>`<li>${x}</li>`).join("")}</ol></div>`).join("");
+  document.getElementById("notionsList").innerHTML=Object.entries(NOTIONS[currentLevel]).map(([t,list])=>{
+    const color=DOMAIN_COLORS[t]||"#4f46e5";
+    return `<div class="notion-group" style="--domain-color:${color}"><h3>${THEMES[t]} ${t}</h3><ol>${list.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
+  }).join("");
 }
 selectLevel(currentLevel);
