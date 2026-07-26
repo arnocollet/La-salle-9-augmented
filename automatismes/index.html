@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=16" />
-  <link rel="stylesheet" href="styles.css?v=32" />
+  <link rel="stylesheet" href="styles.css?v=33" />
 </head>
 <body>
   <header class="navbar">
@@ -59,39 +59,39 @@
     </header>
 
     <section id="home" class="view active">
-      <div class="grid two-cols">
-        <article class="card">
-          <div class="section-title">
-            <span class="step">1</span>
-            <h2>Choisis ton niveau</h2>
-          </div>
+      <article class="card level-progress-card">
+        <div class="section-title">
+          <span class="step">1</span>
+          <h2>Choisis ton niveau</h2>
+        </div>
+        <div class="level-progress-layout">
           <div class="levels">
             <button class="level-btn" data-level="6e">6e <small>Disponible</small></button>
             <button class="level-btn selected" data-level="5e">5e <small>Disponible</small></button>
             <button class="level-btn" data-level="4e">4e <small>Disponible</small></button>
             <button class="level-btn" data-level="3e">3e <small>Disponible</small></button>
           </div>
-        </article>
 
-        <article class="card progress-summary">
-          <div class="progress-heading">
-            <div class="section-title"><h2>Ta progression</h2></div>
-            <div class="progress-badges">
-              <div class="streak-summary">
-                <span aria-hidden="true">🔥</span>
-                <span><strong>Série actuelle</strong><small id="sidebarStreak">0 jour</small></span>
+          <section class="progress-summary" aria-labelledby="progress-summary-title">
+            <div class="progress-heading">
+              <h3 id="progress-summary-title">Ta progression</h3>
+              <div class="progress-badges">
+                <div class="streak-summary">
+                  <span aria-hidden="true">🔥</span>
+                  <span><strong>Série actuelle</strong><small id="sidebarStreak">0 jour</small></span>
+                </div>
+                <div class="points">⭐ <span id="points">0</span> pts</div>
               </div>
-              <div class="points">⭐ <span id="points">0</span> pts</div>
             </div>
-          </div>
-          <div class="ring" id="homeRing"><span>0%</span></div>
-          <div class="legend">
-            <span><i class="green"></i><b id="masteredCount">0</b> maîtrisées</span>
-            <span><i class="orange"></i><b id="inProgressCount">0</b> en cours</span>
-            <span><i class="red"></i><b id="reviewCount">0</b> à revoir</span>
-          </div>
-        </article>
-      </div>
+            <div class="ring" id="homeRing"><span>0%</span></div>
+            <div class="legend">
+              <span><i class="green"></i><b id="masteredCount">0</b> maîtrisées</span>
+              <span><i class="orange"></i><b id="inProgressCount">0</b> en cours</span>
+              <span><i class="red"></i><b id="reviewCount">0</b> à revoir</span>
+            </div>
+          </section>
+        </div>
+      </article>
 
       <article class="card">
         <div class="section-title">
