@@ -15,6 +15,13 @@ const THEMES = {
   "Calcul mental": "🧠"
 };
 
+const WORKSHEET_COLORS = {
+  "6e": "#ea580c",
+  "5e": "#2563eb",
+  "4e": "#dc2626",
+  "3e": "#16a34a"
+};
+
 const themeToggleButton=document.getElementById("theme-btn");
 const mobileMenuButton=document.getElementById("menu-btn");
 const mainNavigation=document.querySelector(".nav-links");
@@ -429,14 +436,15 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
   const canvas=document.createElement("canvas");
   canvas.width=1240;canvas.height=1754;
   const context=canvas.getContext("2d");
+  const worksheetColor=WORKSHEET_COLORS[currentLevel]||WORKSHEET_COLORS["5e"];
   context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
-  context.fillStyle=isCorrection?"#b91c1c":"#14213d";context.font="700 43px Arial";
+  context.fillStyle=worksheetColor;context.font="700 43px Arial";
   context.fillText(isCorrection?"Corrigé":"Automatismes Entraînement",82,100);
   context.fillStyle="#14213d";context.textAlign="right";
   context.font="700 30px Arial";context.fillText(`FICHE N° ${sheetNumber}`,1158,78);
   context.font="20px Arial";context.fillText(`Niveau ${currentLevel}`,1158,112);
   context.textAlign="left";
-  context.strokeStyle="#52637b";context.lineWidth=2;
+  context.strokeStyle=worksheetColor;context.lineWidth=3;
   context.beginPath();context.moveTo(82,150);context.lineTo(1158,150);context.stroke();
 
   context.fillStyle="#14213d";
@@ -455,10 +463,10 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
     const x=72+column*(boxWidth+columnGap);
     const y=260+row*278;
     drawRoundedBox(context,x,y,boxWidth,246,18,isCorrection?"#f7f9fc":"#ffffff","#dce5f1");
-    drawRoundedBox(context,x+22,y+22,48,48,24,"#2368e8");
+    drawRoundedBox(context,x+22,y+22,48,48,24,worksheetColor);
     context.fillStyle="#ffffff";context.font="700 24px Arial";context.textAlign="center";
     context.fillText(String(i+1),x+46,y+54);context.textAlign="left";
-    context.fillStyle="#2368e8";context.font=dense?"700 16px Arial":"700 19px Arial";
+    context.fillStyle=worksheetColor;context.font=dense?"700 16px Arial":"700 19px Arial";
     drawLines(context,`${exercise.theme} · ${exercise.notion}`,x+92,y+49,boxWidth-114,dense?21:25,2);
     context.fillStyle="#14213d";context.font=isCorrection?(dense?"19px Arial":"23px Arial"):(dense?"21px Arial":"26px Arial");
     const questionBottom=drawLines(context,exercise.text,x+32,y+111,boxWidth-64,dense?28:(isCorrection?31:34),dense?4:3);
