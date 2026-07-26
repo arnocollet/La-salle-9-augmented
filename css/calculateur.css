@@ -858,7 +858,19 @@
 @media (max-width: 768px) {
   .brevet-header-card {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
+    gap: 0;
+  }
+
+  .brevet-header-copy {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .brevet-header-image {
