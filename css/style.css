@@ -1289,6 +1289,11 @@ body[data-grade="3e"] .page-header {
     gap: 1rem;
   }
 
+  .assignment-title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+  }
+
   .assignment-badges {
     width: 100%;
   }
