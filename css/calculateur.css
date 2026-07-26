@@ -8,6 +8,21 @@
   white-space: normal;
 }
 
+.brevet-header-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2rem;
+}
+
+.brevet-header-image {
+  width: clamp(16rem, 30vw, 23rem);
+  height: auto;
+  margin: 0;
+  border-radius: 1.15rem;
+  box-shadow: var(--shadow-md);
+}
+
 .brevet-main {
   padding-bottom: 6rem;
 }
@@ -838,6 +853,16 @@
 }
 
 @media (max-width: 768px) {
+  .brevet-header-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .brevet-header-image {
+    width: 100%;
+    border-radius: 0.9rem;
+  }
+
   .brevet-grid,
   .brevet-column {
     gap: 1rem;
