@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=16" />
-  <link rel="stylesheet" href="styles.css?v=30" />
+  <link rel="stylesheet" href="styles.css?v=31" />
 </head>
 <body>
   <header class="navbar">
@@ -56,13 +56,6 @@
     <header class="topbar product-header-card">
       <h1 class="product-title">Automatismes</h1>
       <p class="privacy-note product-subtitle">🔒 Données enregistrées uniquement dans votre navigateur — Rien n’est envoyé au site.</p>
-      <div class="topbar-actions">
-        <div class="streak-summary">
-          <span aria-hidden="true">🔥</span>
-          <span><strong>Série actuelle</strong><small id="sidebarStreak">0 jour</small></span>
-        </div>
-        <div class="points">⭐ <span id="points">0</span> pts</div>
-      </div>
     </header>
 
     <section id="home" class="view active">
@@ -81,7 +74,16 @@
         </article>
 
         <article class="card progress-summary">
-          <div class="section-title"><h2>Ta progression</h2></div>
+          <div class="progress-heading">
+            <div class="section-title"><h2>Ta progression</h2></div>
+            <div class="progress-badges">
+              <div class="streak-summary">
+                <span aria-hidden="true">🔥</span>
+                <span><strong>Série actuelle</strong><small id="sidebarStreak">0 jour</small></span>
+              </div>
+              <div class="points">⭐ <span id="points">0</span> pts</div>
+            </div>
+          </div>
           <div class="ring" id="homeRing"><span>0%</span></div>
           <div class="legend">
             <span><i class="green"></i><b id="masteredCount">0</b> maîtrisées</span>
