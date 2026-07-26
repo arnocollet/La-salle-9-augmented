@@ -135,6 +135,22 @@ body{
   font-weight:800;
   letter-spacing:-.05em;
 }
+.auto-title-card{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(320px,520px);
+  gap:2rem;
+  align-items:center;
+}
+.auto-title-copy{min-width:0}
+.auto-title-image{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:1916/821;
+  border:1px solid var(--card-border);
+  border-radius:1rem;
+  box-shadow:var(--shadow-md);
+}
 .topbar p,.topbar .privacy-note,.streak-summary small,.routine p,.muted,.preview-note,.worksheet-summary span,.stats-grid span{
   color:var(--text-secondary);
 }
@@ -287,6 +303,7 @@ body{
 @media(max-width:768px){
   .auto-main{padding:6.5rem 1rem 3.5rem}
   .topbar{padding:1.25rem}
+  .auto-title-card{grid-template-columns:1fr;gap:1rem}
 }
 @media(max-width:650px){
   .auto-main{width:100%;max-width:100%;padding:6rem 1rem 3rem}
