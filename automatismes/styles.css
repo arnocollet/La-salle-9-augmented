@@ -21,10 +21,10 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
 .math-keypad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;width:min(100%,450px);margin:18px auto 0}
 .math-preview{display:flex;align-items:center;justify-content:center;gap:10px;width:min(100%,450px);min-height:48px;margin:10px auto 0;padding:8px 14px;overflow-x:auto;border:1px solid var(--card-border);border-radius:11px;background:var(--bg-secondary);color:var(--text-primary)}
 .math-preview-label{flex:0 0 auto;color:var(--text-secondary);font-size:12px;font-weight:700}
-.math-preview-value{display:inline-flex;align-items:center;gap:3px;min-width:0;font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:20px;font-weight:400;white-space:nowrap}
+.math-preview-value{display:inline-flex;align-items:center;gap:3px;min-width:0;font-family:inherit;font-size:20px;font-weight:400;white-space:nowrap}
 .math-preview-value sup{font-size:.65em}
 .math-variable{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-style:normal;font-weight:400}
-#answerInput{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif}
+#answerInput{font-family:inherit}
 #answerInput::placeholder{font-family:"Plus Jakarta Sans",Calibri,Arial,sans-serif}
 .preview-fraction{display:inline-grid;grid-template-rows:1fr 1fr;min-width:1.4em;margin:0 2px;line-height:1;text-align:center;vertical-align:middle}
 .preview-fraction>span:first-child{padding:0 4px 3px;border-bottom:1.5px solid currentColor}

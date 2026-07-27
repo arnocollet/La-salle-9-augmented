@@ -778,7 +778,7 @@ function updateMathPreview(){
   preview.classList.toggle("hidden",!value);
   document.getElementById("mathPreviewValue").innerHTML=value?mathPreviewMarkup(value):"";
 }
-function normalize(s){return String(s).trim().toLowerCase().replace(/[𝑥𝑋]/g,"x").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
+function normalize(s){return String(s).trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/[𝑥𝑋]/g,"x").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
 function validate(){
   if(answered)return;
   const x=currentQuiz[index], user=normalize(document.getElementById("answerInput").value);
