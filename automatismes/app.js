@@ -589,8 +589,9 @@ function startQuiz(mode,theme){
 }
 function renderQuestion(){
   const x=currentQuiz[index];
-  document.getElementById("questionCounter").textContent=`Question ${index+1} sur 5 — niveau ${currentLevel}`;
-  document.getElementById("progressBar").style.width=`${index*20}%`;
+  document.getElementById("questionLevel").textContent=`niveau ${currentLevel}`;
+  document.getElementById("questionCounter").textContent=`Question ${index+1} sur ${currentQuiz.length}`;
+  document.getElementById("progressBar").style.width=`${index/currentQuiz.length*100}%`;
   document.getElementById("questionTheme").textContent=x.theme;
   document.getElementById("questionNotion").textContent=x.notion;
   document.getElementById("questionText").textContent=x.text;
