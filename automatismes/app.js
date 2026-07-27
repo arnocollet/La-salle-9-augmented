@@ -484,10 +484,15 @@ document.getElementById("returnHome").onclick=()=>{document.getElementById("resu
 document.getElementById("validateAnswer").onclick=validate;
 document.getElementById("nextQuestion").onclick=next;
 document.getElementById("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter"){answered?next():validate()}});
+document.getElementById("answerInput").addEventListener("input",()=>{
+  stylizeAnswerVariables();
+  updateMathPreview();
+});
 document.querySelectorAll(".math-key").forEach(button=>button.addEventListener("click",()=>{
   const input=document.getElementById("answerInput");
   const start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
   input.setRangeText(button.dataset.insert,start,end,"end");
+  updateMathPreview();
   input.focus();
 }));
 document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCount(-1);
@@ -722,9 +727,10 @@ function renderQuestion(){
   document.getElementById("questionCounter").textContent=`Question ${index+1}/${currentQuiz.length}`;
   document.getElementById("progressBar").style.width=`${index/currentQuiz.length*100}%`;
   document.getElementById("questionTheme").textContent=x.theme;
-  document.getElementById("questionText").textContent=x.text;
+  document.getElementById("questionText").innerHTML=wrapMathVariables(escapeXml(x.text));
   renderQuestionVisual(x);
   document.getElementById("answerInput").value="";
+  updateMathPreview();
   document.getElementById("feedback").className="feedback hidden";
   document.getElementById("validateAnswer").classList.remove("hidden");
   document.getElementById("nextQuestion").classList.add("hidden");
@@ -732,7 +738,35 @@ function renderQuestion(){
   answered=false;
   setTimeout(()=>document.getElementById("answerInput").focus(),100);
 }
-function normalize(s){return String(s).trim().toLowerCase().replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
+function mathPreviewMarkup(value){
+  let markup=escapeXml(value.trim());
+  markup=markup.replace(/(-?[A-Za-zÀ-ÿ0-9π²³𝑥𝑋]+(?:\^[A-Za-z0-9+-]+)?)\/(-?[A-Za-zÀ-ÿ0-9π²³𝑥𝑋]+(?:\^[A-Za-z0-9+-]+)?)/g,'<span class="preview-fraction"><span>$1</span><span>$2</span></span>');
+  markup=markup.replace(/\^([A-Za-z0-9+-]+)/g,"<sup>$1</sup>");
+  markup=markup.replace(/²/g,"<sup>2</sup>").replace(/³/g,"<sup>3</sup>");
+  return wrapMathVariables(markup);
+}
+function wrapMathVariables(markup){
+  return markup.replace(/(^|[^A-Za-zÀ-ÿ])([xX])(?=$|[^A-Za-zÀ-ÿ])/g,(_,prefix,variable)=>`${prefix}<span class="math-variable">${variable==="X"?"𝑋":"𝑥"}</span>`);
+}
+function stylizedVariableText(value){
+  return value.replace(/(^|[^A-Za-zÀ-ÿ])([xX])(?=$|[^A-Za-zÀ-ÿ])/g,(_,prefix,variable)=>prefix+(variable==="X"?"𝑋":"𝑥"));
+}
+function stylizeAnswerVariables(){
+  const input=document.getElementById("answerInput"),start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+  const value=input.value,styled=stylizedVariableText(value);
+  if(styled===value)return;
+  const styledStart=stylizedVariableText(value.slice(0,start)).length;
+  const styledEnd=stylizedVariableText(value.slice(0,end)).length;
+  input.value=styled;
+  input.setSelectionRange(styledStart,styledEnd);
+}
+function updateMathPreview(){
+  const value=document.getElementById("answerInput").value.trim();
+  const preview=document.getElementById("mathPreview");
+  preview.classList.toggle("hidden",!value);
+  document.getElementById("mathPreviewValue").innerHTML=value?mathPreviewMarkup(value):"";
+}
+function normalize(s){return String(s).trim().toLowerCase().replace(/[𝑥𝑋]/g,"x").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
 function validate(){
   if(answered)return;
   const x=currentQuiz[index], user=normalize(document.getElementById("answerInput").value);

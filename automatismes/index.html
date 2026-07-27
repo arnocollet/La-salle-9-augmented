@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=16" />
-  <link rel="stylesheet" href="styles.css?v=44" />
+  <link rel="stylesheet" href="styles.css?v=48" />
 </head>
 <body>
   <header class="navbar">
@@ -189,16 +189,20 @@
           <h2 id="questionText">Choisis une routine pour commencer.</h2>
           <div id="questionVisual"></div>
           <input id="answerInput" type="text" autocomplete="off" placeholder="Écris ta réponse" />
+          <div class="math-preview hidden" id="mathPreview" aria-live="polite">
+            <span class="math-preview-label">Aperçu :</span>
+            <span class="math-preview-value" id="mathPreviewValue"></span>
+          </div>
           <div class="math-keypad" aria-label="Clavier mathématique">
             <button type="button" class="math-key" data-insert="×" aria-label="Insérer le signe multiplier">×</button>
             <button type="button" class="math-key" data-insert="/" aria-label="Insérer une barre de fraction">
               <span class="fraction-symbol" aria-hidden="true"><span>a</span><span>b</span></span>
             </button>
             <button type="button" class="math-key" data-insert="²" aria-label="Insérer au carré">
-              <span aria-hidden="true">x<sup>2</sup></span>
+              <span aria-hidden="true"><span class="math-variable">𝑥</span><sup>2</sup></span>
             </button>
             <button type="button" class="math-key" data-insert="^" aria-label="Insérer une puissance">
-              <span aria-hidden="true">x<sup>n</sup></span>
+              <span aria-hidden="true"><span class="math-variable">𝑥</span><sup>n</sup></span>
             </button>
             <button type="button" class="math-key" data-insert="π" aria-label="Insérer pi">π</button>
           </div>
@@ -332,6 +336,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=30"></script>
+  <script src="app.js?v=33"></script>
 </body>
 </html>
