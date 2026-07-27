@@ -361,6 +361,12 @@ document.getElementById("returnHome").onclick=()=>{document.getElementById("resu
 document.getElementById("validateAnswer").onclick=validate;
 document.getElementById("nextQuestion").onclick=next;
 document.getElementById("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter"){answered?next():validate()}});
+document.querySelectorAll(".math-key").forEach(button=>button.addEventListener("click",()=>{
+  const input=document.getElementById("answerInput");
+  const start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+  input.setRangeText(button.dataset.insert,start,end,"end");
+  input.focus();
+}));
 document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCount(-1);
 document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
 document.getElementById("worksheetCount").addEventListener("change",preparePrintableSheets);
