@@ -779,12 +779,28 @@ function updateMathPreview(){
   document.getElementById("mathPreviewValue").innerHTML=value?mathPreviewMarkup(value):"";
 }
 function normalize(s){return String(s).trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/[𝑥𝑋]/gu,"x").replace(/[−–—‑‒﹣－]/g,"-").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
+function canonicalPrimeProduct(value){
+  const expression=normalize(value).replace(/²/g,"^2").replace(/³/g,"^3").replace(/[×·⋅]/g,"*");
+  if(!/^\d+(?:\^\d+)?(?:\*\d+(?:\^\d+)?)*$/.test(expression))return null;
+  const factors=[];
+  for(const term of expression.split("*")){
+    const [baseText,exponentText="1"]=term.split("^");
+    const base=Number(baseText),exponent=Number(exponentText);
+    if(!Number.isInteger(base)||base<2||!Number.isInteger(exponent)||exponent<1||exponent>20)return null;
+    for(let i=0;i<exponent;i++)factors.push(base);
+  }
+  return factors.sort((a,b)=>a-b).join("*");
+}
 function validate(){
   if(answered)return;
   const x=currentQuiz[index], user=normalize(document.getElementById("answerInput").value);
   if(!user)return;
   const acceptable=[x.answer,...x.alts].map(normalize);
-  const isCorrect=acceptable.includes(user);
+  const canonicalUserProduct=canonicalPrimeProduct(user);
+  const isEquivalentPrimeProduct=x.notion==="Décomposition en facteurs premiers"
+    &&canonicalUserProduct!==null
+    &&acceptable.some(answer=>canonicalPrimeProduct(answer)===canonicalUserProduct);
+  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct;
   answered=true;
   const s=levelState();
   if(isCorrect){score++;state.points+=10}
