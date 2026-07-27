@@ -95,16 +95,16 @@ const NOTIONS = {
 ,
 "3e":{
 "Nombres et calculs":[
-"Opérations sur les fractions","Puissance comme multiplication itérée","Multiplication de puissances d’un même nombre","Multiplication de puissances de même exposant","Carrés parfaits de 0 à 12","Décomposition en facteurs premiers","Simplification de fractions","Dénominateur commun","Critères de divisibilité par 2, 3, 5 et 9","Équations simples","Simplification d’expressions littérales","Valeur d’une expression algébrique","Nature d’une expression littérale","Développer et factoriser","Expression d’un nombre pair ou impair","Opposé d’une expression"
+"Opérations sur les fractions","Puissance comme multiplication itérée","Multiplication de puissances d’un même nombre","Multiplication de puissances de même exposant","Écriture scientifique","Carrés parfaits de 0 à 12","Décomposition en facteurs premiers","Simplification de fractions","Dénominateur commun","Critères de divisibilité par 2, 3, 5 et 9","Équations simples","Simplification d’expressions littérales","Valeur d’une expression algébrique","Nature d’une expression littérale","Développer et factoriser","Expression d’un nombre pair ou impair","Opposé d’une expression"
 ],
 "Espace et géométrie":[
-"Placer un nombre relatif sur une droite graduée","Repérer un nombre relatif","Coordonnées dans un repère orthogonal","Reconnaître des solides","Volume d’une pyramide ou d’un cône","Nature d’une face de pyramide","Patrons de pyramides","Triangle rectangle et cercle circonscrit","Égalité de Pythagore","Droite des milieux","Symétrie axiale, demi-tour et translation"
+"Placer un nombre relatif sur une droite graduée","Repérer un nombre relatif","Coordonnées dans un repère orthogonal","Reconnaître des solides","Volume d’une pyramide ou d’un cône","Nature d’une face de pyramide","Patrons de pyramides","Triangle rectangle et cercle circonscrit","Égalité de Pythagore","Théorème de Thalès","Rapports trigonométriques","Droite des milieux","Symétrie axiale, demi-tour et translation"
 ],
 "Données et probabilités":[
-"Calculer une moyenne","Déterminer une médiane","Calculer l’étendue d’une série"
+"Calculer une moyenne","Déterminer une médiane","Calculer l’étendue d’une série","Calculer une probabilité"
 ],
 "Proportionnalité et fonctions":[
-"Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage"
+"Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage","Calculer l’image d’un nombre","Calculer une vitesse moyenne"
 ]}
 
 ,
@@ -138,7 +138,7 @@ const NOTIONS = {
 
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function fmt(n){return String(Math.round(n*1000)/1000).replace(".",",")}
-function q(text,answer,explanation,alts=[]){return {text,answer:String(answer),explanation,alts:alts.map(String)}}
+function q(text,answer,explanation,alts=[],meta={}){return {text,answer:String(answer),explanation,alts:alts.map(String),...meta}}
 function gcd(a,b){while(b){[a,b]=[b,a%b]}return Math.abs(a)}
 function simp(n,d){let g=gcd(n,d); return `${n/g}/${d/g}`}
 function divis(n){let a=[];if(n%2===0)a.push("2");if(n%5===0)a.push("5");if(n%10===0)a.push("10");return a.length?a.join(","):"aucun"}
@@ -324,7 +324,7 @@ const G4 = [
 {theme:"Nombres et calculs",notion:"Valeur d’expressions numériques",make:()=>{let a=rand(2,10),b=rand(2,10),c=rand(2,10);return q(`Calcule : ${a} + ${b} × ${c}`,a+b*c,`On effectue la multiplication avant l’addition.`)}},
 {theme:"Nombres et calculs",notion:"Équations simples",make:()=>{let type=rand(0,2),x=rand(-9,15),a=rand(2,9);if(type===0)return q(`Résous : x + ${a} = ${x+a}`,x,`On soustrait ${a} aux deux membres.`);if(type===1)return q(`Résous : ${a}x = ${a*x}`,x,`On divise les deux membres par ${a}.`);return q(`Résous : ${a} − x = ${a-x}`,x,`On cherche le nombre qui vérifie l’égalité.`)}},
 {theme:"Nombres et calculs",notion:"Écriture 3x",make:()=>{let a=rand(2,9);return q(`Écris sans signe × : ${a} × x`,`${a}x`,`Le signe de multiplication est sous-entendu entre un nombre et une lettre.`)}},
-{theme:"Nombres et calculs",notion:"Réduction d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8);return q(`Réduis : ${a}x + ${b}x`,`${a+b}x`,`On additionne les coefficients : ${a}+${b}=${a+b}.`)}},
+{theme:"Nombres et calculs",notion:"Réduction d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8);return q(`Réduis : ${a}x + ${b}x`,`${a+b}x`,`On additionne les coefficients : ${a}+${b}=${a+b}.`,[],{mathMode:"reduced"})}},
 {theme:"Nombres et calculs",notion:"Double, triple, moitié, prédécesseur, successeur et carré",make:()=>{let n=rand(2,30),types=[["double",2*n],["triple",3*n],["moitié",n/2],["prédécesseur",n-1],["successeur",n+1],["carré",n*n]],z=types[rand(0,5)];if(z[0]==="moitié"&&n%2)n++;return q(`Donne le ${z[0]} de ${n}.`,z[0]==="moitié"?n/2:z[1],`Le ${z[0]} de ${n} vaut ${z[0]==="moitié"?n/2:z[1]}.`)}},
 {theme:"Nombres et calculs",notion:"Tester une égalité",make:()=>{let a=rand(1,8),b=rand(1,8),x=rand(1,8),right=a*x+b+(Math.random()<.5?0:rand(1,4));return q(`Pour x = ${x}, l’égalité ${a}x + ${b} = ${right} est-elle vraie ?`,a*x+b===right?"oui":"non",`Le membre de gauche vaut ${a*x+b}.`)}},
 
@@ -352,18 +352,19 @@ const G3 = [
 {theme:"Nombres et calculs",notion:"Puissance comme multiplication itérée",make:()=>{let a=[2,3,4,5][rand(0,3)],e=rand(2,5);return q(`Écris ${a} × ${Array(e-1).fill(a).join(" × ")} sous forme d’une puissance.`,`${a}^${e}`,`Le facteur ${a} apparaît ${e} fois.`)}},
 {theme:"Nombres et calculs",notion:"Multiplication de puissances d’un même nombre",make:()=>{let a=[2,3,5][rand(0,2)],m=rand(1,5),n=rand(1,5);return q(`Simplifie : ${a}^${m} × ${a}^${n}`,`${a}^${m+n}`,`On additionne les exposants : ${m}+${n}=${m+n}.`)}},
 {theme:"Nombres et calculs",notion:"Multiplication de puissances de même exposant",make:()=>{let a=rand(2,6),b=rand(2,6),n=rand(2,4);return q(`Simplifie : ${a}^${n} × ${b}^${n}`,`${a*b}^${n}`,`a^n × b^n = (ab)^n.`)}},
+{theme:"Nombres et calculs",notion:"Écriture scientifique",make:()=>{let coefficient=rand(1,9),exponent=[-5,-4,-3,-2,2,3,4,5][rand(0,7)],value=exponent>0?`${coefficient}${"0".repeat(exponent)}`:`0,${"0".repeat(-exponent-1)}${coefficient}`,answer=`${coefficient}×10^${exponent}`;return q(`Écris ${value} en notation scientifique.`,answer,`Le nombre s’écrit ${coefficient} × 10^${exponent}.`,[`${coefficient}*10^${exponent}`,`${coefficient}·10^${exponent}`])}},
 {theme:"Nombres et calculs",notion:"Carrés parfaits de 0 à 12",make:()=>{let a=rand(0,12);return q(`Calcule ${a}².`,a*a,`${a}² = ${a} × ${a} = ${a*a}.`)}},
 {theme:"Nombres et calculs",notion:"Décomposition en facteurs premiers",make:()=>{let p=[2,3,5][rand(0,2)],qv=[2,3,5,7][rand(0,3)],r=[2,3,5][rand(0,2)],n=p*qv*r;return q(`Décompose ${n} en produit de facteurs premiers.`,primeFactorString(n),`${n} = ${primeFactorString(n)}.`)}},
 {theme:"Nombres et calculs",notion:"Simplification de fractions",make:()=>{let a=rand(2,12),b=rand(2,12),k=rand(2,6);return q(`Simplifie la fraction ${a*k}/${b*k}.`,simp(a*k,b*k),`On divise le numérateur et le dénominateur par leur plus grand diviseur commun.`)}},
 {theme:"Nombres et calculs",notion:"Dénominateur commun",make:()=>{let d1=[2,3,4,5,6][rand(0,4)],d2=[2,3,4,5,6][rand(0,4)];return q(`Donne un dénominateur commun possible à ${1}/${d1} et ${1}/${d2}.`,lcm(d1,d2),`Le plus petit dénominateur commun est ${lcm(d1,d2)}.`)}},
 {theme:"Nombres et calculs",notion:"Critères de divisibilité par 2, 3, 5 et 9",make:()=>{let n=rand(100,999);return q(`Parmi 2, 3, 5 et 9, indique tous les diviseurs de ${n}.`,divis2359(n),`On applique les critères de divisibilité.`)}},
 {theme:"Nombres et calculs",notion:"Équations simples",make:()=>{let type=rand(0,2),x=rand(-9,15),a=rand(2,9),b=rand(-8,8);if(type===0)return q(`Résous : ${a}x = ${a*x}`,x,`On divise les deux membres par ${a}.`);if(type===1)return q(`Résous : x + ${b} = ${x+b}`,x,`On soustrait ${b} aux deux membres.`);return q(`Résous : ${a}x + ${b} = ${a*x+b}`,x,`On isole d’abord ${a}x, puis on divise par ${a}.`)}},
-{theme:"Nombres et calculs",notion:"Simplification d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8),c=rand(1,8);return q(`Réduis : ${a}x + ${b}x − ${c}`,`${a+b}x-${c}`,`On regroupe les termes en x : ${a}+${b}=${a+b}.`,[`${a+b}x − ${c}`])}},
+{theme:"Nombres et calculs",notion:"Simplification d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8),c=rand(1,8);return q(`Réduis : ${a}x + ${b}x − ${c}`,`${a+b}x-${c}`,`On regroupe les termes en x : ${a}+${b}=${a+b}.`,[`${a+b}x − ${c}`],{mathMode:"reduced"})}},
 {theme:"Nombres et calculs",notion:"Valeur d’une expression algébrique",make:()=>{let a=rand(1,6),b=rand(-6,6),x=rand(-4,6);return q(`Calcule ${a}x + ${b} pour x = ${x}.`,a*x+b,`${a} × ${x} + ${b} = ${a*x+b}.`)}},
 {theme:"Nombres et calculs",notion:"Nature d’une expression littérale",make:()=>{let items=[["3x + 2","somme"],["5(x + 4)","produit"],["7x − 1","différence"]],z=items[rand(0,2)];return q(`Quelle est la nature de l’expression ${z[0]} ?`,z[1],`L’opération principale est une ${z[1]}.`)}},
-{theme:"Nombres et calculs",notion:"Développer et factoriser",make:()=>{if(Math.random()<.5){let a=rand(2,7),b=rand(1,9);return q(`Développe : ${a}(x + ${b})`,`${a}x+${a*b}`,`${a}(x+${b})=${a}x+${a*b}.`,[`${a}x + ${a*b}`])}let a=rand(2,7),b=rand(1,9);return q(`Factorise : ${a}x + ${a*b}`,`${a}(x+${b})`,`On met ${a} en facteur.`,[`${a}(x + ${b})`])}},
+{theme:"Nombres et calculs",notion:"Développer et factoriser",make:()=>{if(Math.random()<.5){let a=rand(2,7),b=rand(1,9);return q(`Développe : ${a}(x + ${b})`,`${a}x+${a*b}`,`${a}(x+${b})=${a}x+${a*b}.`,[`${a}x + ${a*b}`],{mathMode:"developed"})}let a=rand(2,7),b=rand(1,9);return q(`Factorise : ${a}x + ${a*b}`,`${a}(x+${b})`,`On met ${a} en facteur.`,[`${a}(x + ${b})`],{mathMode:"factorized"})}},
 {theme:"Nombres et calculs",notion:"Expression d’un nombre pair ou impair",make:()=>{let even=Math.random()<.5;return q(`Donne une expression littérale d’un nombre ${even?"pair":"impair"}.`,even?"2n":"2n+1",even?"Tout nombre pair s’écrit 2n.":"Tout nombre impair s’écrit 2n+1.",even?["2×n"]:["2n + 1"])}},
-{theme:"Nombres et calculs",notion:"Opposé d’une expression",make:()=>{let a=rand(1,9),b=rand(1,9);return q(`Donne l’opposé de ${a} − ${b}x.`,`${-a}+${b}x`,`On change le signe de chaque terme.`,[`${b}x-${a}`,`${b}x − ${a}`])}},
+{theme:"Nombres et calculs",notion:"Opposé d’une expression",make:()=>{let a=rand(1,9),b=rand(1,9);return q(`Donne l’opposé de ${a} − ${b}x.`,`${-a}+${b}x`,`On change le signe de chaque terme.`,[`${b}x-${a}`,`${b}x − ${a}`],{mathMode:"reduced"})}},
 
 {theme:"Espace et géométrie",notion:"Placer un nombre relatif sur une droite graduée",make:()=>{let n=rand(-20,20)/2;return q(`Un point est situé à ${Math.abs(n)} unité(s) ${n>=0?"à droite":"à gauche"} de 0. Quelle est son abscisse ?`,fmt(n),`À droite de 0 l’abscisse est positive ; à gauche elle est négative.`)}},
 {theme:"Espace et géométrie",notion:"Coordonnées dans un repère orthogonal",make:()=>{let x=rand(-6,6),y=rand(-6,6);return q(`Un point a pour abscisse ${x} et pour ordonnée ${y}. Écris ses coordonnées.`,`${x};${y}`,`On écrit d’abord l’abscisse, puis l’ordonnée.`,[`(${x};${y})`,`${x},${y}`])}},
@@ -372,19 +373,24 @@ const G3 = [
 {theme:"Espace et géométrie",notion:"Nature d’une face de pyramide",make:()=>q(`Quelle est la nature d’une face latérale d’une pyramide ?`,`triangle`,`Les faces latérales d’une pyramide sont des triangles.`)},
 {theme:"Espace et géométrie",notion:"Triangle rectangle et cercle circonscrit",make:()=>q(`Dans un triangle rectangle, où se situe le centre du cercle circonscrit ?`,`milieu de l’hypoténuse`,`Dans un triangle rectangle, le centre du cercle circonscrit est le milieu de l’hypoténuse.`)},
 {theme:"Espace et géométrie",notion:"Égalité de Pythagore",make:()=>{let a=rand(3,8),b=rand(a+1,12);return q(`Dans le triangle ABC rectangle en A, écris l’égalité de Pythagore.`,`BC²=AB²+AC²`,`L’hypoténuse est [BC].`,["BC^2=AB^2+AC^2"])}},
+{theme:"Espace et géométrie",notion:"Théorème de Thalès",make:()=>{let k=rand(2,5),am=rand(2,6),an=rand(2,7),ab=am*k,ac=an*k;return q(`Dans le triangle ABC, M appartient à [AB], N appartient à [AC] et (MN) est parallèle à (BC). On donne AM = ${am} cm, AB = ${ab} cm et AC = ${ac} cm. Calcule AN.`,an,`D’après Thalès, AM/AB = AN/AC = 1/${k}, donc AN = ${ac} ÷ ${k} = ${an} cm.`)}},
+{theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{let k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],answers={sinus:simp(4*k,5*k),cosinus:simp(3*k,5*k),tangente:simp(4*k,3*k)};return q(`ABC est rectangle en A avec AB = ${3*k} cm, AC = ${4*k} cm et BC = ${5*k} cm. Donne le ${ratio} de l’angle ABC.`,answers[ratio],`Par rapport à l’angle ABC : le côté opposé est AC, l’adjacent est AB et l’hypoténuse est BC.`)}},
 {theme:"Espace et géométrie",notion:"Droite des milieux",make:()=>q(`Dans un triangle, que peut-on dire du segment joignant les milieux de deux côtés ?`,`il est parallèle au troisième côté`,`La droite des milieux est parallèle au troisième côté et le segment mesure la moitié de ce côté.`)},
 {theme:"Espace et géométrie",notion:"Symétrie axiale, demi-tour et translation",make:()=>{let items=[["symétrie axiale","une droite"],["demi-tour","un point"],["translation","un vecteur"]],z=items[rand(0,2)];return q(`Quel élément définit une ${z[0]} ?`,z[1],`Une ${z[0]} est définie par ${z[1]}.`)}},
 
 {theme:"Données et probabilités",notion:"Calculer une moyenne",make:()=>{let a=rand(5,18),b=rand(5,18),c=rand(5,18),d=rand(5,18);return q(`Calcule la moyenne de ${a}, ${b}, ${c} et ${d}.`,fmt((a+b+c+d)/4),`On additionne les quatre valeurs puis on divise par 4.`)}},
 {theme:"Données et probabilités",notion:"Déterminer une médiane",make:()=>{let vals=[rand(1,6),rand(7,12),rand(13,18),rand(19,24),rand(25,30)];return q(`Donne la médiane de la série : ${vals.join(" ; ")}.`,vals[2],`La série comporte 5 valeurs ordonnées : la médiane est la 3e.`)}},
 {theme:"Données et probabilités",notion:"Calculer l’étendue d’une série",make:()=>{let min=rand(1,10),max=rand(15,35);return q(`Une série a pour minimum ${min} et pour maximum ${max}. Quelle est son étendue ?`,max-min,`Étendue = maximum − minimum = ${max-min}.`)}},
+{theme:"Données et probabilités",notion:"Calculer une probabilité",make:()=>{let favorable=rand(2,9),other=rand(2,9),total=favorable+other;return q(`Une urne contient ${favorable} boules rouges et ${other} boules bleues. Quelle est la probabilité de tirer une boule rouge ?`,simp(favorable,total),`Il y a ${favorable} issues favorables sur ${total} boules, soit ${simp(favorable,total)}.`)}},
 
 {theme:"Proportionnalité et fonctions",notion:"Partager une somme selon un ratio",make:()=>{let a=rand(1,5),b=rand(1,5),u=rand(5,20),total=(a+b)*u;return q(`Partage ${total} € selon le ratio ${a}:${b}. Donne les deux parts.`,`${a*u};${b*u}`,`Il y a ${a+b} parts égales, chacune vaut ${u} €.`,[`${a*u},${b*u}`])}},
 {theme:"Proportionnalité et fonctions",notion:"Partager une masse selon un ratio",make:()=>{let a=rand(1,4),b=rand(1,4),c=rand(1,4),u=rand(2,10),total=(a+b+c)*u;return q(`Partage ${total} kg selon le ratio ${a}:${b}:${c}.`,`${a*u};${b*u};${c*u}`,`Il y a ${a+b+c} parts égales de ${u} kg.`,[`${a*u},${b*u},${c*u}`])}},
 {theme:"Proportionnalité et fonctions",notion:"Partage proportionnel à des âges",make:()=>{let total=rand(3,10)*50;return q(`Deux personnes âgées de 20 ans et 30 ans se partagent ${total} € proportionnellement à leur âge. Donne leurs parts.`,`${total*2/5};${total*3/5}`,`Le ratio est 20:30 = 2:3.`,[`${total*2/5},${total*3/5}`])}},
 {theme:"Proportionnalité et fonctions",notion:"Calculer un pourcentage",make:()=>{let p=[10,20,25,30,40,50][rand(0,5)],n=20*rand(2,20);return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Échelle d’une carte",make:()=>{let scale=[10000,25000,50000][rand(0,2)],cm=rand(2,12),m=cm*scale,km=m/100000;return q(`Sur une carte à l’échelle 1:${scale}, deux villes sont distantes de ${cm} cm. Quelle est la distance réelle en km ?`,fmt(km),`${cm} × ${scale} cm = ${fmt(km)} km.`)}},
-{theme:"Proportionnalité et fonctions",notion:"Augmentation ou diminution en pourcentage",make:()=>{let n=rand(50,300),p=[10,20,25][rand(0,2)],up=Math.random()<.5,ans=up?n*(1+p/100):n*(1-p/100);return q(`Une valeur de ${n} ${up?"augmente":"diminue"} de ${p} %. Quelle est la nouvelle valeur ?`,fmt(ans),`On multiplie par ${up?1+p/100:1-p/100}.`)}}
+{theme:"Proportionnalité et fonctions",notion:"Augmentation ou diminution en pourcentage",make:()=>{let n=rand(50,300),p=[10,20,25][rand(0,2)],up=Math.random()<.5,ans=up?n*(1+p/100):n*(1-p/100);return q(`Une valeur de ${n} ${up?"augmente":"diminue"} de ${p} %. Quelle est la nouvelle valeur ?`,fmt(ans),`On multiplie par ${up?1+p/100:1-p/100}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Calculer l’image d’un nombre",make:()=>{let a=rand(2,7),b=rand(-8,8),x=rand(-5,6),sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`On définit f(x) = ${a}x ${sign}. Calcule f(${x}).`,a*x+b,`f(${x}) = ${a} × (${x}) ${sign} = ${a*x+b}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Calculer une vitesse moyenne",make:()=>{let speed=[30,40,50,60,70,80,90][rand(0,6)],duration=rand(2,4),distance=speed*duration;return q(`Un véhicule parcourt ${distance} km en ${duration} h à vitesse constante. Quelle est sa vitesse moyenne en km/h ?`,speed,`Vitesse = distance ÷ durée = ${distance} ÷ ${duration} = ${speed} km/h.`)}}
 ];
 
 function lcm(a,b){return Math.abs(a*b)/gcd(a,b)}
@@ -778,7 +784,7 @@ function updateMathPreview(){
   preview.classList.toggle("hidden",!value);
   document.getElementById("mathPreviewValue").innerHTML=value?mathPreviewMarkup(value):"";
 }
-function normalize(s){return String(s).trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/[𝑥𝑋]/gu,"x").replace(/[−–—‑‒﹣－]/g,"-").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
+function normalize(s){return String(s).trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/[𝑥𝑋]/gu,"x").replace(/[−–—‑‒﹣－]/g,"-").replace(/²/g,"^2").replace(/³/g,"^3").replace(/[×·⋅]/g,"*").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
 function canonicalPrimeProduct(value){
   const expression=normalize(value).replace(/²/g,"^2").replace(/³/g,"^3").replace(/[×·⋅]/g,"*");
   if(!/^\d+(?:\^\d+)?(?:\*\d+(?:\^\d+)?)*$/.test(expression))return null;
@@ -791,16 +797,74 @@ function canonicalPrimeProduct(value){
   }
   return factors.sort((a,b)=>a-b).join("*");
 }
+function canonicalFraction(value){
+  const match=normalize(value).match(/^(-?\d+)(?:\/(-?\d+))?$/);
+  if(!match)return null;
+  let numerator=Number(match[1]),denominator=Number(match[2]??1);
+  if(!Number.isSafeInteger(numerator)||!Number.isSafeInteger(denominator)||denominator===0)return null;
+  if(denominator<0){numerator=-numerator;denominator=-denominator}
+  const factor=gcd(numerator,denominator);
+  return `${numerator/factor}/${denominator/factor}`;
+}
+function mathJsExpression(value){
+  const expression=String(value).trim().toLowerCase()
+    .replace(/[𝑥𝑋]/gu,"x")
+    .replace(/[−–—‑‒﹣－]/g,"-")
+    .replace(/²/g,"^2")
+    .replace(/³/g,"^3")
+    .replace(/[×·⋅]/g,"*")
+    .replace(",",".")
+    .replace(/\s/g,"");
+  return expression&&/^[0-9x+\-*/^().]+$/.test(expression)?expression:null;
+}
+function respectsRequestedMathForm(expression,mode){
+  if(mode==="developed")return expression.includes("x")&&!/[()]/.test(expression);
+  if(mode==="factorized")return /^[+-]?\d+(?:\.\d+)?\*?\(.+\)$/.test(expression);
+  if(mode==="reduced"){
+    const compact=expression.replace(/\*/g,"");
+    return /^[+-]?(?:\d+(?:\.\d+)?)?x(?:[+-]\d+(?:\.\d+)?)?$/.test(compact)
+      ||/^[+-]?\d+(?:\.\d+)?[+-](?:\d+(?:\.\d+)?)?x$/.test(compact);
+  }
+  return false;
+}
+function isMathLibraryEquivalent(exercise,userAnswer,expectedAnswers){
+  if(!exercise.mathMode||typeof window.math?.symbolicEqual!=="function")return false;
+  const userExpression=mathJsExpression(userAnswer);
+  if(!userExpression||!respectsRequestedMathForm(userExpression,exercise.mathMode))return false;
+  const context=window.math.simplify?.realContext;
+  return expectedAnswers.some(expected=>{
+    const expectedExpression=mathJsExpression(expected);
+    if(!expectedExpression)return false;
+    try{
+      if(window.math.symbolicEqual(
+        userExpression,
+        expectedExpression,
+        context?{context}:undefined
+      ))return true;
+      if(typeof window.math.rationalize==="function"){
+        return window.math.rationalize(userExpression).toString()
+          ===window.math.rationalize(expectedExpression).toString();
+      }
+      return false;
+    }catch{
+      return false;
+    }
+  });
+}
 function validate(){
   if(answered)return;
-  const x=currentQuiz[index], user=normalize(document.getElementById("answerInput").value);
+  const x=currentQuiz[index],rawUser=document.getElementById("answerInput").value,user=normalize(rawUser);
   if(!user)return;
-  const acceptable=[x.answer,...x.alts].map(normalize);
+  const rawAcceptable=[x.answer,...x.alts],acceptable=rawAcceptable.map(normalize);
   const canonicalUserProduct=canonicalPrimeProduct(user);
+  const canonicalUserFraction=canonicalFraction(user);
   const isEquivalentPrimeProduct=x.notion==="Décomposition en facteurs premiers"
     &&canonicalUserProduct!==null
     &&acceptable.some(answer=>canonicalPrimeProduct(answer)===canonicalUserProduct);
-  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct;
+  const isEquivalentFraction=canonicalUserFraction!==null
+    &&acceptable.some(answer=>canonicalFraction(answer)===canonicalUserFraction);
+  const isEquivalentMathExpression=isMathLibraryEquivalent(x,rawUser,rawAcceptable);
+  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct||isEquivalentFraction||isEquivalentMathExpression;
   answered=true;
   const s=levelState();
   if(isCorrect){score++;state.points+=10}
