@@ -189,7 +189,7 @@ function triangleSvg(exercise){
     return geometrySvg("Triangle ABC rectangle en A",`<path class="geo-line" d="M75 160 L75 45 L255 160 Z"/><path class="geo-accent" d="M75 140 L95 140 L95 160"/><text class="geo-label" x="62" y="177">A</text><text class="geo-label" x="61" y="39">B</text><text class="geo-label" x="263" y="177">C</text>`);
   }
   if(notion==="Triangle rectangle et cercle circonscrit"){
-    return geometrySvg("Triangle rectangle inscrit dans un cercle",`<circle class="geo-accent" cx="160" cy="105" r="72"/><path class="geo-line" d="M88 105 L160 33 L232 105 Z"/><path class="geo-accent" d="M88 91 L102 91 L102 105"/><circle class="geo-point" cx="160" cy="105" r="4"/><text class="geo-accent-label" x="160" y="124">O</text>`);
+    return geometrySvg("Triangle rectangle inscrit dans un cercle",`<circle class="geo-accent" cx="160" cy="105" r="72"/><path class="geo-line" d="M88 105 L160 33 L232 105 Z"/><path class="geo-accent" d="M150 43 L160 53 L170 43"/><circle class="geo-point" cx="160" cy="105" r="4"/><text class="geo-accent-label" x="160" y="124">O</text>`);
   }
   if(notion==="Droite des milieux"){
     return geometrySvg("Segment des milieux dans un triangle",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/><line class="geo-accent" x1="106" y1="100" x2="214" y2="100"/><circle class="geo-point" cx="106" cy="100" r="4"/><circle class="geo-point" cx="214" cy="100" r="4"/><path class="geo-tick" d="M74 128 l8 7 M128 68 l8 7 M184 68 l8 7 M238 128 l8 7"/><path class="geo-parallel" d="M149 100 l8 -5 l8 5 M149 165 l8 -5 l8 5"/>`);
