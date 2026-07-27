@@ -143,6 +143,129 @@ function gcd(a,b){while(b){[a,b]=[b,a%b]}return Math.abs(a)}
 function simp(n,d){let g=gcd(n,d); return `${n/g}/${d/g}`}
 function divis(n){let a=[];if(n%2===0)a.push("2");if(n%5===0)a.push("5");if(n%10===0)a.push("10");return a.length?a.join(","):"aucun"}
 
+const GEOMETRY_THEMES=new Set(["Espace et géométrie","Géométrie plane et espace"]);
+function escapeXml(value){
+  return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[char]));
+}
+function geometrySvg(label,body,viewBox="0 0 320 200"){
+  return `<svg class="geometry-svg" viewBox="${viewBox}" role="img" aria-label="${escapeXml(label)}"><title>${escapeXml(label)}</title>${body}</svg>`;
+}
+function questionNumbers(text){
+  return (String(text).match(/-?\d+(?:[.,]\d+)?/g)||[]).map(value=>Number(value.replace(",",".")));
+}
+function numberLineSvg(exercise){
+  const value=Number(String(exercise.answer).replace(",","."));
+  const range=Math.max(5,Math.ceil(Math.abs(value))+1),left=28,right=292,y=100;
+  const position=left+(value+range)/(2*range)*(right-left),tickStep=Math.max(1,Math.ceil(range/5));
+  let ticks="";
+  for(let n=-range;n<=range;n+=tickStep){
+    const x=left+(n+range)/(2*range)*(right-left);
+    ticks+=`<line class="geo-line" x1="${x}" y1="${y-5}" x2="${x}" y2="${y+5}"/><text class="geo-label" x="${x}" y="${y+22}">${n}</text>`;
+  }
+  return geometrySvg("Droite graduée",`<defs><marker id="geo-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs><line class="geo-line" x1="${left}" y1="${y}" x2="${right}" y2="${y}" marker-end="url(#geo-arrow)"/>${ticks}<circle class="geo-point" cx="${position}" cy="${y}" r="6"/><text class="geo-accent-label" x="${position}" y="${y-14}">A</text>`);
+}
+function coordinateSvg(exercise){
+  const values=questionNumbers(exercise.text),coordinateMatch=exercise.text.match(/A\((-?\d+(?:[.,]\d+)?);(-?\d+(?:[.,]\d+)?)\)/);
+  const x=coordinateMatch?Number(coordinateMatch[1].replace(",",".")):(values[0]??0);
+  const y=coordinateMatch?Number(coordinateMatch[2].replace(",",".")):(values[1]??0);
+  const originX=160,originY=110,step=16,pointX=originX+x*step,pointY=originY-y*step;
+  let grid="",ticks="";
+  for(let n=-6;n<=6;n++){
+    const gx=originX+n*step,gy=originY-n*step;
+    grid+=`<line class="geo-grid" x1="${gx}" y1="14" x2="${gx}" y2="206"/><line class="geo-grid" x1="64" y1="${gy}" x2="256" y2="${gy}"/>`;
+    if(n!==0)ticks+=`<text class="geo-small-label" x="${gx}" y="${originY+14}">${n}</text><text class="geo-small-label geo-y-label" x="${originX-8}" y="${gy+3}">${n}</text>`;
+  }
+  return geometrySvg("Repère orthogonal avec le point A",`<defs><marker id="axis-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs>${grid}<line class="geo-axis" x1="58" y1="${originY}" x2="266" y2="${originY}" marker-end="url(#axis-arrow)"/><line class="geo-axis" x1="${originX}" y1="212" x2="${originX}" y2="8" marker-end="url(#axis-arrow)"/>${ticks}<text class="geo-label" x="${originX+10}" y="${originY+16}">O</text><circle class="geo-point" cx="${pointX}" cy="${pointY}" r="6"/><text class="geo-accent-label" x="${pointX-12}" y="${pointY-10}">A</text>`,"0 0 320 220");
+}
+function angleSvg(exercise){
+  const angle=Number(exercise.answer);
+  if(angle===180)return geometrySvg("Angle plat",`<line class="geo-line" x1="35" y1="120" x2="285" y2="120"/><circle class="geo-point" cx="160" cy="120" r="4"/><path class="geo-accent geo-dash" d="M85 118 A75 75 0 0 1 235 118"/><text class="geo-accent-label" x="160" y="55">180°</text>`);
+  if(angle===360)return geometrySvg("Angle plein",`<circle class="geo-accent" cx="160" cy="102" r="62"/><path class="geo-line" d="M160 102 L222 102"/><path class="geo-point" d="M218 94 L232 102 L218 110 Z"/><text class="geo-accent-label" x="160" y="185">360°</text>`);
+  return geometrySvg("Angle droit",`<path class="geo-line" d="M75 160 L75 55 M75 160 L245 160"/><path class="geo-accent" d="M75 138 L97 138 L97 160"/><text class="geo-accent-label" x="116" y="132">90°</text>`);
+}
+function triangleSvg(exercise){
+  const notion=exercise.notion,numbers=questionNumbers(exercise.text);
+  if(notion==="Égalité de Pythagore"){
+    return geometrySvg("Triangle ABC rectangle en A",`<path class="geo-line" d="M75 160 L75 45 L255 160 Z"/><path class="geo-accent" d="M75 140 L95 140 L95 160"/><text class="geo-label" x="62" y="177">A</text><text class="geo-label" x="61" y="39">B</text><text class="geo-label" x="263" y="177">C</text>`);
+  }
+  if(notion==="Triangle rectangle et cercle circonscrit"){
+    return geometrySvg("Triangle rectangle inscrit dans un cercle",`<circle class="geo-accent" cx="160" cy="105" r="72"/><path class="geo-line" d="M88 105 L160 33 L232 105 Z"/><path class="geo-accent" d="M88 91 L102 91 L102 105"/><circle class="geo-point" cx="160" cy="105" r="4"/><text class="geo-accent-label" x="160" y="124">O</text>`);
+  }
+  if(notion==="Droite des milieux"){
+    return geometrySvg("Segment des milieux dans un triangle",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/><line class="geo-accent" x1="106" y1="100" x2="214" y2="100"/><circle class="geo-point" cx="106" cy="100" r="4"/><circle class="geo-point" cx="214" cy="100" r="4"/><path class="geo-tick" d="M74 128 l8 7 M128 68 l8 7 M184 68 l8 7 M238 128 l8 7"/><path class="geo-parallel" d="M149 100 l8 -5 l8 5 M149 165 l8 -5 l8 5"/>`);
+  }
+  if(notion==="Droites remarquables dans un triangle"){
+    const answer=exercise.answer;
+    let special="";
+    if(answer==="médiane")special=`<line class="geo-accent" x1="160" y1="35" x2="160" y2="165"/><circle class="geo-point" cx="160" cy="165" r="4"/><path class="geo-tick" d="M101 157 l7 12 M212 157 l7 12"/>`;
+    else if(answer==="hauteur")special=`<line class="geo-accent geo-dash" x1="160" y1="35" x2="160" y2="165"/><path class="geo-accent" d="M160 148 L177 148 L177 165"/>`;
+    else special=`<line class="geo-accent geo-dash" x1="160" y1="72" x2="160" y2="190"/><circle class="geo-point" cx="160" cy="165" r="4"/><path class="geo-accent" d="M160 148 L177 148 L177 165"/>`;
+    return geometrySvg("Triangle et droite remarquable",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/>${special}`);
+  }
+  const first=numbers[0],second=numbers[1],kind=exercise.text;
+  if(kind.includes("équilatéral"))return geometrySvg("Triangle équilatéral",`<path class="geo-line" d="M60 165 L160 35 L260 165 Z"/><path class="geo-tick" d="M105 94 l10 8 M205 102 l10 -8 M155 165 l10 -10"/><text class="geo-accent-label" x="160" y="142">60°</text>`);
+  if(kind.includes("rectangle"))return geometrySvg("Triangle rectangle",`<path class="geo-line" d="M70 165 L70 45 L255 165 Z"/><path class="geo-accent" d="M70 145 L90 145 L90 165"/>`);
+  return geometrySvg("Triangle avec deux angles connus",`<path class="geo-line" d="M55 165 L150 40 L265 165 Z"/><path class="geo-accent" d="M78 165 A24 24 0 0 1 70 146"/><path class="geo-accent" d="M236 165 A28 28 0 0 0 246 144"/><text class="geo-accent-label" x="82" y="145">${first??"α"}°</text><text class="geo-accent-label" x="228" y="142">${second??"β"}°</text>`);
+}
+function mediatrixSvg(){
+  return geometrySvg("Médiatrice d’un segment",`<line class="geo-line" x1="55" y1="125" x2="265" y2="125"/><line class="geo-accent geo-dash" x1="160" y1="30" x2="160" y2="185"/><circle class="geo-point" cx="160" cy="125" r="4"/><path class="geo-accent" d="M160 107 L178 107 L178 125"/><path class="geo-tick" d="M103 117 l8 16 M209 117 l8 16"/><text class="geo-label" x="45" y="146">A</text><text class="geo-label" x="272" y="146">B</text><text class="geo-accent-label" x="172" y="145">M</text>`);
+}
+function areaSvg(exercise){
+  const values=questionNumbers(exercise.text);
+  if(exercise.text.includes("disque"))return geometrySvg("Disque et rayon",`<circle class="geo-line" cx="160" cy="100" r="62"/><circle class="geo-point" cx="160" cy="100" r="4"/><line class="geo-accent geo-dash" x1="160" y1="100" x2="222" y2="100"/><text class="geo-accent-label" x="191" y="88">r = ${values[0]} cm</text>`);
+  if(exercise.text.includes("rectangle"))return geometrySvg("Rectangle avec ses dimensions",`<rect class="geo-line" x="65" y="50" width="190" height="110"/><text class="geo-accent-label" x="160" y="184">${values[0]} cm</text><text class="geo-accent-label" x="42" y="108" transform="rotate(-90 42 108)">${values[1]} cm</text>`);
+  return geometrySvg("Triangle avec base et hauteur",`<path class="geo-line" d="M55 165 L185 35 L265 165 Z"/><line class="geo-accent geo-dash" x1="185" y1="35" x2="185" y2="165"/><path class="geo-accent" d="M185 148 L202 148 L202 165"/><text class="geo-accent-label" x="160" y="188">b = ${values[0]} cm</text><text class="geo-accent-label" x="198" y="102">h = ${values[1]} cm</text>`);
+}
+function solidSvg(exercise){
+  const source=`${exercise.text} ${exercise.answer}`.toLowerCase(),values=questionNumbers(exercise.text);
+  if(source.includes("cylindre"))return geometrySvg("Cylindre",`<ellipse class="geo-line" cx="160" cy="48" rx="58" ry="20"/><path class="geo-line" d="M102 48 V150 M218 48 V150"/><ellipse class="geo-line" cx="160" cy="150" rx="58" ry="20"/><line class="geo-accent geo-dash" x1="160" y1="48" x2="218" y2="48"/><text class="geo-accent-label" x="185" y="38">${exercise.text.includes("rayon")&&values[0]?`r = ${values[0]} cm`:""}</text>`);
+  if(source.includes("cône"))return geometrySvg("Cône",`<ellipse class="geo-line" cx="160" cy="155" rx="65" ry="21"/><path class="geo-line" d="M95 155 L160 35 L225 155"/><line class="geo-accent geo-dash" x1="160" y1="35" x2="160" y2="155"/>`);
+  if(source.includes("pyramide"))return geometrySvg("Pyramide",`<path class="geo-line" d="M62 150 L220 150 L258 120 L103 120 Z M160 35 L62 150 M160 35 L220 150 M160 35 L258 120 M160 35 L103 120"/><line class="geo-accent geo-dash" x1="160" y1="35" x2="160" y2="135"/><text class="geo-accent-label" x="170" y="89">${values[1]?`h = ${values[1]} cm`:""}</text>`);
+  if(source.includes("boule"))return geometrySvg("Boule",`<circle class="geo-line" cx="160" cy="105" r="70"/><ellipse class="geo-accent geo-dash" cx="160" cy="105" rx="70" ry="24"/><path class="geo-accent" d="M110 55 A70 70 0 0 0 110 155"/>`);
+  if(source.includes("prisme"))return geometrySvg("Prisme droit",`<path class="geo-line" d="M70 150 L70 70 L130 35 L130 115 Z M70 70 L190 70 L250 35 L130 35 M190 70 L190 150 L250 115 L250 35 M70 150 L190 150 M130 115 L250 115"/>`);
+  const label=source.includes("pavé")?"Pavé droit":"Cube";
+  return geometrySvg(label,`<path class="geo-line" d="M72 70 H205 V170 H72 Z M115 35 H248 V135 H205 M72 70 L115 35 M205 70 L248 35 M205 170 L248 135"/>${values.length&&exercise.text.includes("cm")?`<text class="geo-accent-label" x="160" y="192">${values.slice(0,3).join(" × ")} cm</text>`:""}`);
+}
+function quadrilateralSvg(exercise){
+  const source=`${exercise.text} ${exercise.answer}`.toLowerCase();
+  if(source.includes("carré"))return geometrySvg("Carré",`<rect class="geo-line" x="95" y="40" width="130" height="130"/><path class="geo-accent" d="M95 55 H110 V40 M210 40 V55 H225 M225 155 H210 V170 M110 170 V155 H95"/><path class="geo-tick" d="M155 35 l10 10 M155 165 l10 10 M90 100 l10 10 M220 100 l10 10"/>`);
+  if(source.includes("rectangle"))return geometrySvg("Rectangle",`<rect class="geo-line" x="55" y="60" width="210" height="105"/><path class="geo-accent" d="M55 76 H71 V60 M249 60 V76 H265 M265 149 H249 V165 M71 165 V149 H55"/>`);
+  if(source.includes("losange"))return geometrySvg("Losange",`<path class="geo-line" d="M160 30 L260 105 L160 180 L60 105 Z"/><path class="geo-tick" d="M105 63 l9 11 M206 72 l9 -11 M105 147 l9 -11 M206 138 l9 11"/>`);
+  if(source.includes("parallélogramme"))return geometrySvg("Parallélogramme",`<path class="geo-line" d="M95 45 H260 L225 165 H60 Z"/><path class="geo-parallel" d="M155 45 l8 -5 l8 5 M145 165 l8 -5 l8 5 M76 99 l-5 8 l7 8 M242 91 l-5 8 l7 8"/>`);
+  return geometrySvg("Triangle",`<path class="geo-line" d="M55 165 L160 35 L265 165 Z"/>`);
+}
+function axesSvg(exercise){
+  const source=exercise.text.toLowerCase(),base=source.includes("carré")?`<rect class="geo-line" x="95" y="40" width="130" height="130"/>`:source.includes("rectangle")?`<rect class="geo-line" x="60" y="65" width="200" height="100"/>`:source.includes("cercle")?`<circle class="geo-line" cx="160" cy="105" r="70"/>`:`<path class="geo-line" d="M60 170 L160 35 L260 170 Z"/>`;
+  const count=exercise.answer==="une infinité"?4:Number(exercise.answer);
+  const axes=[`<line class="geo-accent geo-dash" x1="160" y1="18" x2="160" y2="192"/>`,`<line class="geo-accent geo-dash" x1="45" y1="105" x2="275" y2="105"/>`,`<line class="geo-accent geo-dash" x1="75" y1="20" x2="245" y2="190"/>`,`<line class="geo-accent geo-dash" x1="245" y1="20" x2="75" y2="190"/>`].slice(0,count).join("");
+  return geometrySvg("Figure et axes de symétrie",base+axes);
+}
+function transformationSvg(exercise){
+  const answer=exercise.answer;
+  if(answer==="une droite")return geometrySvg("Symétrie axiale définie par une droite",`<path class="geo-line" d="M55 145 L90 75 L125 145 Z M195 145 L230 75 L265 145 Z"/><line class="geo-accent geo-dash" x1="160" y1="25" x2="160" y2="180"/><path class="geo-accent geo-dash" d="M125 105 H195"/>`);
+  if(answer==="un point")return geometrySvg("Demi-tour défini par un point",`<path class="geo-line" d="M55 75 L95 45 L125 95 Z M195 115 L225 165 L265 135 Z"/><circle class="geo-point" cx="160" cy="105" r="5"/><text class="geo-accent-label" x="173" y="110">O</text><path class="geo-accent geo-dash" d="M110 80 L210 130"/>`);
+  return geometrySvg("Translation définie par un vecteur",`<rect class="geo-line" x="50" y="90" width="70" height="55"/><rect class="geo-line" x="205" y="45" width="70" height="55"/><defs><marker id="vector-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs><line class="geo-accent" x1="115" y1="82" x2="205" y2="55" marker-end="url(#vector-arrow)"/><text class="geo-accent-label" x="158" y="55">u⃗</text>`);
+}
+function geometryQuestionSvg(exercise){
+  const notion=exercise.notion;
+  if(notion.includes("abscisse")||notion.includes("nombre relatif"))return numberLineSvg(exercise);
+  if(notion.includes("Coordonnées")||notion.includes("Symétrie centrale"))return coordinateSvg(exercise);
+  if(notion==="Angles usuels")return angleSvg(exercise);
+  if(notion.includes("Médiatrice"))return mediatrixSvg();
+  if(notion==="Aires des figures usuelles")return areaSvg(exercise);
+  if(notion.includes("solide")||notion.includes("Solides")||notion.includes("Volumes")||notion.includes("Volume d’une")||notion.includes("pyramide"))return solidSvg(exercise);
+  if(notion.includes("Parallélogramme")||notion.includes("parallélogramme")||notion.includes("carré"))return quadrilateralSvg(exercise);
+  if(notion==="Axes de symétrie")return axesSvg(exercise);
+  if(notion.includes("Symétrie axiale"))return transformationSvg(exercise);
+  if(notion.includes("triangle")||notion.includes("Triangle")||notion.includes("Pythagore")||notion.includes("Droite")||notion.includes("Triangles"))return triangleSvg(exercise);
+  return geometrySvg("Figure géométrique",`<circle class="geo-accent" cx="160" cy="105" r="58"/><path class="geo-line" d="M55 165 L160 35 L265 165 Z"/><line class="geo-accent geo-dash" x1="55" y1="105" x2="265" y2="105"/>`);
+}
+function renderQuestionVisual(exercise){
+  const host=document.getElementById("questionVisual");
+  if(!GEOMETRY_THEMES.has(exercise.theme)){host.innerHTML="";return}
+  host.innerHTML=geometryQuestionSvg(exercise);
+}
+
 const G5 = [
 {theme:"Nombres et calculs", notion:"Critères de divisibilité par 2, 5 et 10", make:()=>{let n=rand(12,999);return q(`Le nombre ${n} est-il divisible par 2, 5 ou 10 ? Donne toutes les réponses possibles.`, divis(n), `On observe le chiffre des unités : ${n%10}.`)}},
 {theme:"Nombres et calculs", notion:"Quotient et reste d’une division euclidienne", make:()=>{let b=rand(3,9),quo=rand(2,15),r=rand(0,b-1),a=b*quo+r;return q(`Dans la division euclidienne de ${a} par ${b}, donne le quotient et le reste.`,`${quo};${r}`,`${a} = ${b} × ${quo} + ${r}.`,["q="+quo+" r="+r,quo+","+r])}},
@@ -600,6 +723,7 @@ function renderQuestion(){
   document.getElementById("progressBar").style.width=`${index/currentQuiz.length*100}%`;
   document.getElementById("questionTheme").textContent=x.theme;
   document.getElementById("questionText").textContent=x.text;
+  renderQuestionVisual(x);
   document.getElementById("answerInput").value="";
   document.getElementById("feedback").className="feedback hidden";
   document.getElementById("validateAnswer").classList.remove("hidden");
