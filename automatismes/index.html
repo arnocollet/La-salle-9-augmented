@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=16" />
-  <link rel="stylesheet" href="styles.css?v=38" />
+  <link rel="stylesheet" href="styles.css?v=39" />
 </head>
 <body>
   <header class="navbar">
@@ -175,10 +175,12 @@
         <div class="quiz-head">
           <button class="back-link" id="quitQuiz">← Quitter</button>
           <div class="quiz-progress">
-            <div class="quiz-meta">
-              <span class="badge" id="questionTheme">Nombres et calculs</span>
-              <span class="badge quiz-level" id="questionLevel">niveau 5e</span>
-              <span class="badge quiz-counter" id="questionCounter">Question 1 sur 5</span>
+            <div class="quiz-meta" aria-live="polite">
+              <span id="questionTheme">Nombres et calculs</span>
+              <span class="quiz-separator" aria-hidden="true">-</span>
+              <span id="questionLevel">Niveau 5e</span>
+              <span class="quiz-separator" aria-hidden="true">-</span>
+              <span id="questionCounter">Question 1/5</span>
             </div>
             <div class="quiz-progress-track"><i id="progressBar"></i></div>
           </div>
@@ -318,6 +320,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=25"></script>
+  <script src="app.js?v=26"></script>
 </body>
 </html>
