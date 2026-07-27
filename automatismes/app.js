@@ -143,7 +143,6 @@ function gcd(a,b){while(b){[a,b]=[b,a%b]}return Math.abs(a)}
 function simp(n,d){let g=gcd(n,d); return `${n/g}/${d/g}`}
 function divis(n){let a=[];if(n%2===0)a.push("2");if(n%5===0)a.push("5");if(n%10===0)a.push("10");return a.length?a.join(","):"aucun"}
 
-const GEOMETRY_THEMES=new Set(["Espace et géométrie","Géométrie plane et espace"]);
 function escapeXml(value){
   return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[char]));
 }
@@ -262,8 +261,21 @@ function geometryQuestionSvg(exercise){
 }
 function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
-  if(!GEOMETRY_THEMES.has(exercise.theme)){host.innerHTML="";return}
-  host.innerHTML=geometryQuestionSvg(exercise);
+  const notion=exercise.notion;
+  if(notion==="Repérage sur une droite graduée"
+    ||notion==="Placer un point d’abscisse décimale"
+    ||notion==="Repérer un nombre décimal"
+    ||notion==="Placer un nombre relatif sur une droite graduée"
+    ||notion==="Repérer un nombre relatif"){
+    host.innerHTML=numberLineSvg(exercise);
+    return;
+  }
+  if(notion==="Coordonnées dans un repère orthogonal"
+    ||notion==="Symétrie centrale d’un point"){
+    host.innerHTML=coordinateSvg(exercise);
+    return;
+  }
+  host.innerHTML="";
 }
 
 const G5 = [
