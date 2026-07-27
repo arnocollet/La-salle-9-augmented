@@ -599,7 +599,6 @@ function renderQuestion(){
   document.getElementById("questionCounter").textContent=`Question ${index+1}/${currentQuiz.length}`;
   document.getElementById("progressBar").style.width=`${index/currentQuiz.length*100}%`;
   document.getElementById("questionTheme").textContent=x.theme;
-  document.getElementById("questionNotion").textContent=x.notion;
   document.getElementById("questionText").textContent=x.text;
   document.getElementById("answerInput").value="";
   document.getElementById("feedback").className="feedback hidden";
