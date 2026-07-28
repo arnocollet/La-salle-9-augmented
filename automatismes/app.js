@@ -729,6 +729,7 @@ document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCou
 document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
 document.getElementById("worksheetCount").addEventListener("change",preparePrintableSheets);
 document.getElementById("worksheetCount").addEventListener("blur",preparePrintableSheets);
+document.getElementById("dyslexicVersion").addEventListener("change",renderWorksheetPreview);
 document.getElementById("refreshWorksheet").onclick=preparePrintableSheets;
 document.getElementById("downloadWorksheets").onclick=downloadWorksheetsPdf;
 document.getElementById("clearLocalData").onclick=()=>{
@@ -826,7 +827,8 @@ function preparePrintableSheets(){
 function renderWorksheetPreview(){
   if(!printableSheets[0]) return;
   const preview=document.getElementById("worksheetPreview");
-  const renderedPage=renderWorksheetPage(printableSheets[0],1,false);
+  const dyslexic=document.getElementById("dyslexicVersion").checked;
+  const renderedPage=renderWorksheetPages(printableSheets[0],1,false,dyslexic)[0];
   const context=preview.getContext("2d");
   context.clearRect(0,0,preview.width,preview.height);
   context.drawImage(renderedPage,0,0);
@@ -862,28 +864,44 @@ function drawRoundedBox(context,x,y,width,height,radius,fill,stroke){
   if(fill){context.fillStyle=fill;context.fill()}
   if(stroke){context.strokeStyle=stroke;context.lineWidth=2;context.stroke()}
 }
-function renderWorksheetPage(sheet,sheetNumber,isCorrection){
+function renderWorksheetPages(sheet,sheetNumber,isCorrection,dyslexic=false){
+  const exercisesPerPage=dyslexic?5:sheet.length;
+  const pageCount=Math.ceil(sheet.length/exercisesPerPage);
+  return Array.from({length:pageCount},(_,pageIndex)=>{
+    const startIndex=pageIndex*exercisesPerPage;
+    return renderWorksheetPage(
+      sheet.slice(startIndex,startIndex+exercisesPerPage),
+      sheetNumber,
+      isCorrection,
+      {dyslexic,pageNumber:pageIndex+1,pageCount,startIndex}
+    );
+  });
+}
+function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
+  const {dyslexic=false,pageNumber=1,pageCount=1,startIndex=0}=options;
   const canvas=document.createElement("canvas");
   canvas.width=1240;canvas.height=1754;
   const context=canvas.getContext("2d");
   const worksheetColor=WORKSHEET_COLORS[currentLevel]||WORKSHEET_COLORS["5e"];
-  context.fillStyle="#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
-  context.fillStyle=worksheetColor;context.font="700 43px Arial";
-  context.fillText(isCorrection?"Corrigé":"Automatismes Entraînement",82,100);
+  const fontFamily=dyslexic?"Verdana":"Arial";
+  if("letterSpacing" in context)context.letterSpacing=dyslexic?"0.8px":"0px";
+  context.fillStyle=dyslexic?"#fffdf4":"#ffffff";context.fillRect(0,0,canvas.width,canvas.height);
+  context.fillStyle=worksheetColor;context.font=`700 ${dyslexic?38:43}px ${fontFamily}`;
+  context.fillText(isCorrection?"Corrigé":dyslexic?"Automatismes · Version dyslexique":"Automatismes Entraînement",82,100);
   context.fillStyle="#14213d";context.textAlign="right";
-  context.font="700 30px Arial";context.fillText(`FICHE N° ${sheetNumber}`,1158,78);
-  context.font="20px Arial";context.fillText(`Niveau ${currentLevel}`,1158,112);
+  context.font=`700 30px ${fontFamily}`;context.fillText(`FICHE N° ${sheetNumber}${pageCount>1?` · ${pageNumber}/${pageCount}`:""}`,1158,78);
+  context.font=`20px ${fontFamily}`;context.fillText(`Niveau ${currentLevel}`,1158,112);
   context.textAlign="left";
   context.strokeStyle=worksheetColor;context.lineWidth=3;
   context.beginPath();context.moveTo(82,150);context.lineTo(1158,150);context.stroke();
 
   context.fillStyle="#14213d";
   if(!isCorrection){
-    context.font="22px Arial";context.fillText("Nom : ______________________________________",82,218);
+    context.font=`22px ${fontFamily}`;context.fillText("Nom : ______________________________________",82,218);
     context.fillText("Date : ____________________",780,218);
   }
 
-  const dense=sheet.length>5;
+  const dense=!dyslexic&&sheet.length>5;
   const columns=dense?2:1;
   const columnGap=dense?20:0;
   const boxWidth=(1096-columnGap*(columns-1))/columns;
@@ -892,16 +910,20 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection){
     const row=dense?Math.floor(i/columns):i;
     const x=72+column*(boxWidth+columnGap);
     const y=260+row*278;
-    drawRoundedBox(context,x,y,boxWidth,246,18,isCorrection?"#f7f9fc":"#ffffff","#dce5f1");
+    const dyslexicBoxFill=i%2===0?"#ffffff":"#f3f7fb";
+    drawRoundedBox(context,x,y,boxWidth,246,18,isCorrection?"#f7f9fc":dyslexic?dyslexicBoxFill:"#ffffff","#dce5f1");
     drawRoundedBox(context,x+22,y+22,48,48,24,worksheetColor);
-    context.fillStyle="#ffffff";context.font="700 24px Arial";context.textAlign="center";
-    context.fillText(String(i+1),x+46,y+54);context.textAlign="left";
-    context.fillStyle=worksheetColor;context.font=dense?"700 16px Arial":"700 19px Arial";
-    drawLines(context,`${exercise.theme} · ${exercise.notion}`,x+92,y+49,boxWidth-114,dense?21:25,2);
-    context.fillStyle="#14213d";context.font=isCorrection?(dense?"19px Arial":"23px Arial"):(dense?"21px Arial":"26px Arial");
-    const questionBottom=drawLines(context,exercise.text,x+32,y+111,boxWidth-64,dense?28:(isCorrection?31:34),dense?4:3);
+    context.fillStyle="#ffffff";context.font=`700 24px ${fontFamily}`;context.textAlign="center";
+    context.fillText(String(startIndex+i+1),x+46,y+54);context.textAlign="left";
+    context.fillStyle=worksheetColor;context.font=dense?`700 16px ${fontFamily}`:`700 ${dyslexic?20:19}px ${fontFamily}`;
+    drawLines(context,`${exercise.theme} · ${exercise.notion}`,x+92,y+49,boxWidth-114,dense?21:dyslexic?29:25,2);
+    context.fillStyle="#14213d";
+    context.font=isCorrection
+      ?(dense?`19px ${fontFamily}`:`${dyslexic?25:23}px ${fontFamily}`)
+      :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
+    const questionBottom=drawLines(context,exercise.text,x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(isCorrection){
-      context.fillStyle="#167333";context.font=dense?"700 19px Arial":"700 25px Arial";
+      context.fillStyle="#167333";context.font=dense?`700 19px ${fontFamily}`:`700 ${dyslexic?26:25}px ${fontFamily}`;
       context.fillText(`Réponse : ${exercise.answer}`,x+32,Math.min(y+226,Math.max(y+180,questionBottom+8)));
     }else{
       context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);
@@ -960,26 +982,31 @@ function makeImagePdf(images){
 async function downloadWorksheetsPdf(){
   const button=document.getElementById("downloadWorksheets"),status=document.getElementById("pdfStatus");
   if(printableLevel!==currentLevel||printableSheets.length!==worksheetCount()) preparePrintableSheets();
+  const dyslexic=document.getElementById("dyslexicVersion").checked;
   button.disabled=true;status.textContent="Préparation du PDF…";
   await new Promise(resolve=>setTimeout(resolve,20));
   try{
     const images=[];
     for(let i=0;i<printableSheets.length;i++){
       status.textContent=`Création de la fiche ${i+1} sur ${printableSheets.length}…`;
-      images.push(await canvasToJpegBytes(renderWorksheetPage(printableSheets[i],i+1,false)));
+      for(const page of renderWorksheetPages(printableSheets[i],i+1,false,dyslexic)){
+        images.push(await canvasToJpegBytes(page));
+      }
     }
     if(document.getElementById("includeAnswers").checked){
       for(let i=0;i<printableSheets.length;i++){
         status.textContent=`Création du corrigé ${i+1} sur ${printableSheets.length}…`;
-        images.push(await canvasToJpegBytes(renderWorksheetPage(printableSheets[i],i+1,true)));
+        for(const page of renderWorksheetPages(printableSheets[i],i+1,true,dyslexic)){
+          images.push(await canvasToJpegBytes(page));
+        }
       }
     }
     const pdf=makeImagePdf(images),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
     const link=document.createElement("a");
-    link.href=url;link.download=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}.pdf`;
+    link.href=url;link.download=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}${dyslexic?"-dyslexique":""}.pdf`;
     document.body.appendChild(link);link.click();link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),30000);
-    status.textContent=`PDF prêt : ${printableSheets.length} fiche${printableSheets.length>1?"s":""}${document.getElementById("includeAnswers").checked?" avec corrigé":""}.`;
+    status.textContent=`PDF prêt : ${printableSheets.length} fiche${printableSheets.length>1?"s":""}${dyslexic?" en version dyslexique":""}${document.getElementById("includeAnswers").checked?" avec corrigé":""}.`;
   }catch(error){
     console.error(error);status.textContent="Le PDF n’a pas pu être créé. Réessaie avec moins de fiches.";
   }finally{button.disabled=false}
