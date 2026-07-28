@@ -104,7 +104,7 @@ const NOTIONS = {
 "Calculer une moyenne","Déterminer une médiane","Calculer l’étendue d’une série","Calculer une probabilité"
 ],
 "Proportionnalité et fonctions":[
-"Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage","Calculer l’image d’un nombre","Calculer une vitesse moyenne"
+"Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage","Calculer l’image d’un nombre","Déterminer un antécédent","Lire une image ou un antécédent dans un tableau","Lire graphiquement une image","Lire graphiquement un antécédent","Interpréter l’égalité f(a) = b","Déterminer le coefficient d’une fonction linéaire","Reconnaître une fonction linéaire ou affine","Calculer une vitesse moyenne"
 ]}
 
 ,
@@ -143,7 +143,35 @@ function parenthesizedIfNegative(n){return n<0?`(${displayNumber(n)})`:displayNu
 function q(text,answer,explanation,alts=[],meta={}){return {text,answer:String(answer),explanation,alts:alts.map(String),...meta}}
 function gcd(a,b){while(b){[a,b]=[b,a%b]}return Math.abs(a)}
 function simp(n,d){let g=gcd(n,d); return `${n/g}/${d/g}`}
+function piTerm(coefficient){return coefficient===1?"π":`${coefficient}π`}
 function divis(n){let a=[];if(n%2===0)a.push("2");if(n%5===0)a.push("5");if(n%10===0)a.push("10");return a.length?a.join(","):"aucun"}
+function makeGraphReadingQuestion(reading){
+  const quadratic=Math.random()<.5;
+  const targetX=quadratic?rand(1,2):rand(-2,2);
+  const graph=quadratic
+    ?{kind:"quadratic",a:Math.random()<.5?1:-1,b:rand(-1,1)}
+    :{kind:"affine",a:[-2,-1,1,2][rand(0,3)],b:rand(-1,1)};
+  const targetY=graph.kind==="quadratic"
+    ?graph.a*targetX*targetX+graph.b
+    :graph.a*targetX+graph.b;
+  if(reading==="image"){
+    return q(
+      `À l’aide de la courbe représentative de f, lis l’image de ${targetX}.`,
+      targetY,
+      `À l’abscisse ${targetX}, la courbe a pour ordonnée ${targetY}. Donc f(${targetX}) = ${targetY}.`,
+      [],
+      {graph}
+    );
+  }
+  const alternatives=graph.kind==="quadratic"?[-targetX]:[];
+  return q(
+    `À l’aide de la courbe représentative de f, donne un antécédent de ${targetY}.`,
+    targetX,
+    `La courbe passe par le point (${targetX} ; ${targetY}) : ${targetX} est donc un antécédent de ${targetY}.`,
+    alternatives,
+    {graph}
+  );
+}
 
 function escapeXml(value){
   return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[char]));
@@ -177,6 +205,30 @@ function coordinateSvg(exercise){
     if(n!==0)ticks+=`<text class="geo-small-label" x="${gx}" y="${originY+14}">${n}</text><text class="geo-small-label geo-y-label" x="${originX-8}" y="${gy+3}">${n}</text>`;
   }
   return geometrySvg("Repère orthogonal avec le point A",`<defs><marker id="axis-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs>${grid}<line class="geo-axis" x1="58" y1="${originY}" x2="266" y2="${originY}" marker-end="url(#axis-arrow)"/><line class="geo-axis" x1="${originX}" y1="212" x2="${originX}" y2="8" marker-end="url(#axis-arrow)"/>${ticks}<text class="geo-label" x="${originX+10}" y="${originY+16}">O</text><circle class="geo-point" cx="${pointX}" cy="${pointY}" r="6"/><text class="geo-accent-label" x="${pointX-12}" y="${pointY-10}">A</text>`,"0 0 320 220");
+}
+function functionGraphSvg(exercise){
+  const graph=exercise.graph,originX=180,originY=130,step=22,min=-5,max=5;
+  const toX=x=>originX+x*step,toY=y=>originY-y*step;
+  let grid="",labels="";
+  for(let n=min;n<=max;n++){
+    const gx=toX(n),gy=toY(n);
+    grid+=`<line class="geo-grid" x1="${gx}" y1="${toY(max)}" x2="${gx}" y2="${toY(min)}"/><line class="geo-grid" x1="${toX(min)}" y1="${gy}" x2="${toX(max)}" y2="${gy}"/>`;
+    if(n!==0)labels+=`<text class="geo-small-label graph-label" x="${gx}" y="${originY+13}">${n}</text><text class="geo-small-label geo-y-label graph-label" x="${originX-7}" y="${gy}">${n}</text>`;
+  }
+  const sections=[];let current=[];
+  for(let i=0;i<=200;i++){
+    const x=min+(max-min)*i/200;
+    const y=graph.kind==="quadratic"?graph.a*x*x+graph.b:graph.a*x+graph.b;
+    if(y>=min&&y<=max)current.push(`${toX(x).toFixed(1)},${toY(y).toFixed(1)}`);
+    else if(current.length){sections.push(current);current=[]}
+  }
+  if(current.length)sections.push(current);
+  const curves=sections.map(points=>`<polyline class="geo-accent function-curve" points="${points.join(" ")}"/>`).join("");
+  return geometrySvg(
+    "Courbe représentative d’une fonction dans un repère gradué",
+    `<defs><marker id="graph-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs>${grid}<line class="geo-axis" x1="${toX(min)-5}" y1="${originY}" x2="${toX(max)+12}" y2="${originY}" marker-end="url(#graph-arrow)"/><line class="geo-axis" x1="${originX}" y1="${toY(min)+5}" x2="${originX}" y2="${toY(max)-12}" marker-end="url(#graph-arrow)"/>${labels}<text class="geo-label" x="${originX+10}" y="${originY+14}">O</text><text class="geo-label" x="${toX(max)+16}" y="${originY+13}">x</text><text class="geo-label" x="${originX+12}" y="${toY(max)-14}">y</text>${curves}<text class="geo-accent-label graph-curve-label" x="286" y="40">C<tspan dy="3" font-size="9">f</tspan></text>`,
+    "0 0 360 260"
+  );
 }
 function angleSvg(exercise){
   const angle=Number(exercise.answer);
@@ -264,6 +316,10 @@ function geometryQuestionSvg(exercise){
 function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
   const notion=exercise.notion;
+  if(exercise.graph){
+    host.innerHTML=functionGraphSvg(exercise);
+    return;
+  }
   if(notion==="Repérage sur une droite graduée"
     ||notion==="Placer un point d’abscisse décimale"
     ||notion==="Repérer un nombre décimal"
@@ -334,14 +390,14 @@ const G4 = [
 {theme:"Espace et géométrie",notion:"Placer un nombre relatif sur une droite graduée",make:()=>{let n=rand(-20,20)/2;return q(`Un point est situé à ${Math.abs(n)} unité(s) ${n>=0?"à droite":"à gauche"} de 0. Quelle est son abscisse ?`,fmt(n),`À droite de 0 l’abscisse est positive ; à gauche elle est négative.`)}},
 {theme:"Espace et géométrie",notion:"Coordonnées dans un repère orthogonal",make:()=>{let x=rand(-6,6),y=rand(-6,6);return q(`Un point est à l’abscisse ${x} et à l’ordonnée ${y}. Écris ses coordonnées.`,`${x};${y}`,`On écrit d’abord l’abscisse, puis l’ordonnée.`,[`(${x};${y})`,`${x},${y}`])}},
 {theme:"Espace et géométrie",notion:"Reconnaître des solides",make:()=>{let items=[["deux bases circulaires parallèles","cylindre"],["deux bases polygonales identiques et parallèles","prisme droit"],["six faces carrées","cube"],["six faces rectangulaires","pavé droit"]],z=items[rand(0,3)];return q(`Quel solide possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
-{theme:"Espace et géométrie",notion:"Volumes du cube, du pavé, du prisme et du cylindre",make:()=>{let type=rand(0,2);if(type===0){let a=rand(2,8);return q(`Calcule le volume d’un cube d’arête ${a} cm.`,a**3,`V = ${a}³ = ${a**3} cm³.`)}if(type===1){let l=rand(2,9),w=rand(2,8),h=rand(2,7);return q(`Calcule le volume d’un pavé droit de dimensions ${l} cm, ${w} cm et ${h} cm.`,l*w*h,`V = ${l} × ${w} × ${h} = ${l*w*h} cm³.`)}let r=rand(1,5),h=rand(2,10);return q(`Donne l’expression exacte du volume d’un cylindre de rayon ${r} cm et de hauteur ${h} cm.`,`${r*r*h}π`,`V = π × ${r}² × ${h} = ${r*r*h}π cm³.`,[`${r*r*h}pi`])}},
-{theme:"Espace et géométrie",notion:"Aires des figures usuelles",make:()=>{let type=rand(0,2);if(type===0){let b=rand(3,12),h=rand(2,10);return q(`Calcule l’aire d’un triangle de base ${b} cm et de hauteur ${h} cm.`,b*h/2,`A = base × hauteur ÷ 2 = ${b*h/2} cm².`)}if(type===1){let l=rand(3,12),w=rand(2,10);return q(`Calcule l’aire d’un rectangle de longueur ${l} cm et de largeur ${w} cm.`,l*w,`A = ${l} × ${w} = ${l*w} cm².`)}let r=rand(1,6);return q(`Donne l’aire exacte d’un disque de rayon ${r} cm.`,`${r*r}π`,`A = π × ${r}² = ${r*r}π cm².`,[`${r*r}pi`])}},
+{theme:"Espace et géométrie",notion:"Volumes du cube, du pavé, du prisme et du cylindre",make:()=>{let type=rand(0,2);if(type===0){let a=rand(2,8);return q(`Calcule le volume d’un cube d’arête ${a} cm.`,a**3,`V = ${a}³ = ${a**3} cm³.`)}if(type===1){let l=rand(2,9),w=rand(2,8),h=rand(2,7);return q(`Calcule le volume d’un pavé droit de dimensions ${l} cm, ${w} cm et ${h} cm.`,l*w*h,`V = ${l} × ${w} × ${h} = ${l*w*h} cm³.`)}let r=rand(1,5),h=rand(2,10),coefficient=r*r*h,answer=piTerm(coefficient);return q(`Donne l’expression exacte du volume d’un cylindre de rayon ${r} cm et de hauteur ${h} cm.`,answer,`V = π × ${r}² × ${h} = ${answer} cm³.`,[answer.replace("π","pi")])}},
+{theme:"Espace et géométrie",notion:"Aires des figures usuelles",make:()=>{let type=rand(0,2);if(type===0){let b=rand(3,12),h=rand(2,10);return q(`Calcule l’aire d’un triangle de base ${b} cm et de hauteur ${h} cm.`,b*h/2,`A = base × hauteur ÷ 2 = ${b*h/2} cm².`)}if(type===1){let l=rand(3,12),w=rand(2,10);return q(`Calcule l’aire d’un rectangle de longueur ${l} cm et de largeur ${w} cm.`,l*w,`A = ${l} × ${w} = ${l*w} cm².`)}let r=rand(1,6),coefficient=r*r,answer=piTerm(coefficient);return q(`Donne l’aire exacte d’un disque de rayon ${r} cm.`,answer,`A = π × ${r}² = ${answer} cm².`,[answer.replace("π","pi")])}},
 {theme:"Espace et géométrie",notion:"Reconnaître un parallélogramme",make:()=>q(`Quel quadrilatère a ses côtés opposés parallèles deux à deux ?`,`parallélogramme`,`C’est la définition d’un parallélogramme.`)},
 {theme:"Espace et géométrie",notion:"Parallélogrammes particuliers",make:()=>{let items=[["quatre angles droits","rectangle"],["quatre côtés de même longueur","losange"],["quatre angles droits et quatre côtés égaux","carré"]],z=items[rand(0,2)];return q(`Quel parallélogramme possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
 {theme:"Espace et géométrie",notion:"Droites remarquables dans un triangle",make:()=>{let items=[["passe par un sommet et le milieu du côté opposé","médiane"],["est perpendiculaire à un côté et passe par le sommet opposé","hauteur"],["est perpendiculaire à un côté et passe par son milieu","médiatrice"]],z=items[rand(0,2)];return q(`Comment s’appelle la droite qui ${z[0]} ?`,z[1],`C’est une ${z[1]}.`)}},
 
 {theme:"Données et probabilités",notion:"Calculer une moyenne",make:()=>{let a=rand(5,18),b=rand(5,18),c=rand(5,18);return q(`Calcule la moyenne de ${a}, ${b} et ${c}.`,fmt((a+b+c)/3),`(${a}+${b}+${c}) ÷ 3 = ${fmt((a+b+c)/3)}.`)}},
-{theme:"Données et probabilités",notion:"Effectif manquant dans un tableau",make:()=>{let total=rand(20,50),a=rand(5,12),b=rand(5,12);while(a+b>=total)b=rand(3,8);return q(`Un groupe compte ${total} élèves. ${a} ont choisi A et ${b} ont choisi B. Combien ont choisi C ?`,total-a-b,`${total} − ${a} − ${b} = ${total-a-b}.`)}},
+{theme:"Données et probabilités",notion:"Effectif manquant dans un tableau",make:()=>{let total=rand(20,50),a=rand(5,12),b=rand(5,12);while(a+b>=total)b=rand(3,8);return q(`Un groupe compte ${total} élèves. ${a} ont choisi A et ${b} ont choisi B. Combien ont choisi C ?`,total-a-b,`${total} − (${a} + ${b}) = ${total-a-b}.`,[],{allowNumericExpression:true})}},
 {theme:"Données et probabilités",notion:"Calculer une fréquence simple",make:()=>{let total=[20,25,40,50][rand(0,3)],fav=rand(1,total-1);return q(`Dans un groupe de ${total} élèves, ${fav} ont choisi l’option A. Donne la fréquence sous forme de fraction.`,`${fav}/${total}`,`La fréquence est effectif de A ÷ effectif total.`)}},
 
 {theme:"Proportionnalité et fonctions",notion:"Calculer un pourcentage simple",make:()=>{let p=[1,10,20,25,50][rand(0,4)],n=p===1?100*rand(1,9):20*rand(2,15);return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}},
@@ -376,7 +432,21 @@ const G3 = [
 {theme:"Espace et géométrie",notion:"Triangle rectangle et cercle circonscrit",make:()=>q(`Dans un triangle rectangle, où se situe le centre du cercle circonscrit ?`,`milieu de l’hypoténuse`,`Dans un triangle rectangle, le centre du cercle circonscrit est le milieu de l’hypoténuse.`)},
 {theme:"Espace et géométrie",notion:"Égalité de Pythagore",make:()=>{let a=rand(3,8),b=rand(a+1,12);return q(`Dans le triangle ABC rectangle en A, écris l’égalité de Pythagore.`,`BC²=AB²+AC²`,`L’hypoténuse est [BC].`,["BC^2=AB^2+AC^2"])}},
 {theme:"Espace et géométrie",notion:"Théorème de Thalès",make:()=>{let k=rand(2,5),am=rand(2,6),an=rand(2,7),ab=am*k,ac=an*k;return q(`Dans le triangle ABC, M appartient à [AB], N appartient à [AC] et (MN) est parallèle à (BC). On donne AM = ${am} cm, AB = ${ab} cm et AC = ${ac} cm. Calcule AN.`,an,`D’après Thalès, AM/AB = AN/AC = 1/${k}, donc AN = ${ac} ÷ ${k} = ${an} cm.`)}},
-{theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{let k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],article=ratio==="tangente"?"la":"le",answers={sinus:simp(4*k,5*k),cosinus:simp(3*k,5*k),tangente:simp(4*k,3*k)};return q(`ABC est rectangle en A avec AB = ${3*k} cm, AC = ${4*k} cm et BC = ${5*k} cm. Donne ${article} ${ratio} de l’angle AB̂C.`,answers[ratio],`Par rapport à l’angle AB̂C : le côté opposé est AC, l’adjacent est AB et l’hypoténuse est BC.`)}},
+{theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{
+  const k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],article=ratio==="tangente"?"la":"le";
+  const definitions={
+    sinus:{numerator:4,denominator:5,sides:["AC/BC","CA/BC","AC/CB","CA/CB"]},
+    cosinus:{numerator:3,denominator:5,sides:["AB/BC","BA/BC","AB/CB","BA/CB"]},
+    tangente:{numerator:4,denominator:3,sides:["AC/AB","CA/AB","AC/BA","CA/BA"]}
+  };
+  const selected=definitions[ratio],answer=simp(selected.numerator*k,selected.denominator*k);
+  return q(
+    `ABC est rectangle en A avec AB = ${3*k} cm, AC = ${4*k} cm et BC = ${5*k} cm. Donne ${article} ${ratio} de l’angle AB̂C.`,
+    answer,
+    `Par rapport à l’angle AB̂C : le côté opposé est AC, l’adjacent est AB et l’hypoténuse est BC. Ainsi, ${article} ${ratio} vaut ${selected.sides[0]} = ${answer}.`,
+    [...selected.sides,`${selected.numerator*k}/${selected.denominator*k}`]
+  );
+}},
 {theme:"Espace et géométrie",notion:"Droite des milieux",make:()=>q(`Dans un triangle, que peut-on dire du segment joignant les milieux de deux côtés ?`,`il est parallèle au troisième côté`,`La droite des milieux est parallèle au troisième côté et le segment mesure la moitié de ce côté.`)},
 {theme:"Espace et géométrie",notion:"Symétrie axiale, demi-tour et translation",make:()=>{let items=[["symétrie axiale","une droite"],["demi-tour","un point"],["translation","un vecteur"]],z=items[rand(0,2)];return q(`Quel élément définit une ${z[0]} ?`,z[1],`Une ${z[0]} est définie par ${z[1]}.`)}},
 
@@ -391,7 +461,14 @@ const G3 = [
 {theme:"Proportionnalité et fonctions",notion:"Calculer un pourcentage",make:()=>{let p=[10,20,25,30,40,50][rand(0,5)],n=20*rand(2,20);return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Échelle d’une carte",make:()=>{let scale=[10000,25000,50000][rand(0,2)],cm=rand(2,12),m=cm*scale,km=m/100000;return q(`Sur une carte à l’échelle 1:${scale}, deux villes sont distantes de ${cm} cm. Quelle est la distance réelle en km ?`,fmt(km),`${cm} × ${scale} cm = ${fmt(km)} km.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Augmentation ou diminution en pourcentage",make:()=>{let n=rand(50,300),p=[10,20,25][rand(0,2)],up=Math.random()<.5,ans=up?n*(1+p/100):n*(1-p/100);return q(`Une valeur de ${n} ${up?"augmente":"diminue"} de ${p} %. Quelle est la nouvelle valeur ?`,fmt(ans),`On multiplie par ${up?1+p/100:1-p/100}.`)}},
-{theme:"Proportionnalité et fonctions",notion:"Calculer l’image d’un nombre",make:()=>{let a=rand(2,7),b=rand(-8,8),x=rand(-5,6),sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`On définit f(x) = ${a}x ${sign}. Calcule f(${x}).`,a*x+b,`f(${x}) = ${a} × (${x}) ${sign} = ${a*x+b}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Calculer l’image d’un nombre",isFunction:true,make:()=>{let a=rand(2,7),b=rand(-8,8),x=rand(-5,6),sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`On définit f(x) = ${a}x ${sign}. Calcule f(${x}).`,a*x+b,`f(${x}) = ${a} × (${x}) ${sign} = ${a*x+b}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Déterminer un antécédent",isFunction:true,make:()=>{let a=rand(2,7),b=rand(-8,8),x=rand(-5,6),image=a*x+b,sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`On définit f(x) = ${a}x ${sign}. Détermine un antécédent de ${image} par f.`,x,`On résout ${a}x ${sign} = ${image}. L’antécédent est ${x}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Lire une image ou un antécédent dans un tableau",isFunction:true,make:()=>{let x1=rand(-6,-1),x2=rand(0,3),x3=rand(4,8),a=rand(2,5),b=rand(-5,5),values=[a*x1+b,a*x2+b,a*x3+b],askImage=Math.random()<.5;if(askImage)return q(`Le tableau donne x : ${x1} ; ${x2} ; ${x3} et f(x) : ${values.join(" ; ")}. Quelle est l’image de ${x2} ?`,values[1],`Dans le tableau, à ${x2} correspond ${values[1]} : f(${x2}) = ${values[1]}.`);return q(`Le tableau donne x : ${x1} ; ${x2} ; ${x3} et f(x) : ${values.join(" ; ")}. Quel est l’antécédent de ${values[2]} ?`,x3,`Dans le tableau, ${values[2]} est l’image de ${x3}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Lire graphiquement une image",isFunction:true,interactiveOnly:true,make:()=>makeGraphReadingQuestion("image")},
+{theme:"Proportionnalité et fonctions",notion:"Lire graphiquement un antécédent",isFunction:true,interactiveOnly:true,make:()=>makeGraphReadingQuestion("antecedent")},
+{theme:"Proportionnalité et fonctions",notion:"Interpréter l’égalité f(a) = b",isFunction:true,make:()=>{let antecedent=rand(-6,8),image=rand(-15,20),askImage=Math.random()<.5;return askImage?q(`On sait que f(${antecedent}) = ${image}. Quelle est l’image de ${antecedent} ?`,image,`L’égalité f(${antecedent}) = ${image} signifie que l’image de ${antecedent} est ${image}.`):q(`On sait que f(${antecedent}) = ${image}. Donne un antécédent de ${image}.`,antecedent,`${antecedent} est un antécédent de ${image} par f.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Déterminer le coefficient d’une fonction linéaire",isFunction:true,make:()=>{let coefficient=rand(2,8),x=rand(2,7),image=coefficient*x;return q(`La fonction linéaire f vérifie f(${x}) = ${image}. Détermine son coefficient.`,coefficient,`Pour une fonction linéaire, f(x) = ax. Donc a = ${image} ÷ ${x} = ${coefficient}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Reconnaître une fonction linéaire ou affine",isFunction:true,make:()=>{let a=rand(2,8),b=rand(1,9),linear=Math.random()<.5;return linear?q(`La fonction définie par f(x) = ${a}x est-elle linéaire ou affine non linéaire ?`,`linéaire`,`Une fonction de la forme f(x) = ax est linéaire.`,["lineaire"]):q(`La fonction définie par f(x) = ${a}x + ${b} est-elle linéaire ou affine non linéaire ?`,`affine non linéaire`,`Elle est de la forme ax + b avec b ≠ 0 : elle est affine, mais pas linéaire.`,["affine","affine non lineaire"])}},
 {theme:"Proportionnalité et fonctions",notion:"Calculer une vitesse moyenne",make:()=>{let speed=[30,40,50,60,70,80,90][rand(0,6)],duration=rand(2,4),distance=speed*duration;return q(`Un véhicule parcourt ${distance} km en ${duration} h à vitesse constante. Quelle est sa vitesse moyenne en km/h ?`,speed,`Vitesse = distance ÷ durée = ${distance} ÷ ${duration} = ${speed} km/h.`)}}
 ];
 
@@ -546,14 +623,28 @@ function updateWorksheetExerciseCount(){
   document.getElementById("worksheetDescriptionCount").textContent=count;
   document.getElementById("worksheetExerciseCount").textContent=`${count} exercices par fiche`;
 }
-function makeRandomRoutine(){
-  const pool=[...GENERATORS[currentLevel]],routine=[];
-  for(let i=0;i<worksheetExerciseCount();i++){
-    if(!pool.length) pool.push(...GENERATORS[currentLevel]);
-    const pick=pool.splice(rand(0,pool.length-1),1)[0];
-    routine.push({...pick.make(),theme:pick.theme,notion:pick.notion});
+function buildRoutineFromGenerators(generators,count,minimumFunctionQuestions=0){
+  const pool=[...generators],selected=[];
+  const functionGenerators=pool.filter(generator=>generator.isFunction);
+  for(let i=0;i<Math.min(minimumFunctionQuestions,functionGenerators.length,count);i++){
+    const functionIndex=rand(0,functionGenerators.length-1);
+    const pick=functionGenerators.splice(functionIndex,1)[0];
+    pool.splice(pool.indexOf(pick),1);
+    selected.push(pick);
   }
-  return routine;
+  while(selected.length<count&&pool.length){
+    selected.push(pool.splice(rand(0,pool.length-1),1)[0]);
+  }
+  for(let i=selected.length-1;i>0;i--){
+    const swapIndex=rand(0,i);
+    [selected[i],selected[swapIndex]]=[selected[swapIndex],selected[i]];
+  }
+  return selected.map(pick=>({...pick.make(),theme:pick.theme,notion:pick.notion}));
+}
+function makeRandomRoutine(){
+  const count=worksheetExerciseCount();
+  const printableGenerators=GENERATORS[currentLevel].filter(generator=>!generator.interactiveOnly);
+  return buildRoutineFromGenerators(printableGenerators,count,currentLevel==="3e"?2:0);
 }
 function preparePrintableSheets(){
   updateWorksheetExerciseCount();
@@ -731,12 +822,8 @@ function startQuiz(mode,theme){
     pool.sort((a,b)=>(successRate(a.notion)-successRate(b.notion)));
     pool=pool.slice(0,Math.max(8,Math.floor(pool.length/2)));
   }
-  currentQuiz=[];
-  for(let i=0;i<5;i++){
-    if(!pool.length) pool=[...GENERATORS[currentLevel]];
-    const pick=pool.splice(rand(0,pool.length-1),1)[0];
-    currentQuiz.push({...pick.make(),theme:pick.theme,notion:pick.notion});
-  }
+  const minimumFunctionQuestions=currentLevel==="3e"&&mode==="random"?1:0;
+  currentQuiz=buildRoutineFromGenerators(pool,5,minimumFunctionQuestions);
   index=0;score=0;answered=false;
   document.getElementById("themeModal").classList.add("hidden");
   showView("training");renderQuestion();
@@ -787,7 +874,7 @@ function updateMathPreview(){
   preview.classList.toggle("hidden",!value);
   document.getElementById("mathPreviewValue").innerHTML=value?mathPreviewMarkup(value):"";
 }
-function normalize(s){return String(s).trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/[𝑥𝑋]/gu,"x").replace(/[−–—‑‒﹣－]/g,"-").replace(/²/g,"^2").replace(/³/g,"^3").replace(/[×·⋅]/g,"*").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
+function normalize(s){return String(s).trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/[𝑥𝑋]/gu,"x").replace(/[−–—‑‒﹣－]/g,"-").replace(/²/g,"^2").replace(/³/g,"^3").replace(/[×·⋅]/g,"*").replace(/\s/g,"").replace(",",".").replace("°","").replace(/\(/g,"").replace(/\)/g,"").replace("π","pi").replace(/^1\*?pi$/,"pi").replace(/^pi\*?1$/,"pi").replace("q=","").replace("r=",";").replace(/et/g,";")}
 function canonicalPrimeProduct(value){
   const expression=normalize(value).replace(/²/g,"^2").replace(/³/g,"^3").replace(/[×·⋅]/g,"*");
   if(!/^\d+(?:\^\d+)?(?:\*\d+(?:\^\d+)?)*$/.test(expression))return null;
@@ -854,6 +941,33 @@ function isMathLibraryEquivalent(exercise,userAnswer,expectedAnswers){
     }
   });
 }
+function numericMathJsExpression(value){
+  const expression=String(value).trim()
+    .replace(/[−–—‑‒﹣－]/g,"-")
+    .replace(/[×·⋅]/g,"*")
+    .replace(",",".")
+    .replace(/\s/g,"");
+  return expression.length<=80&&/^[0-9+\-*/().]+$/.test(expression)?expression:null;
+}
+function isEquivalentNumericExpression(exercise,userAnswer,expectedAnswers){
+  if(!exercise.allowNumericExpression||typeof window.math?.evaluate!=="function")return false;
+  const userExpression=numericMathJsExpression(userAnswer);
+  if(!userExpression)return false;
+  try{
+    const userValue=window.math.evaluate(userExpression);
+    if(typeof userValue!=="number"||!Number.isFinite(userValue))return false;
+    return expectedAnswers.some(expected=>{
+      const expectedExpression=numericMathJsExpression(expected);
+      if(!expectedExpression)return false;
+      const expectedValue=window.math.evaluate(expectedExpression);
+      return typeof expectedValue==="number"
+        &&Number.isFinite(expectedValue)
+        &&Math.abs(userValue-expectedValue)<1e-12;
+    });
+  }catch{
+    return false;
+  }
+}
 function expressionParity(value){
   let expression=String(value).trim().toLowerCase()
     .replace(/[𝑎-𝑧]/gu,char=>String.fromCharCode(char.codePointAt(0)-0x1d44e+97))
@@ -890,8 +1004,9 @@ function validate(){
   const isEquivalentFraction=canonicalUserFraction!==null
     &&acceptable.some(answer=>canonicalFraction(answer)===canonicalUserFraction);
   const isEquivalentMathExpression=isMathLibraryEquivalent(x,rawUser,rawAcceptable);
+  const isEquivalentNumericCalculation=isEquivalentNumericExpression(x,rawUser,rawAcceptable);
   const hasExpectedParity=Boolean(x.parity)&&expressionParity(rawUser)===x.parity;
-  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct||isEquivalentFraction||isEquivalentMathExpression||hasExpectedParity;
+  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct||isEquivalentFraction||isEquivalentMathExpression||isEquivalentNumericCalculation||hasExpectedParity;
   answered=true;
   const s=levelState();
   if(isCorrect){score++;state.points+=10}

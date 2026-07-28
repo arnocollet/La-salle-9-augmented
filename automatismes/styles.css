@@ -47,6 +47,9 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
 .geo-axis{stroke:currentColor;stroke-width:1.8}
 .geo-accent{stroke:var(--accent);stroke-width:2}
 .geo-grid{stroke:var(--card-border);stroke-width:1}
+.function-curve{stroke-width:3;fill:none}
+.graph-label{font-size:9px}
+.graph-curve-label{font-size:14px;font-style:italic;font-weight:700}
 .geo-dash{stroke-dasharray:5 5}
 .geo-tick,.geo-parallel{stroke:var(--accent);stroke-width:1.8}
 .geo-fill,.geo-point{fill:var(--accent)}
