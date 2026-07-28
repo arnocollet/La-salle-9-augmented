@@ -138,6 +138,8 @@ const NOTIONS = {
 
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function fmt(n){return String(Math.round(n*1000)/1000).replace(".",",")}
+function displayNumber(n){return fmt(n).replace("-","−")}
+function parenthesizedIfNegative(n){return n<0?`(${displayNumber(n)})`:displayNumber(n)}
 function q(text,answer,explanation,alts=[],meta={}){return {text,answer:String(answer),explanation,alts:alts.map(String),...meta}}
 function gcd(a,b){while(b){[a,b]=[b,a%b]}return Math.abs(a)}
 function simp(n,d){let g=gcd(n,d); return `${n/g}/${d/g}`}
@@ -358,12 +360,12 @@ const G3 = [
 {theme:"Nombres et calculs",notion:"Simplification de fractions",make:()=>{let a=rand(2,12),b=rand(2,12),k=rand(2,6);return q(`Simplifie la fraction ${a*k}/${b*k}.`,simp(a*k,b*k),`On divise le numérateur et le dénominateur par leur plus grand diviseur commun.`)}},
 {theme:"Nombres et calculs",notion:"Dénominateur commun",make:()=>{let d1=[2,3,4,5,6][rand(0,4)],d2=[2,3,4,5,6][rand(0,4)];return q(`Donne un dénominateur commun possible à ${1}/${d1} et ${1}/${d2}.`,lcm(d1,d2),`Le plus petit dénominateur commun est ${lcm(d1,d2)}.`)}},
 {theme:"Nombres et calculs",notion:"Critères de divisibilité par 2, 3, 5 et 9",make:()=>{let n=rand(100,999);return q(`Parmi 2, 3, 5 et 9, indique tous les diviseurs de ${n}.`,divis2359(n),`On applique les critères de divisibilité.`)}},
-{theme:"Nombres et calculs",notion:"Équations simples",make:()=>{let type=rand(0,2),x=rand(-9,15),a=rand(2,9),b=rand(-8,8);if(type===0)return q(`Résous : ${a}x = ${a*x}`,x,`On divise les deux membres par ${a}.`);if(type===1)return q(`Résous : x + ${b} = ${x+b}`,x,`On soustrait ${b} aux deux membres.`);return q(`Résous : ${a}x + ${b} = ${a*x+b}`,x,`On isole d’abord ${a}x, puis on divise par ${a}.`)}},
+{theme:"Nombres et calculs",notion:"Équations simples",make:()=>{let type=rand(0,2),x=rand(-9,15),a=rand(2,9),b=rand(-8,8);if(type===0)return q(`Résous : ${a}x = ${displayNumber(a*x)}`,x,`On divise les deux membres par ${a}.`);if(type===1)return q(`Résous : x + ${parenthesizedIfNegative(b)} = ${displayNumber(x+b)}`,x,`On soustrait ${parenthesizedIfNegative(b)} aux deux membres.`);return q(`Résous : ${a}x + ${parenthesizedIfNegative(b)} = ${displayNumber(a*x+b)}`,x,`On isole d’abord ${a}x, puis on divise par ${a}.`)}},
 {theme:"Nombres et calculs",notion:"Simplification d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8),c=rand(1,8);return q(`Réduis : ${a}x + ${b}x − ${c}`,`${a+b}x-${c}`,`On regroupe les termes en x : ${a}+${b}=${a+b}.`,[`${a+b}x − ${c}`],{mathMode:"reduced"})}},
-{theme:"Nombres et calculs",notion:"Valeur d’une expression algébrique",make:()=>{let a=rand(1,6),b=rand(-6,6),x=rand(-4,6);return q(`Calcule ${a}x + ${b} pour x = ${x}.`,a*x+b,`${a} × ${x} + ${b} = ${a*x+b}.`)}},
+{theme:"Nombres et calculs",notion:"Valeur d’une expression algébrique",make:()=>{let a=rand(1,6),b=rand(-6,6),x=rand(-4,6);return q(`Calcule ${a}x + ${parenthesizedIfNegative(b)} pour x = ${displayNumber(x)}.`,a*x+b,`${a} × ${parenthesizedIfNegative(x)} + ${parenthesizedIfNegative(b)} = ${displayNumber(a*x+b)}.`)}},
 {theme:"Nombres et calculs",notion:"Nature d’une expression littérale",make:()=>{let items=[["3x + 2","somme"],["5(x + 4)","produit"],["7x − 1","différence"]],z=items[rand(0,2)];return q(`Quelle est la nature de l’expression ${z[0]} ?`,z[1],`L’opération principale est une ${z[1]}.`)}},
 {theme:"Nombres et calculs",notion:"Développer et factoriser",make:()=>{if(Math.random()<.5){let a=rand(2,7),b=rand(1,9);return q(`Développe : ${a}(x + ${b})`,`${a}x+${a*b}`,`${a}(x+${b})=${a}x+${a*b}.`,[`${a}x + ${a*b}`],{mathMode:"developed"})}let a=rand(2,7),b=rand(1,9);return q(`Factorise : ${a}x + ${a*b}`,`${a}(x+${b})`,`On met ${a} en facteur.`,[`${a}(x + ${b})`],{mathMode:"factorized"})}},
-{theme:"Nombres et calculs",notion:"Expression d’un nombre pair ou impair",make:()=>{let even=Math.random()<.5;return q(`Donne une expression littérale d’un nombre ${even?"pair":"impair"}.`,even?"2n":"2n+1",even?"Tout nombre pair s’écrit 2n.":"Tout nombre impair s’écrit 2n+1.",even?["2×n"]:["2n + 1"])}},
+{theme:"Nombres et calculs",notion:"Expression d’un nombre pair ou impair",make:()=>{let even=Math.random()<.5;return q(`Donne une expression littérale d’un nombre ${even?"pair":"impair"}.`,even?"2n":"2n+1",even?"Tout nombre pair s’écrit 2n.":"Tout nombre impair s’écrit 2n+1.",even?["2×n"]:["2n + 1"],{parity:even?"even":"odd"})}},
 {theme:"Nombres et calculs",notion:"Opposé d’une expression",make:()=>{let a=rand(1,9),b=rand(1,9);return q(`Donne l’opposé de ${a} − ${b}x.`,`${-a}+${b}x`,`On change le signe de chaque terme.`,[`${b}x-${a}`,`${b}x − ${a}`],{mathMode:"reduced"})}},
 
 {theme:"Espace et géométrie",notion:"Placer un nombre relatif sur une droite graduée",make:()=>{let n=rand(-20,20)/2;return q(`Un point est situé à ${Math.abs(n)} unité(s) ${n>=0?"à droite":"à gauche"} de 0. Quelle est son abscisse ?`,fmt(n),`À droite de 0 l’abscisse est positive ; à gauche elle est négative.`)}},
@@ -374,7 +376,7 @@ const G3 = [
 {theme:"Espace et géométrie",notion:"Triangle rectangle et cercle circonscrit",make:()=>q(`Dans un triangle rectangle, où se situe le centre du cercle circonscrit ?`,`milieu de l’hypoténuse`,`Dans un triangle rectangle, le centre du cercle circonscrit est le milieu de l’hypoténuse.`)},
 {theme:"Espace et géométrie",notion:"Égalité de Pythagore",make:()=>{let a=rand(3,8),b=rand(a+1,12);return q(`Dans le triangle ABC rectangle en A, écris l’égalité de Pythagore.`,`BC²=AB²+AC²`,`L’hypoténuse est [BC].`,["BC^2=AB^2+AC^2"])}},
 {theme:"Espace et géométrie",notion:"Théorème de Thalès",make:()=>{let k=rand(2,5),am=rand(2,6),an=rand(2,7),ab=am*k,ac=an*k;return q(`Dans le triangle ABC, M appartient à [AB], N appartient à [AC] et (MN) est parallèle à (BC). On donne AM = ${am} cm, AB = ${ab} cm et AC = ${ac} cm. Calcule AN.`,an,`D’après Thalès, AM/AB = AN/AC = 1/${k}, donc AN = ${ac} ÷ ${k} = ${an} cm.`)}},
-{theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{let k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],answers={sinus:simp(4*k,5*k),cosinus:simp(3*k,5*k),tangente:simp(4*k,3*k)};return q(`ABC est rectangle en A avec AB = ${3*k} cm, AC = ${4*k} cm et BC = ${5*k} cm. Donne le ${ratio} de l’angle ABC.`,answers[ratio],`Par rapport à l’angle ABC : le côté opposé est AC, l’adjacent est AB et l’hypoténuse est BC.`)}},
+{theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{let k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],article=ratio==="tangente"?"la":"le",answers={sinus:simp(4*k,5*k),cosinus:simp(3*k,5*k),tangente:simp(4*k,3*k)};return q(`ABC est rectangle en A avec AB = ${3*k} cm, AC = ${4*k} cm et BC = ${5*k} cm. Donne ${article} ${ratio} de l’angle AB̂C.`,answers[ratio],`Par rapport à l’angle AB̂C : le côté opposé est AC, l’adjacent est AB et l’hypoténuse est BC.`)}},
 {theme:"Espace et géométrie",notion:"Droite des milieux",make:()=>q(`Dans un triangle, que peut-on dire du segment joignant les milieux de deux côtés ?`,`il est parallèle au troisième côté`,`La droite des milieux est parallèle au troisième côté et le segment mesure la moitié de ce côté.`)},
 {theme:"Espace et géométrie",notion:"Symétrie axiale, demi-tour et translation",make:()=>{let items=[["symétrie axiale","une droite"],["demi-tour","un point"],["translation","un vecteur"]],z=items[rand(0,2)];return q(`Quel élément définit une ${z[0]} ?`,z[1],`Une ${z[0]} est définie par ${z[1]}.`)}},
 
@@ -745,7 +747,7 @@ function renderQuestion(){
   document.getElementById("questionCounter").textContent=`Question ${index+1}/${currentQuiz.length}`;
   document.getElementById("progressBar").style.width=`${index/currentQuiz.length*100}%`;
   document.getElementById("questionTheme").textContent=x.theme;
-  document.getElementById("questionText").innerHTML=wrapMathVariables(escapeXml(x.text));
+  document.getElementById("questionText").innerHTML=mathPreviewMarkup(x.text);
   renderQuestionVisual(x);
   document.getElementById("answerInput").value="";
   updateMathPreview();
@@ -758,9 +760,10 @@ function renderQuestion(){
 }
 function mathPreviewMarkup(value){
   let markup=escapeXml(value.trim());
+  markup=markup.replace(/([A-Z])([A-Z])̂([A-Z])/g,'<span class="angle-notation" aria-label="$1$2$3">$1$2$3</span>');
   markup=markup.replace(/(-?[A-Za-zÀ-ÿ0-9π²³𝑥𝑋]+(?:\^[A-Za-z0-9+-]+)?)\/(-?[A-Za-zÀ-ÿ0-9π²³𝑥𝑋]+(?:\^[A-Za-z0-9+-]+)?)/g,'<span class="preview-fraction"><span>$1</span><span>$2</span></span>');
-  markup=markup.replace(/\^([A-Za-z0-9+-]+)/g,"<sup>$1</sup>");
-  markup=markup.replace(/²/g,"<sup>2</sup>").replace(/³/g,"<sup>3</sup>");
+  markup=markup.replace(/\^([+-]?(?:\d+|[A-Za-z]))/g,'<sup class="math-exponent">$1</sup>');
+  markup=markup.replace(/²/g,'<sup class="math-exponent">2</sup>').replace(/³/g,'<sup class="math-exponent">3</sup>');
   return wrapMathVariables(markup);
 }
 function wrapMathVariables(markup){
@@ -851,6 +854,29 @@ function isMathLibraryEquivalent(exercise,userAnswer,expectedAnswers){
     }
   });
 }
+function expressionParity(value){
+  let expression=String(value).trim().toLowerCase()
+    .replace(/[𝑎-𝑧]/gu,char=>String.fromCharCode(char.codePointAt(0)-0x1d44e+97))
+    .replace(/[−–—‑‒﹣－]/g,"-")
+    .replace(/[×·⋅]/g,"*")
+    .replace(/\s/g,"");
+  if(!expression||!/^[0-9a-z+\-*/^().]+$/.test(expression))return null;
+  const variables=[...new Set(expression.match(/[a-z]/g)||[])];
+  if(variables.length!==1)return null;
+  const variable=variables[0];
+  if(typeof window.math?.rationalize==="function"){
+    try{expression=window.math.rationalize(expression).toString().replace(/\s|\*/g,"")}
+    catch{return null}
+  }else{
+    expression=expression.replace(/\*/g,"");
+  }
+  const match=expression.match(new RegExp(`^([+-]?\\d*)${variable}([+-]\\d+)?$`));
+  if(!match)return null;
+  const coefficient=match[1]===""||match[1]==="+"?1:match[1]==="-"?-1:Number(match[1]);
+  const constant=Number(match[2]||0);
+  if(!Number.isSafeInteger(coefficient)||!Number.isSafeInteger(constant)||Math.abs(coefficient)%2!==0)return null;
+  return Math.abs(constant)%2===0?"even":"odd";
+}
 function validate(){
   if(answered)return;
   const x=currentQuiz[index],rawUser=document.getElementById("answerInput").value,user=normalize(rawUser);
@@ -864,7 +890,8 @@ function validate(){
   const isEquivalentFraction=canonicalUserFraction!==null
     &&acceptable.some(answer=>canonicalFraction(answer)===canonicalUserFraction);
   const isEquivalentMathExpression=isMathLibraryEquivalent(x,rawUser,rawAcceptable);
-  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct||isEquivalentFraction||isEquivalentMathExpression;
+  const hasExpectedParity=Boolean(x.parity)&&expressionParity(rawUser)===x.parity;
+  const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct||isEquivalentFraction||isEquivalentMathExpression||hasExpectedParity;
   answered=true;
   const s=levelState();
   if(isCorrect){score++;state.points+=10}
@@ -874,7 +901,10 @@ function validate(){
   save();
   const fb=document.getElementById("feedback");
   fb.className=`feedback ${isCorrect?"good":"bad"}`;
-  fb.innerHTML=isCorrect?`✅ Bonne réponse. ${x.explanation}`:`❌ Réponse attendue : <strong>${x.answer}</strong><br>${x.explanation}`;
+  const explanationMarkup=mathPreviewMarkup(x.explanation);
+  fb.innerHTML=isCorrect
+    ?`✅ Bonne réponse. ${explanationMarkup}`
+    :`❌ Réponse attendue : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${explanationMarkup}`;
   document.getElementById("validateAnswer").classList.add("hidden");
   document.getElementById("nextQuestion").classList.remove("hidden");
 }
