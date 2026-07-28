@@ -1045,7 +1045,7 @@ body[data-grade="3e"] .page-header {
 .footer {
   background-color: var(--footer-bg);
   color: var(--footer-text);
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   border-top: 1px solid var(--card-border);
 }
 
@@ -1053,7 +1053,7 @@ body[data-grade="3e"] .page-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0;
   text-align: center;
 }
 
@@ -1079,15 +1079,16 @@ body[data-grade="3e"] .page-header {
 }
 
 .copyright {
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 0.5rem;
-  width: 100%;
+  font-size: clamp(0.65rem, 2.7vw, 0.85rem);
+  margin-top: 0;
+  border-top: 0;
+  padding-top: 0;
+  width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .copyright span.divider {
