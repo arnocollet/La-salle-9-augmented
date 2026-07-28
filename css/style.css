@@ -21,6 +21,7 @@
   --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.12);
 
   --nav-bg: rgba(248, 250, 252, 0.8);
+  --menu-surface: color-mix(in srgb, var(--accent-light) 72%, var(--bg-secondary));
   --footer-bg: #0f172a;
   --footer-text: #94a3b8;
 
@@ -1043,8 +1044,8 @@ body[data-grade="3e"] .page-header {
    Footer Component
    ========================================================================== */
 .footer {
-  background-color: var(--footer-bg);
-  color: var(--footer-text);
+  background-color: var(--menu-surface);
+  color: var(--text-secondary);
   padding: 0.5rem 0;
   border-top: 1px solid var(--card-border);
 }
@@ -1250,7 +1251,7 @@ body[data-grade="3e"] .page-header {
     top: 4.5rem;
     left: 0;
     right: 0;
-    background-color: color-mix(in srgb, var(--accent-light) 72%, var(--bg-secondary));
+    background-color: var(--menu-surface);
     flex-direction: column;
     padding: 2rem;
     gap: 1.5rem;
