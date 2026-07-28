@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=29" />
-  <link rel="stylesheet" href="styles.css?v=56" />
+  <link rel="stylesheet" href="styles.css?v=57" />
 </head>
 <body>
   <header class="navbar">
@@ -236,10 +236,16 @@
             <button id="increaseWorksheetCount" type="button" aria-label="Ajouter une fiche">+</button>
           </div>
 
-          <label class="check-option">
-            <input id="includeAnswers" type="checkbox" checked />
-            <span>Ajouter le corrigé à la fin du PDF</span>
-          </label>
+          <div class="worksheet-options">
+            <label class="check-option">
+              <input id="includeAnswers" type="checkbox" checked />
+              <span>Ajouter le corrigé à la fin du PDF</span>
+            </label>
+            <label class="check-option">
+              <input id="dyslexicVersion" type="checkbox" />
+              <span>Version dyslexique</span>
+            </label>
+          </div>
 
           <div class="worksheet-summary">
             <span>Niveau</span>
@@ -263,7 +269,7 @@
             <button id="refreshWorksheet" class="refresh-button" type="button">↻ Nouveaux exercices</button>
           </div>
           <canvas id="worksheetPreview" class="paper-preview" width="1240" height="1754" aria-label="Aperçu exact de la première fiche PDF"></canvas>
-          <p class="preview-note">L’aperçu affiche la première fiche. Le PDF contient toutes les fiches demandées, chacune sur une page A4.</p>
+          <p class="preview-note">L’aperçu affiche la première page de la fiche 1. Le PDF contient toutes les fiches demandées.</p>
         </article>
       </div>
     </section>
@@ -343,6 +349,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="app.js?v=49"></script>
+  <script src="app.js?v=50"></script>
 </body>
 </html>
