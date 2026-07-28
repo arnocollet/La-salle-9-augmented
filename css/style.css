@@ -1066,8 +1066,7 @@ body[data-grade="3e"] .page-header {
 }
 
 .footer-nav {
-  display: flex;
-  gap: 2rem;
+  display: none;
 }
 
 .footer-nav-link {
@@ -1325,9 +1324,4 @@ body[data-grade="3e"] .page-header {
     grid-template-rows: repeat(2, minmax(0, 1fr));
   }
 
-  .footer-nav {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
 }
