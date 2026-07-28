@@ -1250,7 +1250,7 @@ body[data-grade="3e"] .page-header {
     top: 4.5rem;
     left: 0;
     right: 0;
-    background-color: var(--bg-secondary);
+    background-color: color-mix(in srgb, var(--accent-light) 72%, var(--bg-secondary));
     flex-direction: column;
     padding: 2rem;
     gap: 1.5rem;
