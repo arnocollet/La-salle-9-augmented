@@ -1,7 +1,7 @@
 .portal-hero {
   position: relative;
   min-height: 29rem;
-  padding: 4.5rem 0 7.5rem;
+  padding: 5.5rem 0 7.5rem;
   overflow: hidden;
   isolation: isolate;
 }
@@ -254,7 +254,7 @@
 @media (max-width: 600px) {
   .portal-hero {
     min-height: 25rem;
-    padding: 4.5rem 0 6rem;
+    padding: 5.5rem 0 6rem;
   }
 
   .portal-illustration {
