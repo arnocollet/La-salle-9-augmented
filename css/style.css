@@ -178,12 +178,13 @@ a {
   -webkit-text-fill-color: transparent;
 }
 
-/* Logo icon must NOT inherit -webkit-text-fill-color: transparent */
-.logo .logo-icon {
+.logo-image {
+  display: block;
   flex-shrink: 0;
-  stroke: var(--accent);
-  fill: none;
-  -webkit-text-fill-color: initial;
+  width: auto;
+  height: 4rem;
+  max-width: min(9rem, 40vw);
+  object-fit: contain;
 }
 
 .nav-links {
