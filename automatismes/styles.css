@@ -57,11 +57,13 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
 .scratch-event:first-child{margin-top:0}
 .scratch-motion{background:#4c97ff}
 .scratch-control{background:#ffab19;color:#382500}
-.scratch-control-start{min-width:155px;padding-bottom:10px}
+.scratch-control-start{min-width:155px;padding-bottom:10px;clip-path:polygon(0 0,13px 0,17px 4px,32px 4px,36px 0,100% 0,100% calc(100% - 4px),36px calc(100% - 4px),32px 100%,17px 100%,13px calc(100% - 4px),0 calc(100% - 4px))}
 .scratch-control-stack{display:grid;justify-items:start;width:max-content;max-width:100%;gap:0}
-.scratch-control-body{display:grid;justify-items:start;width:100%;min-width:38px;min-height:8px;gap:2px;padding:2px 0 2px 18px;border-left:9px solid #ffab19}
-.scratch-control-middle{width:100%;min-width:105px;margin:0!important;border-radius:0 4px 4px 0;clip-path:none!important}
-.scratch-control-footer{width:100%;height:13px;margin:0 0 2px;border:1px solid rgba(0,0,0,.14);border-top:0;border-radius:0 0 4px 4px;background:#ffab19;filter:drop-shadow(0 1px 0 rgba(0,0,0,.18));clip-path:polygon(0 0,100% 0,100% 70%,36px 70%,32px 100%,17px 100%,13px 70%,0 70%)}
+.scratch-control-body{display:grid;justify-items:start;width:100%;min-width:38px;min-height:12px;gap:2px;padding:4px 0 4px 18px;border-left:9px solid #ffab19}
+.scratch-control-middle{width:100%;min-width:105px;margin:0!important;border-radius:0 4px 4px 0;clip-path:polygon(0 0,13px 0,17px 4px,32px 4px,36px 0,100% 0,100% calc(100% - 4px),36px calc(100% - 4px),32px 100%,17px 100%,13px calc(100% - 4px),0 calc(100% - 4px))!important}
+.scratch-control-footer{position:relative;width:100%;height:19px;margin:0 0 2px;border:1px solid rgba(0,0,0,.14);border-top:0;border-radius:0 0 5px 5px;background:#ffab19;filter:drop-shadow(0 1px 0 rgba(0,0,0,.18));clip-path:polygon(0 0,13px 0,17px 4px,32px 4px,36px 0,100% 0,100% calc(100% - 4px),36px calc(100% - 4px),32px 100%,17px 100%,13px calc(100% - 4px),0 calc(100% - 4px))}
+.scratch-loop-footer{height:24px}
+.scratch-loop-footer::after{content:"↻";position:absolute;right:8px;top:0;color:#fff;font-family:Arial,sans-serif;font-size:18px;font-weight:800;line-height:19px;text-shadow:0 1px 1px rgba(0,0,0,.18)}
 .scratch-variables{background:#ff8c1a}
 .scratch-looks{background:#9966ff}
 .scratch-sensing{background:#5cb1d6}

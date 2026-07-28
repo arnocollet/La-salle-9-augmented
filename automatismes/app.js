@@ -269,7 +269,8 @@ function scratchProgramMarkup(blocks){
     if(node.kind==="block")return renderBlock(node.block);
     const thenBranch=`<div class="scratch-control-body">${renderNodes(node.then)}</div>`;
     const elseBranch=node.otherwise===null?"":`${renderBlock({type:"control",text:"sinon"},"scratch-control-middle")}<div class="scratch-control-body">${renderNodes(node.otherwise)}</div>`;
-    return `<div class="scratch-control-stack">${renderBlock(node.block,"scratch-control-start")}${thenBranch}${elseBranch}<div class="scratch-control-footer" aria-hidden="true"></div></div>`;
+    const footerClass=String(node.block.text).startsWith("répéter")?" scratch-loop-footer":"";
+    return `<div class="scratch-control-stack">${renderBlock(node.block,"scratch-control-start")}${thenBranch}${elseBranch}<div class="scratch-control-footer${footerClass}" aria-hidden="true"></div></div>`;
   }).join("");
   const content=renderNodes(root);
   return `<div class="scratch-program" role="img" aria-label="Programme Scratch">${content}</div>`;
