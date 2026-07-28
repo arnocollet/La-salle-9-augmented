@@ -81,7 +81,7 @@ const NOTIONS = {
 ]},
 "4e":{
 "Nombres et calculs":[
-"Sommes et différences de nombres relatifs","Opposé d’un nombre et somme d’opposés","Tables de multiplication","Multiplier et diviser par 10, 100, 1 000","Multiplications à trou","Multiplication comme addition répétée","Addition et soustraction de fractions","Comparer des fractions","Fraction comme quotient","Fraction d’un nombre","Carrés parfaits de 0 à 12","Puissances simples","Valeur d’expressions numériques","Équations simples","Écriture 3x","Réduction d’expressions littérales","Double, triple, moitié, prédécesseur, successeur et carré","Tester une égalité"
+"Sommes et différences de nombres relatifs","Opposé d’un nombre et somme d’opposés","Tables de multiplication","Multiplier et diviser par 10, 100, 1 000","Multiplications à trou","Multiplication comme addition répétée","Addition et soustraction de fractions","Comparer des fractions","Fraction comme quotient","Fraction d’un nombre","Carrés parfaits de 0 à 12","Puissances simples","Valeur d’expressions numériques","Équations simples","Écriture 3x","Réduction d’expressions littérales","Réduction d’expressions comportant des carrés","Double, triple, moitié, prédécesseur, successeur et carré","Tester une égalité"
 ],
 "Espace et géométrie":[
 "Symétrie centrale d’un point","Placer un nombre relatif sur une droite graduée","Repérer un nombre relatif","Coordonnées dans un repère orthogonal","Reconnaître des solides","Volumes du cube, du pavé, du prisme et du cylindre","Base d’un prisme en perspective","Aires des figures usuelles","Symétrie axiale et demi-tour","Images de figures par transformation","Reconnaître un parallélogramme","Parallélogrammes particuliers","Droites remarquables dans un triangle"
@@ -95,7 +95,7 @@ const NOTIONS = {
 ,
 "3e":{
 "Nombres et calculs":[
-"Opérations sur les fractions","Puissance comme multiplication itérée","Multiplication de puissances d’un même nombre","Multiplication de puissances de même exposant","Écriture scientifique","Carrés parfaits de 0 à 12","Décomposition en facteurs premiers","Simplification de fractions","Dénominateur commun","Critères de divisibilité par 2, 3, 5 et 9","Équations simples","Simplification d’expressions littérales","Valeur d’une expression algébrique","Nature d’une expression littérale","Développer et factoriser","Expression d’un nombre pair ou impair","Opposé d’une expression"
+"Opérations sur les fractions","Puissance comme multiplication itérée","Multiplication de puissances d’un même nombre","Multiplication de puissances de même exposant","Écriture scientifique","Carrés parfaits de 0 à 12","Décomposition en facteurs premiers","Simplification de fractions","Dénominateur commun","Critères de divisibilité par 2, 3, 5 et 9","Équations simples","Simplification d’expressions littérales","Réduction d’expressions comportant des carrés","Valeur d’une expression algébrique","Nature d’une expression littérale","Développer et factoriser","Expression d’un nombre pair ou impair","Opposé d’une expression"
 ],
 "Espace et géométrie":[
 "Placer un nombre relatif sur une droite graduée","Repérer un nombre relatif","Coordonnées dans un repère orthogonal","Reconnaître des solides","Volume d’une pyramide ou d’un cône","Nature d’une face de pyramide","Patrons de pyramides","Triangle rectangle et cercle circonscrit","Égalité de Pythagore","Théorème de Thalès","Rapports trigonométriques","Droite des milieux","Symétrie axiale, demi-tour et translation"
@@ -104,7 +104,7 @@ const NOTIONS = {
 "Calculer une moyenne","Déterminer une médiane","Calculer l’étendue d’une série","Calculer une probabilité"
 ],
 "Proportionnalité et fonctions":[
-"Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage","Calculer l’image d’un nombre","Déterminer un antécédent","Lire une image ou un antécédent dans un tableau","Lire graphiquement une image","Lire graphiquement un antécédent","Interpréter l’égalité f(a) = b","Déterminer le coefficient d’une fonction linéaire","Reconnaître une fonction linéaire ou affine","Calculer une vitesse moyenne"
+"Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage","Calculer l’image d’un nombre","Calculer un antécédent avec une fonction linéaire","Calculer un antécédent avec une fonction affine","Lire une image ou un antécédent dans un tableau","Lire graphiquement une image","Lire graphiquement un antécédent","Interpréter l’égalité f(a) = b","Déterminer le coefficient d’une fonction linéaire","Reconnaître une fonction linéaire ou affine","Calculer une vitesse moyenne"
 ]}
 
 ,
@@ -144,6 +144,20 @@ function q(text,answer,explanation,alts=[],meta={}){return {text,answer:String(a
 function gcd(a,b){while(b){[a,b]=[b,a%b]}return Math.abs(a)}
 function simp(n,d){let g=gcd(n,d); return `${n/g}/${d/g}`}
 function piTerm(coefficient){return coefficient===1?"π":`${coefficient}π`}
+function quadraticExpression(quadraticCoefficient,linearCoefficient,constant=0){
+  const terms=[];
+  const addTerm=(coefficient,variable="")=>{
+    if(coefficient===0)return;
+    const absolute=Math.abs(coefficient);
+    const body=variable&&absolute===1?variable:`${absolute}${variable}`;
+    if(!terms.length)terms.push(coefficient<0?`−${body}`:body);
+    else terms.push(`${coefficient<0?"−":"+"} ${body}`);
+  };
+  addTerm(quadraticCoefficient,"x²");
+  addTerm(linearCoefficient,"x");
+  addTerm(constant);
+  return terms.join(" ")||"0";
+}
 function divis(n){let a=[];if(n%2===0)a.push("2");if(n%5===0)a.push("5");if(n%10===0)a.push("10");return a.length?a.join(","):"aucun"}
 function makeGraphReadingQuestion(reading){
   const quadratic=Math.random()<.5;
@@ -383,6 +397,7 @@ const G4 = [
 {theme:"Nombres et calculs",notion:"Équations simples",make:()=>{let type=rand(0,2),x=rand(-9,15),a=rand(2,9);if(type===0)return q(`Résous : x + ${a} = ${x+a}`,x,`On soustrait ${a} aux deux membres.`);if(type===1)return q(`Résous : ${a}x = ${a*x}`,x,`On divise les deux membres par ${a}.`);return q(`Résous : ${a} − x = ${a-x}`,x,`On cherche le nombre qui vérifie l’égalité.`)}},
 {theme:"Nombres et calculs",notion:"Écriture 3x",make:()=>{let a=rand(2,9);return q(`Écris sans signe × : ${a} × x`,`${a}x`,`Le signe de multiplication est sous-entendu entre un nombre et une lettre.`)}},
 {theme:"Nombres et calculs",notion:"Réduction d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8);return q(`Réduis : ${a}x + ${b}x`,`${a+b}x`,`On additionne les coefficients : ${a}+${b}=${a+b}.`,[],{mathMode:"reduced"})}},
+{theme:"Nombres et calculs",notion:"Réduction d’expressions comportant des carrés",make:()=>{let a=rand(1,6),b=rand(1,7),c=rand(1,6),d=rand(1,7),answer=quadraticExpression(a+c,b+d);return q(`Réduis : ${a}x² + ${b}x + ${c}x² + ${d}x`,answer,`On regroupe les termes en x² et les termes en x : ${answer}.`,[],{mathMode:"reduced"})}},
 {theme:"Nombres et calculs",notion:"Double, triple, moitié, prédécesseur, successeur et carré",make:()=>{let n=rand(2,30),types=[["double",2*n],["triple",3*n],["moitié",n/2],["prédécesseur",n-1],["successeur",n+1],["carré",n*n]],z=types[rand(0,5)];if(z[0]==="moitié"&&n%2)n++;return q(`Donne le ${z[0]} de ${n}.`,z[0]==="moitié"?n/2:z[1],`Le ${z[0]} de ${n} vaut ${z[0]==="moitié"?n/2:z[1]}.`)}},
 {theme:"Nombres et calculs",notion:"Tester une égalité",make:()=>{let a=rand(1,8),b=rand(1,8),x=rand(1,8),right=a*x+b+(Math.random()<.5?0:rand(1,4));return q(`Pour x = ${x}, l’égalité ${a}x + ${b} = ${right} est-elle vraie ?`,a*x+b===right?"oui":"non",`Le membre de gauche vaut ${a*x+b}.`)}},
 
@@ -418,6 +433,7 @@ const G3 = [
 {theme:"Nombres et calculs",notion:"Critères de divisibilité par 2, 3, 5 et 9",make:()=>{let n=rand(100,999);return q(`Parmi 2, 3, 5 et 9, indique tous les diviseurs de ${n}.`,divis2359(n),`On applique les critères de divisibilité.`)}},
 {theme:"Nombres et calculs",notion:"Équations simples",make:()=>{let type=rand(0,2),x=rand(-9,15),a=rand(2,9),b=rand(-8,8);if(type===0)return q(`Résous : ${a}x = ${displayNumber(a*x)}`,x,`On divise les deux membres par ${a}.`);if(type===1)return q(`Résous : x + ${parenthesizedIfNegative(b)} = ${displayNumber(x+b)}`,x,`On soustrait ${parenthesizedIfNegative(b)} aux deux membres.`);return q(`Résous : ${a}x + ${parenthesizedIfNegative(b)} = ${displayNumber(a*x+b)}`,x,`On isole d’abord ${a}x, puis on divise par ${a}.`)}},
 {theme:"Nombres et calculs",notion:"Simplification d’expressions littérales",make:()=>{let a=rand(1,8),b=rand(1,8),c=rand(1,8);return q(`Réduis : ${a}x + ${b}x − ${c}`,`${a+b}x-${c}`,`On regroupe les termes en x : ${a}+${b}=${a+b}.`,[`${a+b}x − ${c}`],{mathMode:"reduced"})}},
+{theme:"Nombres et calculs",notion:"Réduction d’expressions comportant des carrés",make:()=>{let a=rand(2,8),b=rand(1,8),c=rand(1,8),d=rand(1,9),e=rand(1,8);while(a===c)c=rand(1,8);while(b===e)e=rand(1,8);let answer=quadraticExpression(a-c,b-e,d);return q(`Réduis : ${a}x² + ${b}x − ${c}x² − ${e}x + ${d}`,answer,`On regroupe séparément les termes en x², les termes en x et la constante : ${answer}.`,[],{mathMode:"reduced"})}},
 {theme:"Nombres et calculs",notion:"Valeur d’une expression algébrique",make:()=>{let a=rand(1,6),b=rand(-6,6),x=rand(-4,6);return q(`Calcule ${a}x + ${parenthesizedIfNegative(b)} pour x = ${displayNumber(x)}.`,a*x+b,`${a} × ${parenthesizedIfNegative(x)} + ${parenthesizedIfNegative(b)} = ${displayNumber(a*x+b)}.`)}},
 {theme:"Nombres et calculs",notion:"Nature d’une expression littérale",make:()=>{let items=[["3x + 2","somme"],["5(x + 4)","produit"],["7x − 1","différence"]],z=items[rand(0,2)];return q(`Quelle est la nature de l’expression ${z[0]} ?`,z[1],`L’opération principale est une ${z[1]}.`)}},
 {theme:"Nombres et calculs",notion:"Développer et factoriser",make:()=>{if(Math.random()<.5){let a=rand(2,7),b=rand(1,9);return q(`Développe : ${a}(x + ${b})`,`${a}x+${a*b}`,`${a}(x+${b})=${a}x+${a*b}.`,[`${a}x + ${a*b}`],{mathMode:"developed"})}let a=rand(2,7),b=rand(1,9);return q(`Factorise : ${a}x + ${a*b}`,`${a}(x+${b})`,`On met ${a} en facteur.`,[`${a}(x + ${b})`],{mathMode:"factorized"})}},
@@ -460,16 +476,17 @@ const G3 = [
 {theme:"Proportionnalité et fonctions",notion:"Partage proportionnel à des âges",make:()=>{let total=rand(3,10)*50;return q(`Deux personnes âgées de 20 ans et 30 ans se partagent ${total} € proportionnellement à leur âge. Donne leurs parts.`,`${total*2/5};${total*3/5}`,`Le ratio est 20:30 = 2:3.`,[`${total*2/5},${total*3/5}`])}},
 {theme:"Proportionnalité et fonctions",notion:"Calculer un pourcentage",make:()=>{let p=[10,20,25,30,40,50][rand(0,5)],n=20*rand(2,20);return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Échelle d’une carte",make:()=>{let scale=[10000,25000,50000][rand(0,2)],cm=rand(2,12),m=cm*scale,km=m/100000;return q(`Sur une carte à l’échelle 1:${scale}, deux villes sont distantes de ${cm} cm. Quelle est la distance réelle en km ?`,fmt(km),`${cm} × ${scale} cm = ${fmt(km)} km.`)}},
-{theme:"Proportionnalité et fonctions",notion:"Augmentation ou diminution en pourcentage",make:()=>{let n=rand(50,300),p=[10,20,25][rand(0,2)],up=Math.random()<.5,ans=up?n*(1+p/100):n*(1-p/100);return q(`Une valeur de ${n} ${up?"augmente":"diminue"} de ${p} %. Quelle est la nouvelle valeur ?`,fmt(ans),`On multiplie par ${up?1+p/100:1-p/100}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Augmentation ou diminution en pourcentage",make:()=>{let n=rand(50,300),p=[10,20,25][rand(0,2)],up=Math.random()<.5,coefficient=up?1+p/100:1-p/100,ans=n*coefficient;return q(`Une valeur de ${n} ${up?"augmente":"diminue"} de ${p} %. Quelle est la nouvelle valeur ?`,fmt(ans),`On multiplie par ${fmt(coefficient)} : ${n} × ${fmt(coefficient)} = ${fmt(ans)}.`,[],{allowNumericExpression:true})}},
 {theme:"Proportionnalité et fonctions",notion:"Calculer l’image d’un nombre",isFunction:true,make:()=>{let a=rand(2,7),b=rand(-8,8),x=rand(-5,6),sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`On définit f(x) = ${a}x ${sign}. Calcule f(${x}).`,a*x+b,`f(${x}) = ${a} × (${x}) ${sign} = ${a*x+b}.`)}},
-{theme:"Proportionnalité et fonctions",notion:"Déterminer un antécédent",isFunction:true,make:()=>{let a=rand(2,7),b=rand(-8,8),x=rand(-5,6),image=a*x+b,sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`On définit f(x) = ${a}x ${sign}. Détermine un antécédent de ${image} par f.`,x,`On résout ${a}x ${sign} = ${image}. L’antécédent est ${x}.`)}},
+{theme:"Proportionnalité et fonctions",notion:"Calculer un antécédent avec une fonction linéaire",isFunction:true,make:()=>{let a=[-6,-5,-4,-3,-2,2,3,4,5,6][rand(0,9)],x=rand(-6,6),image=a*x,coefficient=displayNumber(a);return q(`La fonction linéaire f est définie par f(x) = ${coefficient}x. Calcule l’antécédent de ${displayNumber(image)} par f.`,x,`On résout ${coefficient}x = ${displayNumber(image)} : x = ${displayNumber(image)} ÷ ${parenthesizedIfNegative(a)} = ${displayNumber(x)}.`,[],{allowNumericExpression:true})}},
+{theme:"Proportionnalité et fonctions",notion:"Calculer un antécédent avec une fonction affine",isFunction:true,make:()=>{let a=[-6,-5,-4,-3,-2,2,3,4,5,6][rand(0,9)],b=rand(-8,8),x=rand(-6,6);while(b===0)b=rand(-8,8);let image=a*x+b,coefficient=displayNumber(a),sign=b>0?`+ ${b}`:`− ${Math.abs(b)}`,intermediate=image-b;return q(`La fonction affine f est définie par f(x) = ${coefficient}x ${sign}. Calcule l’antécédent de ${displayNumber(image)} par f.`,x,`On résout ${coefficient}x ${sign} = ${displayNumber(image)}. Donc ${coefficient}x = ${displayNumber(intermediate)}, puis x = ${displayNumber(intermediate)} ÷ ${parenthesizedIfNegative(a)} = ${displayNumber(x)}.`,[],{allowNumericExpression:true})}},
 {theme:"Proportionnalité et fonctions",notion:"Lire une image ou un antécédent dans un tableau",isFunction:true,make:()=>{let x1=rand(-6,-1),x2=rand(0,3),x3=rand(4,8),a=rand(2,5),b=rand(-5,5),values=[a*x1+b,a*x2+b,a*x3+b],askImage=Math.random()<.5;if(askImage)return q(`Le tableau donne x : ${x1} ; ${x2} ; ${x3} et f(x) : ${values.join(" ; ")}. Quelle est l’image de ${x2} ?`,values[1],`Dans le tableau, à ${x2} correspond ${values[1]} : f(${x2}) = ${values[1]}.`);return q(`Le tableau donne x : ${x1} ; ${x2} ; ${x3} et f(x) : ${values.join(" ; ")}. Quel est l’antécédent de ${values[2]} ?`,x3,`Dans le tableau, ${values[2]} est l’image de ${x3}.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Lire graphiquement une image",isFunction:true,interactiveOnly:true,make:()=>makeGraphReadingQuestion("image")},
 {theme:"Proportionnalité et fonctions",notion:"Lire graphiquement un antécédent",isFunction:true,interactiveOnly:true,make:()=>makeGraphReadingQuestion("antecedent")},
 {theme:"Proportionnalité et fonctions",notion:"Interpréter l’égalité f(a) = b",isFunction:true,make:()=>{let antecedent=rand(-6,8),image=rand(-15,20),askImage=Math.random()<.5;return askImage?q(`On sait que f(${antecedent}) = ${image}. Quelle est l’image de ${antecedent} ?`,image,`L’égalité f(${antecedent}) = ${image} signifie que l’image de ${antecedent} est ${image}.`):q(`On sait que f(${antecedent}) = ${image}. Donne un antécédent de ${image}.`,antecedent,`${antecedent} est un antécédent de ${image} par f.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Déterminer le coefficient d’une fonction linéaire",isFunction:true,make:()=>{let coefficient=rand(2,8),x=rand(2,7),image=coefficient*x;return q(`La fonction linéaire f vérifie f(${x}) = ${image}. Détermine son coefficient.`,coefficient,`Pour une fonction linéaire, f(x) = ax. Donc a = ${image} ÷ ${x} = ${coefficient}.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Reconnaître une fonction linéaire ou affine",isFunction:true,make:()=>{let a=rand(2,8),b=rand(1,9),linear=Math.random()<.5;return linear?q(`La fonction définie par f(x) = ${a}x est-elle linéaire ou affine non linéaire ?`,`linéaire`,`Une fonction de la forme f(x) = ax est linéaire.`,["lineaire"]):q(`La fonction définie par f(x) = ${a}x + ${b} est-elle linéaire ou affine non linéaire ?`,`affine non linéaire`,`Elle est de la forme ax + b avec b ≠ 0 : elle est affine, mais pas linéaire.`,["affine","affine non lineaire"])}},
-{theme:"Proportionnalité et fonctions",notion:"Calculer une vitesse moyenne",make:()=>{let speed=[30,40,50,60,70,80,90][rand(0,6)],duration=rand(2,4),distance=speed*duration;return q(`Un véhicule parcourt ${distance} km en ${duration} h à vitesse constante. Quelle est sa vitesse moyenne en km/h ?`,speed,`Vitesse = distance ÷ durée = ${distance} ÷ ${duration} = ${speed} km/h.`)}}
+{theme:"Proportionnalité et fonctions",notion:"Calculer une vitesse moyenne",make:()=>{let speed=[30,40,50,60,70,80,90][rand(0,6)],duration=rand(2,4),distance=speed*duration;return q(`Un véhicule parcourt ${distance} km en ${duration} h à vitesse constante. Quelle est sa vitesse moyenne en km·h⁻¹ ?`,speed,`Vitesse = distance ÷ durée = ${distance} ÷ ${duration} = ${speed} km·h⁻¹.`)}}
 ];
 
 function lcm(a,b){return Math.abs(a*b)/gcd(a,b)}
@@ -528,6 +545,20 @@ const G6 = [
 ];
 
 const GENERATORS = {"6e":G6,"5e":G5,"4e":G4,"3e":G3};
+const LEVEL_SEQUENCE=["6e","5e","4e","3e"];
+Object.entries(GENERATORS).forEach(([level,generators])=>{
+  generators.forEach(generator=>{generator.sourceLevel=level});
+});
+const SIXTH_GRADE_THEME_EQUIVALENTS={
+  "Nombres entiers et décimaux":"Nombres et calculs",
+  "Fractions":"Nombres et calculs",
+  "Repérage dans le temps et durées":"Nombres et calculs",
+  "Calcul mental":"Nombres et calculs",
+  "Longueurs et aires":"Espace et géométrie",
+  "Géométrie plane et espace":"Espace et géométrie",
+  "Organisation et gestion de données":"Données et probabilités",
+  "Proportionnalité":"Proportionnalité et fonctions"
+};
 
 let state = JSON.parse(localStorage.getItem("mathsAutoCycle4")||'{"selectedLevel":"5e","points":0,"levels":{"6e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]},"5e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]},"4e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]},"3e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]}}}');
 if(!state.levels){
@@ -624,7 +655,8 @@ function updateWorksheetExerciseCount(){
   document.getElementById("worksheetExerciseCount").textContent=`${count} exercices par fiche`;
 }
 function buildRoutineFromGenerators(generators,count,minimumFunctionQuestions=0){
-  const pool=[...generators],selected=[];
+  const source=[...generators],pool=[...source],selected=[];
+  if(!source.length)return [];
   const functionGenerators=pool.filter(generator=>generator.isFunction);
   for(let i=0;i<Math.min(minimumFunctionQuestions,functionGenerators.length,count);i++){
     const functionIndex=rand(0,functionGenerators.length-1);
@@ -632,19 +664,55 @@ function buildRoutineFromGenerators(generators,count,minimumFunctionQuestions=0)
     pool.splice(pool.indexOf(pick),1);
     selected.push(pick);
   }
-  while(selected.length<count&&pool.length){
+  while(selected.length<count){
+    if(!pool.length)pool.push(...source);
     selected.push(pool.splice(rand(0,pool.length-1),1)[0]);
   }
   for(let i=selected.length-1;i>0;i--){
     const swapIndex=rand(0,i);
     [selected[i],selected[swapIndex]]=[selected[swapIndex],selected[i]];
   }
-  return selected.map(pick=>({...pick.make(),theme:pick.theme,notion:pick.notion}));
+  return selected.map(pick=>({...pick.make(),theme:pick.theme,notion:pick.notion,sourceLevel:pick.sourceLevel}));
+}
+function previousLevelGenerators(level){
+  const levelIndex=LEVEL_SEQUENCE.indexOf(level);
+  return LEVEL_SEQUENCE.slice(0,Math.max(0,levelIndex)).flatMap(previousLevel=>GENERATORS[previousLevel]);
+}
+function matchesSelectedTheme(generator,theme){
+  return generator.theme===theme||SIXTH_GRADE_THEME_EQUIVALENTS[generator.theme]===theme;
+}
+function prepareGeneratorPool(generators,{mode="random",theme=null,printable=false}={}){
+  let pool=generators.filter(generator=>!printable||!generator.interactiveOnly);
+  if(mode==="theme")pool=pool.filter(generator=>matchesSelectedTheme(generator,theme));
+  if(mode==="review"){
+    pool=[...pool].sort((a,b)=>successRate(a.notion)-successRate(b.notion));
+    pool=pool.slice(0,Math.max(8,Math.floor(pool.length/2)));
+  }
+  return pool;
+}
+function shuffleQuestions(questions){
+  for(let i=questions.length-1;i>0;i--){
+    const swapIndex=rand(0,i);
+    [questions[i],questions[swapIndex]]=[questions[swapIndex],questions[i]];
+  }
+  return questions;
+}
+function buildMixedLevelRoutine(count,options={}){
+  const currentPool=prepareGeneratorPool(GENERATORS[currentLevel],options);
+  const previousPool=prepareGeneratorPool(previousLevelGenerators(currentLevel),options);
+  const currentCount=previousPool.length?Math.ceil(count*.6):count;
+  const previousCount=count-currentCount;
+  const minimumFunctionQuestions=currentLevel==="3e"
+    ?(options.printable?2:options.mode==="random"?1:0)
+    :0;
+  return shuffleQuestions([
+    ...buildRoutineFromGenerators(currentPool,currentCount,minimumFunctionQuestions),
+    ...buildRoutineFromGenerators(previousPool,previousCount)
+  ]);
 }
 function makeRandomRoutine(){
   const count=worksheetExerciseCount();
-  const printableGenerators=GENERATORS[currentLevel].filter(generator=>!generator.interactiveOnly);
-  return buildRoutineFromGenerators(printableGenerators,count,currentLevel==="3e"?2:0);
+  return buildMixedLevelRoutine(count,{mode:"random",printable:true});
 }
 function preparePrintableSheets(){
   updateWorksheetExerciseCount();
@@ -816,14 +884,7 @@ async function downloadWorksheetsPdf(){
 }
 
 function startQuiz(mode,theme){
-  let pool=[...GENERATORS[currentLevel]];
-  if(mode==="theme") pool=pool.filter(g=>g.theme===theme);
-  if(mode==="review"){
-    pool.sort((a,b)=>(successRate(a.notion)-successRate(b.notion)));
-    pool=pool.slice(0,Math.max(8,Math.floor(pool.length/2)));
-  }
-  const minimumFunctionQuestions=currentLevel==="3e"&&mode==="random"?1:0;
-  currentQuiz=buildRoutineFromGenerators(pool,5,minimumFunctionQuestions);
+  currentQuiz=buildMixedLevelRoutine(5,{mode,theme});
   index=0;score=0;answered=false;
   document.getElementById("themeModal").classList.add("hidden");
   showView("training");renderQuestion();
@@ -912,8 +973,19 @@ function respectsRequestedMathForm(expression,mode){
   if(mode==="factorized")return /^[+-]?\d+(?:\.\d+)?\*?\(.+\)$/.test(expression);
   if(mode==="reduced"){
     const compact=expression.replace(/\*/g,"");
-    return /^[+-]?(?:\d+(?:\.\d+)?)?x(?:[+-]\d+(?:\.\d+)?)?$/.test(compact)
-      ||/^[+-]?\d+(?:\.\d+)?[+-](?:\d+(?:\.\d+)?)?x$/.test(compact);
+    if(/[()]/.test(compact))return false;
+    const signed=/^[+-]/.test(compact)?compact:`+${compact}`;
+    const terms=signed.match(/[+-][^+-]+/g)||[];
+    if(!terms.length||terms.join("")!==signed)return false;
+    const types=terms.map(term=>{
+      if(/^[+-](?:\d+(?:\.\d+)?)?x\^2$/.test(term))return "quadratic";
+      if(/^[+-](?:\d+(?:\.\d+)?)?x$/.test(term))return "linear";
+      if(/^[+-]\d+(?:\.\d+)?$/.test(term))return "constant";
+      return null;
+    });
+    return types.every(Boolean)
+      &&types.some(type=>type==="quadratic"||type==="linear")
+      &&new Set(types).size===types.length;
   }
   return false;
 }
