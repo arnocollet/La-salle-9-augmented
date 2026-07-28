@@ -4,6 +4,7 @@ const THEMES = {
   "Espace et géométrie": "📐",
   "Données et probabilités": "📊",
   "Proportionnalité et fonctions": "％",
+  "Algorithmique et programmation": "🧩",
 
   "Nombres entiers et décimaux": "🔢",
   "Fractions": "◔",
@@ -27,6 +28,7 @@ const DOMAIN_COLORS = {
   "Espace et géométrie": "#7c3aed",
   "Données et probabilités": "#ea580c",
   "Proportionnalité et fonctions": "#059669",
+  "Algorithmique et programmation": "#f59e0b",
   "Nombres entiers et décimaux": "#2563eb",
   "Fractions": "#7c3aed",
   "Longueurs et aires": "#ea580c",
@@ -78,6 +80,9 @@ const NOTIONS = {
 ],
 "Proportionnalité et fonctions":[
 "Reconnaître une situation de proportionnalité","Résoudre un problème de proportionnalité","Calculer un pourcentage"
+],
+"Algorithmique et programmation":[
+"Exécuter une séquence Scratch","Comprendre une boucle répéter","Suivre la valeur d’une variable"
 ]},
 "4e":{
 "Nombres et calculs":[
@@ -91,6 +96,9 @@ const NOTIONS = {
 ],
 "Proportionnalité et fonctions":[
 "Calculer un pourcentage simple","Compléter une égalité de pourcentages"
+],
+"Algorithmique et programmation":[
+"Calculer avec une variable Scratch","Comprendre une boucle Scratch","Suivre une position dans Scratch"
 ]}
 ,
 "3e":{
@@ -105,6 +113,9 @@ const NOTIONS = {
 ],
 "Proportionnalité et fonctions":[
 "Partager une somme selon un ratio","Partager une masse selon un ratio","Partage proportionnel à des âges","Calculer un pourcentage","Échelle d’une carte","Augmentation ou diminution en pourcentage","Calculer l’image d’un nombre","Calculer un antécédent avec une fonction linéaire","Calculer un antécédent avec une fonction affine","Lire une image ou un antécédent dans un tableau","Lire graphiquement une image","Lire graphiquement un antécédent","Interpréter l’égalité f(a) = b","Déterminer le coefficient d’une fonction linéaire","Reconnaître une fonction linéaire ou affine","Calculer une vitesse moyenne"
+],
+"Algorithmique et programmation":[
+"Exécuter un programme Scratch avec une expression","Comprendre des boucles imbriquées","Interpréter une condition Scratch"
 ]}
 
 ,
@@ -132,6 +143,9 @@ const NOTIONS = {
 ],
 "Calcul mental":[
 "Ajouter ou soustraire un entier à un décimal","Ajouter un entier avec retenue","Multiplier un décimal par 10, 100 ou 1 000","Diviser un décimal par 10, 100 ou 1 000","Tables de multiplication","Doubles et moitiés","Somme de plusieurs nombres","Ordre de grandeur","Produit simple"
+],
+"Algorithmique et programmation":[
+"Exécuter une séquence Scratch","Comprendre une boucle répéter","Suivre la valeur d’une variable"
 ]}
 
 };
@@ -192,6 +206,53 @@ function escapeXml(value){
 }
 function geometrySvg(label,body,viewBox="0 0 320 200"){
   return `<svg class="geometry-svg" viewBox="${viewBox}" role="img" aria-label="${escapeXml(label)}"><title>${escapeXml(label)}</title>${body}</svg>`;
+}
+function scratchTokensMarkup(value,variableMode="dropdown"){
+  const pattern=/([−-]?\d+(?:[.,]\d+)?|compteur|résultat|nombre|points|score|réponse|\bx\b)/giu;
+  let markup="",lastIndex=0;
+  for(const match of String(value).matchAll(pattern)){
+    markup+=escapeXml(String(value).slice(lastIndex,match.index));
+    const token=match[0],normalized=token.toLowerCase();
+    if(/^[−\-\d]/.test(token))markup+=`<span class="scratch-input">${escapeXml(token)}</span>`;
+    else if(normalized==="réponse")markup+=`<span class="scratch-reporter scratch-sensing-reporter">${escapeXml(token)}</span>`;
+    else if(variableMode==="reporter")markup+=`<span class="scratch-reporter scratch-variable-reporter">${escapeXml(token)}</span>`;
+    else if(variableMode==="plain")markup+=escapeXml(token);
+    else markup+=`<span class="scratch-variable-token">${escapeXml(token)}<span aria-hidden="true">⌄</span></span>`;
+    lastIndex=match.index+token.length;
+  }
+  return markup+escapeXml(String(value).slice(lastIndex));
+}
+function scratchBlockTextMarkup(block){
+  const text=String(block.text);
+  if(block.type==="event"&&text==="quand le drapeau vert est cliqué"){
+    return `quand <span class="scratch-flag" aria-label="drapeau vert">⚑</span> est cliqué`;
+  }
+  const condition=text.match(/^si (.+) alors$/);
+  if(block.type==="control"&&condition){
+    return `si <span class="scratch-reporter scratch-condition">${scratchTokensMarkup(condition[1],"reporter")}</span> alors`;
+  }
+  const assignment=text.match(/^(mettre .+? à )(.+)$/);
+  if(block.type==="variables"&&assignment&&/[×+−*/]|modulo/.test(assignment[2])){
+    return `${scratchTokensMarkup(assignment[1])}<span class="scratch-reporter scratch-operator-reporter">${scratchTokensMarkup(assignment[2],"reporter")}</span>`;
+  }
+  const variableMode=block.type==="looks"?"reporter":block.type==="variables"?"dropdown":"plain";
+  return scratchTokensMarkup(text,variableMode);
+}
+function scratchProgramMarkup(blocks){
+  const content=blocks.map(block=>{
+    const type=block.type||"variables";
+    const indent=Math.max(0,Math.min(3,block.indent||0));
+    if(/^fin de (?:la boucle|la condition)/.test(block.text)){
+      return `<div class="scratch-control-footer" style="--scratch-indent:${indent}" aria-hidden="true"></div>`;
+    }
+    const isControlStart=type==="control"&&/^(répéter|si )/.test(block.text);
+    const isControlMiddle=type==="control"&&block.text==="sinon";
+    const classes=["scratch-block",`scratch-${type}`];
+    if(isControlStart)classes.push("scratch-control-start");
+    if(isControlMiddle)classes.push("scratch-control-middle");
+    return `<div class="${classes.join(" ")}" style="--scratch-indent:${indent}">${scratchBlockTextMarkup(block)}</div>`;
+  }).join("");
+  return `<div class="scratch-program" role="img" aria-label="Programme Scratch">${content}</div>`;
 }
 function questionNumbers(text){
   return (String(text).match(/-?\d+(?:[.,]\d+)?/g)||[]).map(value=>Number(value.replace(",",".")));
@@ -330,6 +391,10 @@ function geometryQuestionSvg(exercise){
 function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
   const notion=exercise.notion;
+  if(exercise.scratchBlocks){
+    host.innerHTML=scratchProgramMarkup(exercise.scratchBlocks);
+    return;
+  }
   if(exercise.graph){
     host.innerHTML=functionGraphSvg(exercise);
     return;
@@ -378,7 +443,11 @@ const G5 = [
 {theme:"Données et probabilités", notion:"Relier une expression de chance à une probabilité", make:()=>{let items=[["une chance sur quatre","1/4"],["une chance sur deux","1/2"],["trois chances sur quatre","3/4"]];let [txt,ans]=items[rand(0,2)];return q(`Écris sous forme de fraction : « ${txt} ».`,ans,`« ${txt} » correspond à ${ans}.`)}},
 {theme:"Proportionnalité et fonctions", notion:"Reconnaître une situation de proportionnalité", make:()=>{let k=rand(2,6),a=rand(2,8),b=a*k;return q(`3 objets coûtent ${3*k} €. ${a} objets coûtent ${b} €. Cette situation est-elle proportionnelle ?`,`oui`,`Le prix par objet est constant : ${k} €.`)}},
 {theme:"Proportionnalité et fonctions", notion:"Résoudre un problème de proportionnalité", make:()=>{let k=rand(2,8),a=rand(2,9);return q(`${a} cahiers coûtent ${a*k} €. Combien coûtent ${a+2} cahiers ?`,(a+2)*k,`Un cahier coûte ${k} €, donc ${a+2} cahiers coûtent ${(a+2)*k} €.`)}},
-{theme:"Proportionnalité et fonctions", notion:"Calculer un pourcentage", make:()=>{let n=20*rand(2,15),p=[10,20,25,50][rand(0,3)];return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}}
+{theme:"Proportionnalité et fonctions", notion:"Calculer un pourcentage", make:()=>{let n=20*rand(2,15),p=[10,20,25,50][rand(0,3)];return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}},
+
+{theme:"Algorithmique et programmation",notion:"Exécuter une séquence Scratch",interactiveOnly:true,make:()=>{let first=rand(10,50),second=rand(10,50);return q(`Observe le programme Scratch. De combien de pas le lutin avance-t-il au total ?`,first+second,`Le lutin avance de ${first} + ${second} = ${first+second} pas.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"motion",text:`avancer de ${first} pas`},{type:"motion",text:`avancer de ${second} pas`}]})}},
+{theme:"Algorithmique et programmation",notion:"Comprendre une boucle répéter",interactiveOnly:true,make:()=>{let repetitions=rand(2,6),steps=rand(5,20);return q(`Observe le programme Scratch. De combien de pas le lutin avance-t-il au total ?`,repetitions*steps,`Le bloc « avancer de ${steps} pas » est exécuté ${repetitions} fois : ${repetitions} × ${steps} = ${repetitions*steps}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"control",text:`répéter ${repetitions} fois`},{type:"motion",indent:1,text:`avancer de ${steps} pas`},{type:"control",text:"fin de la boucle"}]})}},
+{theme:"Algorithmique et programmation",notion:"Suivre la valeur d’une variable",interactiveOnly:true,make:()=>{let start=rand(1,20),change=rand(2,10);return q(`Observe le programme Scratch. Quelle est la valeur finale de la variable score ?`,start+change,`Le score vaut d’abord ${start}, puis on lui ajoute ${change} : il vaut ${start+change}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"variables",text:`mettre score à ${start}`},{type:"variables",text:`ajouter ${change} à score`}]})}}
 ];
 
 const G4 = [
@@ -416,7 +485,11 @@ const G4 = [
 {theme:"Données et probabilités",notion:"Calculer une fréquence simple",make:()=>{let total=[20,25,40,50][rand(0,3)],fav=rand(1,total-1);return q(`Dans un groupe de ${total} élèves, ${fav} ont choisi l’option A. Donne la fréquence sous forme de fraction.`,`${fav}/${total}`,`La fréquence est effectif de A ÷ effectif total.`)}},
 
 {theme:"Proportionnalité et fonctions",notion:"Calculer un pourcentage simple",make:()=>{let p=[1,10,20,25,50][rand(0,4)],n=p===1?100*rand(1,9):20*rand(2,15);return q(`Calcule ${p} % de ${n}.`,n*p/100,`${n} × ${p}/100 = ${n*p/100}.`)}},
-{theme:"Proportionnalité et fonctions",notion:"Compléter une égalité de pourcentages",make:()=>{let p=[10,20,25,50][rand(0,3)],n=[40,60,80,100,120,200][rand(0,5)];return q(`Complète : ${p} % de ${n} = …`,n*p/100,`${p}/100 × ${n} = ${n*p/100}.`)}}
+{theme:"Proportionnalité et fonctions",notion:"Compléter une égalité de pourcentages",make:()=>{let p=[10,20,25,50][rand(0,3)],n=[40,60,80,100,120,200][rand(0,5)];return q(`Complète : ${p} % de ${n} = …`,n*p/100,`${p}/100 × ${n} = ${n*p/100}.`)}},
+
+{theme:"Algorithmique et programmation",notion:"Calculer avec une variable Scratch",interactiveOnly:true,make:()=>{let start=rand(2,15),factor=rand(2,5),change=rand(1,8),answer=start*factor+change;return q(`Observe le programme Scratch. Quelle est la valeur finale de la variable nombre ?`,answer,`On calcule d’abord ${start} × ${factor} = ${start*factor}, puis on ajoute ${change} : ${answer}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"variables",text:`mettre nombre à ${start}`},{type:"variables",text:`mettre nombre à nombre × ${factor}`},{type:"variables",text:`ajouter ${change} à nombre`}]})}},
+{theme:"Algorithmique et programmation",notion:"Comprendre une boucle Scratch",interactiveOnly:true,make:()=>{let start=rand(0,10),repetitions=rand(3,7),change=rand(2,6),answer=start+repetitions*change;return q(`Observe le programme Scratch. Quelle est la valeur finale de score ?`,answer,`On ajoute ${change} à score ${repetitions} fois : ${start} + ${repetitions} × ${change} = ${answer}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"variables",text:`mettre score à ${start}`},{type:"control",text:`répéter ${repetitions} fois`},{type:"variables",indent:1,text:`ajouter ${change} à score`},{type:"control",text:"fin de la boucle"}]})}},
+{theme:"Algorithmique et programmation",notion:"Suivre une position dans Scratch",interactiveOnly:true,make:()=>{let start=rand(-50,20),repetitions=rand(2,5),change=rand(5,20),answer=start+repetitions*change;return q(`Observe le programme Scratch. Quelle est l’abscisse x finale du lutin ?`,answer,`L’abscisse finale est ${start} + ${repetitions} × ${change} = ${answer}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"motion",text:`aller à x : ${start} y : 0`},{type:"control",text:`répéter ${repetitions} fois`},{type:"motion",indent:1,text:`ajouter ${change} à x`},{type:"control",text:"fin de la boucle"}]})}}
 ];
 
 
@@ -486,7 +559,11 @@ const G3 = [
 {theme:"Proportionnalité et fonctions",notion:"Interpréter l’égalité f(a) = b",isFunction:true,make:()=>{let antecedent=rand(-6,8),image=rand(-15,20),askImage=Math.random()<.5;return askImage?q(`On sait que f(${antecedent}) = ${image}. Quelle est l’image de ${antecedent} ?`,image,`L’égalité f(${antecedent}) = ${image} signifie que l’image de ${antecedent} est ${image}.`):q(`On sait que f(${antecedent}) = ${image}. Donne un antécédent de ${image}.`,antecedent,`${antecedent} est un antécédent de ${image} par f.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Déterminer le coefficient d’une fonction linéaire",isFunction:true,make:()=>{let coefficient=rand(2,8),x=rand(2,7),image=coefficient*x;return q(`La fonction linéaire f vérifie f(${x}) = ${image}. Détermine son coefficient.`,coefficient,`Pour une fonction linéaire, f(x) = ax. Donc a = ${image} ÷ ${x} = ${coefficient}.`)}},
 {theme:"Proportionnalité et fonctions",notion:"Reconnaître une fonction linéaire ou affine",isFunction:true,make:()=>{let a=rand(2,8),b=rand(1,9),linear=Math.random()<.5;return linear?q(`La fonction définie par f(x) = ${a}x est-elle linéaire ou affine non linéaire ?`,`linéaire`,`Une fonction de la forme f(x) = ax est linéaire.`,["lineaire"]):q(`La fonction définie par f(x) = ${a}x + ${b} est-elle linéaire ou affine non linéaire ?`,`affine non linéaire`,`Elle est de la forme ax + b avec b ≠ 0 : elle est affine, mais pas linéaire.`,["affine","affine non lineaire"])}},
-{theme:"Proportionnalité et fonctions",notion:"Calculer une vitesse moyenne",make:()=>{let speed=[30,40,50,60,70,80,90][rand(0,6)],duration=rand(2,4),distance=speed*duration;return q(`Un véhicule parcourt ${distance} km en ${duration} h à vitesse constante. Quelle est sa vitesse moyenne en km·h⁻¹ ?`,speed,`Vitesse = distance ÷ durée = ${distance} ÷ ${duration} = ${speed} km·h⁻¹.`)}}
+{theme:"Proportionnalité et fonctions",notion:"Calculer une vitesse moyenne",make:()=>{let speed=[30,40,50,60,70,80,90][rand(0,6)],duration=rand(2,4),distance=speed*duration;return q(`Un véhicule parcourt ${distance} km en ${duration} h à vitesse constante. Quelle est sa vitesse moyenne en km·h⁻¹ ?`,speed,`Vitesse = distance ÷ durée = ${distance} ÷ ${duration} = ${speed} km·h⁻¹.`)}},
+
+{theme:"Algorithmique et programmation",notion:"Exécuter un programme Scratch avec une expression",interactiveOnly:true,make:()=>{let x=rand(-5,8),a=rand(2,6),b=rand(-8,8),answer=a*x+b,sign=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;return q(`Dans ce programme Scratch, la réponse saisie est ${displayNumber(x)}. Quelle valeur le lutin annonce-t-il ?`,answer,`Le programme calcule ${a} × (${displayNumber(x)}) ${sign} = ${displayNumber(answer)}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"sensing",text:"demander un nombre et attendre"},{type:"variables",text:`mettre résultat à ${a} × réponse ${sign}`},{type:"looks",text:"dire résultat"}]})}},
+{theme:"Algorithmique et programmation",notion:"Comprendre des boucles imbriquées",interactiveOnly:true,make:()=>{let outer=rand(2,5),inner=rand(2,5),change=rand(1,4),answer=outer*inner*change;return q(`Observe le programme Scratch. Quelle est la valeur finale de compteur ?`,answer,`Le changement est exécuté ${outer} × ${inner} = ${outer*inner} fois, donc compteur vaut ${outer*inner} × ${change} = ${answer}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"variables",text:"mettre compteur à 0"},{type:"control",text:`répéter ${outer} fois`},{type:"control",indent:1,text:`répéter ${inner} fois`},{type:"variables",indent:2,text:`ajouter ${change} à compteur`},{type:"control",indent:1,text:"fin de la boucle intérieure"},{type:"control",text:"fin de la boucle extérieure"}]})}},
+{theme:"Algorithmique et programmation",notion:"Interpréter une condition Scratch",interactiveOnly:true,make:()=>{let number=rand(10,99),even=number%2===0;return q(`Dans ce programme Scratch, la réponse saisie est ${number}. Quel mot le lutin annonce-t-il ?`,even?"pair":"impair",`Le reste de la division de ${number} par 2 vaut ${number%2} : le nombre est ${even?"pair":"impair"}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"sensing",text:"demander un nombre et attendre"},{type:"control",text:"si réponse modulo 2 = 0 alors"},{type:"looks",indent:1,text:"dire pair"},{type:"control",text:"sinon"},{type:"looks",indent:1,text:"dire impair"},{type:"control",text:"fin de la condition"}]})}}
 ];
 
 function lcm(a,b){return Math.abs(a*b)/gcd(a,b)}
@@ -541,7 +618,11 @@ const G6 = [
 {theme:"Calcul mental",notion:"Doubles et moitiés",make:()=>{let n=2*rand(2,50),double=Math.random()<.5;return q(`Calcule ${double?"le double":"la moitié"} de ${n}.`,double?2*n:n/2,double?`${n} × 2 = ${2*n}.`:`${n} ÷ 2 = ${n/2}.`)}},
 {theme:"Calcul mental",notion:"Somme de plusieurs nombres",make:()=>{let a=rand(5,40),b=rand(5,40),c=rand(5,40);return q(`Calcule mentalement : ${a} + ${b} + ${c}`,a+b+c,`On peut regrouper les nombres de façon pratique.`)}},
 {theme:"Calcul mental",notion:"Ordre de grandeur",make:()=>{let a=rand(41,99),b=rand(41,99);return q(`Donne un ordre de grandeur de ${a} + ${b}, à la dizaine près.`,Math.round(a/10)*10+Math.round(b/10)*10,`On arrondit chaque nombre à la dizaine la plus proche.`)}},
-{theme:"Calcul mental",notion:"Produit simple",make:()=>{let a=[25,50,100][rand(0,2)],b=rand(2,12);return q(`Calcule mentalement : ${a} × ${b}`,a*b,`On utilise une décomposition simple.`)}}
+{theme:"Calcul mental",notion:"Produit simple",make:()=>{let a=[25,50,100][rand(0,2)],b=rand(2,12);return q(`Calcule mentalement : ${a} × ${b}`,a*b,`On utilise une décomposition simple.`)}},
+
+{theme:"Algorithmique et programmation",notion:"Exécuter une séquence Scratch",interactiveOnly:true,make:()=>{let first=rand(5,30),second=rand(5,30);return q(`Observe le programme Scratch. De combien de pas le lutin avance-t-il au total ?`,first+second,`Le lutin avance de ${first} + ${second} = ${first+second} pas.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"motion",text:`avancer de ${first} pas`},{type:"motion",text:`avancer de ${second} pas`}]})}},
+{theme:"Algorithmique et programmation",notion:"Comprendre une boucle répéter",interactiveOnly:true,make:()=>{let repetitions=rand(2,5),seconds=rand(1,4);return q(`Observe le programme Scratch. Pendant combien de secondes le lutin attend-il au total ?`,repetitions*seconds,`Le lutin attend ${seconds} seconde(s), ${repetitions} fois : ${repetitions} × ${seconds} = ${repetitions*seconds}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"control",text:`répéter ${repetitions} fois`},{type:"control",indent:1,text:`attendre ${seconds} seconde(s)`},{type:"control",text:"fin de la boucle"}]})}},
+{theme:"Algorithmique et programmation",notion:"Suivre la valeur d’une variable",interactiveOnly:true,make:()=>{let start=rand(1,15),change=rand(1,10);return q(`Observe le programme Scratch. Quelle est la valeur finale de la variable points ?`,start+change,`La variable passe de ${start} à ${start} + ${change} = ${start+change}.`,[],{scratchBlocks:[{type:"event",text:"quand le drapeau vert est cliqué"},{type:"variables",text:`mettre points à ${start}`},{type:"variables",text:`ajouter ${change} à points`}]})}}
 ];
 
 const GENERATORS = {"6e":G6,"5e":G5,"4e":G4,"3e":G3};
