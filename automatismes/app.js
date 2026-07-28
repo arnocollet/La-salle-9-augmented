@@ -239,19 +239,39 @@ function scratchBlockTextMarkup(block){
   return scratchTokensMarkup(text,variableMode);
 }
 function scratchProgramMarkup(blocks){
-  const content=blocks.map(block=>{
+  const root=[],branches=[root],controls=[];
+  blocks.forEach(block=>{
     const type=block.type||"variables";
-    const indent=Math.max(0,Math.min(3,block.indent||0));
-    if(/^fin de (?:la boucle|la condition)/.test(block.text)){
-      return `<div class="scratch-control-footer" style="--scratch-indent:${indent}" aria-hidden="true"></div>`;
-    }
     const isControlStart=type==="control"&&/^(répéter|si )/.test(block.text);
-    const isControlMiddle=type==="control"&&block.text==="sinon";
+    if(isControlStart){
+      const node={kind:"control",block,then:[],otherwise:null};
+      branches.at(-1).push(node);
+      controls.push(node);
+      branches.push(node.then);
+    }else if(type==="control"&&block.text==="sinon"&&controls.length){
+      const node=controls.at(-1);
+      node.otherwise=[];
+      branches[branches.length-1]=node.otherwise;
+    }else if(/^fin de (?:la boucle|la condition)/.test(block.text)&&controls.length){
+      controls.pop();
+      branches.pop();
+    }else{
+      branches.at(-1).push({kind:"block",block});
+    }
+  });
+  const renderBlock=(block,extraClass="")=>{
+    const type=block.type||"variables";
     const classes=["scratch-block",`scratch-${type}`];
-    if(isControlStart)classes.push("scratch-control-start");
-    if(isControlMiddle)classes.push("scratch-control-middle");
-    return `<div class="${classes.join(" ")}" style="--scratch-indent:${indent}">${scratchBlockTextMarkup(block)}</div>`;
+    if(extraClass)classes.push(extraClass);
+    return `<div class="${classes.join(" ")}">${scratchBlockTextMarkup(block)}</div>`;
+  };
+  const renderNodes=nodes=>nodes.map(node=>{
+    if(node.kind==="block")return renderBlock(node.block);
+    const thenBranch=`<div class="scratch-control-body">${renderNodes(node.then)}</div>`;
+    const elseBranch=node.otherwise===null?"":`${renderBlock({type:"control",text:"sinon"},"scratch-control-middle")}<div class="scratch-control-body">${renderNodes(node.otherwise)}</div>`;
+    return `<div class="scratch-control-stack">${renderBlock(node.block,"scratch-control-start")}${thenBranch}${elseBranch}<div class="scratch-control-footer" aria-hidden="true"></div></div>`;
   }).join("");
+  const content=renderNodes(root);
   return `<div class="scratch-program" role="img" aria-label="Programme Scratch">${content}</div>`;
 }
 function questionNumbers(text){
