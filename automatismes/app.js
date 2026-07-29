@@ -662,6 +662,42 @@ const SIXTH_GRADE_THEME_EQUIVALENTS={
   "Proportionnalité":"Proportionnalité et fonctions"
 };
 
+const CHOICE_CATEGORIES=[
+  {
+    id:"numbers",
+    icon:"🔢",
+    label:"Nombres et calculs",
+    themes:["Nombres et calculs","Nombres entiers et décimaux","Fractions","Repérage dans le temps et durées","Calcul mental"]
+  },
+  {
+    id:"algebra",
+    icon:"🧩",
+    label:"Calcul littéral et fonctions",
+    themes:["Proportionnalité et fonctions","Proportionnalité"]
+  },
+  {
+    id:"geometry",
+    icon:"📐",
+    label:"Espace, géométrie et grandeurs",
+    themes:["Espace et géométrie","Longueurs et aires","Géométrie plane et espace"]
+  },
+  {
+    id:"statistics",
+    icon:"📊",
+    label:"Probabilités et statistiques",
+    themes:["Données et probabilités","Organisation et gestion de données"]
+  },
+  {
+    id:"scratch",
+    icon:"🐱",
+    label:"Algorithmique Scratch",
+    themes:["Algorithmique"]
+  }
+];
+const CHOICE_CATEGORY_BY_THEME=new Map(
+  CHOICE_CATEGORIES.flatMap(category=>category.themes.map(theme=>[theme,category.id]))
+);
+
 let state = JSON.parse(localStorage.getItem("mathsAutoCycle4")||'{"selectedLevel":"5e","points":0,"levels":{"6e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]},"5e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]},"4e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]},"3e":{"sessions":0,"questions":0,"correct":0,"history":[],"byTheme":{},"byNotion":{},"dates":[]}}}');
 if(!state.levels){
   const old={sessions:state.sessions||0,questions:state.questions||0,correct:state.correct||0,history:state.history||[],byTheme:state.byTheme||{},byNotion:state.byNotion||{},dates:state.dates||[]};
@@ -672,6 +708,7 @@ if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,his
 let currentLevel=state.selectedLevel||"5e";
 let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null;
 let printableSheets=[],printableLevel="";
+let selectedChoiceNotions=new Set();
 
 function levelState(){return state.levels[currentLevel]}
 function cancelScheduledNextQuestion(){
@@ -696,7 +733,7 @@ function selectLevel(level){
   document.getElementById("notionsLevelLabel").textContent=level;
   document.getElementById("worksheetLevelLabel").textContent=level;
   preparePrintableSheets();
-  makeThemeButtons(); renderNotions(); renderAll();
+  makeChoiceMenu(); renderNotions(); renderAll();
 }
 function showView(id){
   if(id!=="training")cancelScheduledNextQuestion();
@@ -710,18 +747,89 @@ function showView(id){
 function availableThemes(){
   return Object.keys(NOTIONS[currentLevel]);
 }
-function makeThemeButtons(){
-  const html=availableThemes().map(t=>`<button class="theme-chip" data-quiz-theme="${t}">${THEMES[t]} ${t}</button>`).join("");
-  document.getElementById("modalThemes").innerHTML=html;
-  document.querySelectorAll("[data-quiz-theme]").forEach(b=>b.onclick=()=>startQuiz("theme",b.dataset.quizTheme));
+function choiceGroupsForCurrentLevel(){
+  const notionsByCategory=new Map(CHOICE_CATEGORIES.map(category=>[category.id,[]]));
+  const seenByCategory=new Map(CHOICE_CATEGORIES.map(category=>[category.id,new Set()]));
+  GENERATORS[currentLevel].forEach(generator=>{
+    const categoryId=CHOICE_CATEGORY_BY_THEME.get(generator.theme);
+    if(!categoryId||seenByCategory.get(categoryId).has(generator.notion))return;
+    seenByCategory.get(categoryId).add(generator.notion);
+    notionsByCategory.get(categoryId).push(generator.notion);
+  });
+  return CHOICE_CATEGORIES
+    .map(category=>({...category,notions:notionsByCategory.get(category.id)}))
+    .filter(category=>category.notions.length);
+}
+function updateChoiceSelection(){
+  const checkboxes=[...document.querySelectorAll("[data-choice-notion]")];
+  selectedChoiceNotions=new Set(
+    checkboxes.filter(checkbox=>checkbox.checked).map(checkbox=>checkbox.dataset.choiceNotion)
+  );
+  const count=selectedChoiceNotions.size;
+  document.getElementById("choiceStatus").textContent=count
+    ?`${count} type${count>1?"s":""} d’exercice${count>1?"s":""} sélectionné${count>1?"s":""}`
+    :"Aucun exercice sélectionné";
+  document.getElementById("startChoice").disabled=count===0;
+}
+function makeChoiceMenu(){
+  selectedChoiceNotions=new Set();
+  const groups=choiceGroupsForCurrentLevel();
+  document.getElementById("choiceGroups").innerHTML=groups.map((category,index)=>{
+    const panelId=`choice-panel-${category.id}`;
+    const choices=category.notions.map((notion,notionIndex)=>{
+      const inputId=`choice-${category.id}-${notionIndex}`;
+      return `<label class="choice-option" for="${inputId}"><input id="${inputId}" type="checkbox" data-choice-notion="${escapeXml(notion)}"><span>${escapeXml(notion)}</span></label>`;
+    }).join("");
+    return `<section class="choice-group" data-choice-group="${category.id}">
+      <button class="choice-group-toggle" type="button" aria-expanded="${index===0}" aria-controls="${panelId}">
+        <span><span aria-hidden="true">${category.icon}</span> ${category.label}</span>
+        <span class="choice-arrow" aria-hidden="true">${index===0?"▲":"▼"}</span>
+      </button>
+      <div class="choice-panel" id="${panelId}"${index===0?"":" hidden"}>
+        <button class="choice-check-all" type="button" data-choice-category="${category.id}">Tout cocher / décocher</button>
+        <div class="choice-options">${choices}</div>
+      </div>
+    </section>`;
+  }).join("");
+  document.querySelectorAll(".choice-group-toggle").forEach(button=>{
+    button.onclick=()=>{
+      const panel=document.getElementById(button.getAttribute("aria-controls"));
+      const isOpen=button.getAttribute("aria-expanded")==="true";
+      button.setAttribute("aria-expanded",String(!isOpen));
+      button.querySelector(".choice-arrow").textContent=isOpen?"▼":"▲";
+      panel.hidden=isOpen;
+    };
+  });
+  document.querySelectorAll("[data-choice-category]").forEach(button=>{
+    button.onclick=()=>{
+      const checkboxes=[...document.querySelectorAll(`[data-choice-group="${button.dataset.choiceCategory}"] [data-choice-notion]`)];
+      const shouldCheck=checkboxes.some(checkbox=>!checkbox.checked);
+      checkboxes.forEach(checkbox=>{checkbox.checked=shouldCheck});
+      updateChoiceSelection();
+    };
+  });
+  document.querySelectorAll("[data-choice-notion]").forEach(checkbox=>{
+    checkbox.onchange=updateChoiceSelection;
+  });
+  updateChoiceSelection();
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=()=>startQuiz("review");
 document.getElementById("openProgress").onclick=()=>showView("progress");
 document.getElementById("openWorksheets").onclick=()=>showView("worksheets");
 document.getElementById("openNotions").onclick=()=>showView("notions");
-document.getElementById("openThemes").onclick=()=>document.getElementById("themeModal").classList.remove("hidden");
-document.getElementById("closeModal").onclick=()=>document.getElementById("themeModal").classList.add("hidden");
+document.getElementById("openChoices").onclick=()=>{
+  makeChoiceMenu();
+  document.getElementById("choiceModal").classList.remove("hidden");
+};
+document.getElementById("closeChoiceModal").onclick=()=>document.getElementById("choiceModal").classList.add("hidden");
+document.getElementById("startChoice").onclick=()=>startQuiz("choice",null,[...selectedChoiceNotions]);
+document.getElementById("choiceModal").onclick=event=>{
+  if(event.target===event.currentTarget)event.currentTarget.classList.add("hidden");
+};
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape")document.getElementById("choiceModal").classList.add("hidden");
+});
 document.getElementById("quitQuiz").onclick=()=>showView("home");
 document.getElementById("returnHome").onclick=()=>{document.getElementById("resultModal").classList.add("hidden");showView("home");renderAll()};
 document.getElementById("validateAnswer").onclick=validate;
@@ -800,9 +908,13 @@ function previousLevelGenerators(level){
 function matchesSelectedTheme(generator,theme){
   return generator.theme===theme||SIXTH_GRADE_THEME_EQUIVALENTS[generator.theme]===theme;
 }
-function prepareGeneratorPool(generators,{mode="random",theme=null,printable=false}={}){
+function prepareGeneratorPool(generators,{mode="random",theme=null,notions=[],printable=false}={}){
   let pool=generators.filter(generator=>!printable||!generator.interactiveOnly);
   if(mode==="theme")pool=pool.filter(generator=>matchesSelectedTheme(generator,theme));
+  if(mode==="choice"){
+    const selectedNotions=new Set(notions);
+    pool=pool.filter(generator=>selectedNotions.has(generator.notion));
+  }
   if(mode==="review"){
     pool=[...pool].sort((a,b)=>successRate(a.notion)-successRate(b.notion));
     pool=pool.slice(0,Math.max(8,Math.floor(pool.length/2)));
@@ -1028,10 +1140,11 @@ async function downloadWorksheetsPdf(){
   }finally{button.disabled=false}
 }
 
-function startQuiz(mode,theme){
-  currentQuiz=buildMixedLevelRoutine(5,{mode,theme});
+function startQuiz(mode,theme=null,notions=[]){
+  currentQuiz=buildMixedLevelRoutine(5,{mode,theme,notions});
+  if(!currentQuiz.length)return;
   quizReview=[];index=0;score=0;answered=false;
-  document.getElementById("themeModal").classList.add("hidden");
+  document.getElementById("choiceModal").classList.add("hidden");
   showView("training");renderQuestion();
 }
 function renderQuestion(){

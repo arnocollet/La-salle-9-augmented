@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=32" />
-  <link rel="stylesheet" href="styles.css?v=60" />
+  <link rel="stylesheet" href="styles.css?v=61" />
 </head>
 <body>
   <header class="navbar">
@@ -114,10 +114,10 @@
           <div class="routine greenish">
             <div class="routine-heading">
               <div class="emoji">🎯</div>
-              <h3>Thème</h3>
+              <h3>Exercices au choix</h3>
             </div>
-            <p>Travaille uniquement la notion de ton choix.</p>
-            <button id="openThemes">Choisir un thème</button>
+            <p>Sélectionne précisément les types d’exercices à travailler.</p>
+            <button id="openChoices">Choisir les exercices</button>
           </div>
           <div class="routine purple">
             <div class="routine-heading">
@@ -309,12 +309,18 @@
       </article>
     </section>
 
-    <div id="themeModal" class="modal hidden">
-      <div class="modal-box">
-        <button class="close" id="closeModal">×</button>
-        <h2>Choisir un thème</h2>
-        <p>La routine comportera 5 questions du même domaine.</p>
-        <div id="modalThemes" class="modal-themes"></div>
+    <div id="choiceModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="choiceModalTitle">
+      <div class="modal-box choice-modal-box">
+        <button class="close" id="closeChoiceModal" type="button" aria-label="Fermer">×</button>
+        <div class="choice-modal-heading">
+          <h2 id="choiceModalTitle">🎯 Exercices au choix</h2>
+          <p>Sélectionne les types d’exercices à inclure dans ta routine.</p>
+        </div>
+        <div id="choiceGroups" class="choice-groups"></div>
+        <div class="choice-modal-footer">
+          <p id="choiceStatus" aria-live="polite">Aucun exercice sélectionné</p>
+          <button id="startChoice" class="primary" type="button" disabled>Commencer la routine</button>
+        </div>
       </div>
     </div>
 
@@ -367,6 +373,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="app.js?v=54"></script>
+  <script src="app.js?v=55"></script>
 </body>
 </html>
