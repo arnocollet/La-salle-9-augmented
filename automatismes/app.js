@@ -1232,7 +1232,7 @@ function renderQuizReview(){
     const statusLabel=result.isCorrect?"Réponse correcte":"Réponse incorrecte";
     return `<tr class="${result.isCorrect?"review-correct":"review-incorrect"}">
       <td><span class="review-question-number">${questionIndex+1}.</span> ${mathPreviewMarkup(result.question)}</td>
-      <td><span class="review-student-answer"><span class="review-status" aria-hidden="true">${statusIcon}</span><span class="sr-only">${statusLabel} : </span><span>${mathPreviewMarkup(result.userAnswer)}</span></span></td>
+      <td><span class="review-student-answer"><span class="review-status" role="img" aria-label="${statusLabel}">${statusIcon}</span><span>${mathPreviewMarkup(result.userAnswer)}</span></span></td>
       <td><span class="review-expected-answer">${mathPreviewMarkup(result.expectedAnswer)}</span></td>
     </tr>`;
   }).join("");
