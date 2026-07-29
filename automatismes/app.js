@@ -706,11 +706,41 @@ if(!state.levels){
 if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
-let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null;
+let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null,pointsMilestoneTimer=null;
 let printableSheets=[],printableLevel="";
 let selectedChoiceNotions=new Set();
 
 function levelState(){return state.levels[currentLevel]}
+function pointsMilestoneMessage(points){
+  const specialMessages={
+    500:"Bravo ! Tes efforts réguliers portent leurs fruits. Continue comme ça !",
+    1000:"Formidable ! Tu construis des automatismes de plus en plus solides.",
+    1500:"Excellent travail ! Ta persévérance te fait vraiment progresser.",
+    2000:"Impressionnant ! Tu as déjà parcouru beaucoup de chemin en mathématiques."
+  };
+  const recurringMessages=[
+    "Quel beau parcours ! Chaque exercice réussi renforce tes connaissances.",
+    "Superbe progression ! Ta régularité est une vraie force.",
+    "Félicitations ! Continue à avancer avec la même détermination."
+  ];
+  return specialMessages[points]||recurringMessages[(points/500-1)%recurringMessages.length];
+}
+function closePointsMilestone(){
+  clearTimeout(pointsMilestoneTimer);
+  pointsMilestoneTimer=null;
+  document.getElementById("pointsMilestone").classList.add("hidden");
+}
+function showReachedPointsMilestone(previousPoints,currentPoints){
+  const previousStep=Math.floor(previousPoints/500);
+  const currentStep=Math.floor(currentPoints/500);
+  if(currentStep<=previousStep)return;
+  const milestone=currentStep*500;
+  document.getElementById("pointsMilestoneTitle").textContent=`Palier atteint : ${milestone.toLocaleString("fr-FR")} points !`;
+  document.getElementById("pointsMilestoneMessage").textContent=pointsMilestoneMessage(milestone);
+  document.getElementById("pointsMilestone").classList.remove("hidden");
+  clearTimeout(pointsMilestoneTimer);
+  pointsMilestoneTimer=setTimeout(closePointsMilestone,6500);
+}
 function cancelScheduledNextQuestion(){
   if(nextQuestionTimer===null)return;
   clearTimeout(nextQuestionTimer);
@@ -824,6 +854,7 @@ document.getElementById("openChoices").onclick=()=>{
 };
 document.getElementById("closeReviewModal").onclick=closeReviewPlan;
 document.getElementById("startPreparedReview").onclick=beginCurrentQuiz;
+document.getElementById("closePointsMilestone").onclick=closePointsMilestone;
 document.getElementById("reviewModal").onclick=event=>{
   if(event.target===event.currentTarget)closeReviewPlan();
 };
@@ -1398,11 +1429,13 @@ function validate(){
   quizReview[index]={question:x.text,userAnswer:rawUser,expectedAnswer:x.answer,isCorrect};
   answered=true;
   const s=levelState();
+  const previousPoints=state.points;
   if(isCorrect){score++;state.points+=10}
   s.questions++; if(isCorrect)s.correct++;
   s.byTheme[x.theme]??={q:0,c:0}; s.byTheme[x.theme].q++; if(isCorrect)s.byTheme[x.theme].c++;
   s.byNotion[x.notion]??={q:0,c:0}; s.byNotion[x.notion].q++; if(isCorrect)s.byNotion[x.notion].c++;
   save();
+  showReachedPointsMilestone(previousPoints,state.points);
   const fb=document.getElementById("feedback");
   fb.className=`feedback ${isCorrect?"good":"bad"}`;
   const explanationMarkup=mathPreviewMarkup(x.explanation);
