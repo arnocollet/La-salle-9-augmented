@@ -670,10 +670,22 @@ if(!state.levels){
 if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
-let currentQuiz=[],quizReview=[],index=0,score=0,answered=false;
+let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null;
 let printableSheets=[],printableLevel="";
 
 function levelState(){return state.levels[currentLevel]}
+function cancelScheduledNextQuestion(){
+  if(nextQuestionTimer===null)return;
+  clearTimeout(nextQuestionTimer);
+  nextQuestionTimer=null;
+}
+function scheduleNextQuestion(){
+  cancelScheduledNextQuestion();
+  nextQuestionTimer=setTimeout(()=>{
+    nextQuestionTimer=null;
+    next();
+  },3000);
+}
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll(".level-btn").forEach(b=>b.onclick=()=>selectLevel(b.dataset.level));
 document.querySelectorAll("[data-return-home]").forEach(b=>b.onclick=()=>showView("home"));
@@ -687,6 +699,7 @@ function selectLevel(level){
   makeThemeButtons(); renderNotions(); renderAll();
 }
 function showView(id){
+  if(id!=="training")cancelScheduledNextQuestion();
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
@@ -712,8 +725,11 @@ document.getElementById("closeModal").onclick=()=>document.getElementById("theme
 document.getElementById("quitQuiz").onclick=()=>showView("home");
 document.getElementById("returnHome").onclick=()=>{document.getElementById("resultModal").classList.add("hidden");showView("home");renderAll()};
 document.getElementById("validateAnswer").onclick=validate;
-document.getElementById("nextQuestion").onclick=next;
-document.getElementById("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter"){answered?next():validate()}});
+document.getElementById("answerInput").addEventListener("keydown",e=>{
+  if(e.key!=="Enter"||e.isComposing)return;
+  e.preventDefault();
+  if(!answered)validate();
+});
 document.getElementById("answerInput").addEventListener("input",()=>{
   stylizeAnswerVariables();
   updateMathPreview();
@@ -1019,6 +1035,7 @@ function startQuiz(mode,theme){
   showView("training");renderQuestion();
 }
 function renderQuestion(){
+  cancelScheduledNextQuestion();
   const x=currentQuiz[index];
   document.getElementById("questionLevel").textContent=`Niveau ${currentLevel}`;
   document.getElementById("questionCounter").textContent=`Question ${index+1}/${currentQuiz.length}`;
@@ -1030,8 +1047,6 @@ function renderQuestion(){
   updateMathPreview();
   document.getElementById("feedback").className="feedback hidden";
   document.getElementById("validateAnswer").classList.remove("hidden");
-  document.getElementById("nextQuestion").classList.add("hidden");
-  document.getElementById("nextQuestion").textContent=index===4?"Voir le résultat":"Question suivante";
   answered=false;
   setTimeout(()=>document.getElementById("answerInput").focus(),100);
 }
@@ -1223,9 +1238,13 @@ function validate(){
     ?`✅ Bonne réponse. ${explanationMarkup}`
     :`❌ Réponse attendue : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${explanationMarkup}`;
   document.getElementById("validateAnswer").classList.add("hidden");
-  document.getElementById("nextQuestion").classList.remove("hidden");
+  scheduleNextQuestion();
 }
-function next(){if(!answered)return;if(index<4){index++;renderQuestion()}else finishQuiz()}
+function next(){
+  if(!answered)return;
+  cancelScheduledNextQuestion();
+  if(index<4){index++;renderQuestion()}else finishQuiz();
+}
 function renderQuizReview(){
   document.getElementById("resultReview").innerHTML=quizReview.map((result,questionIndex)=>{
     const statusIcon=result.isCorrect?"✓":"✕";
