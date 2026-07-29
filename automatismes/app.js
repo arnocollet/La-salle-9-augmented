@@ -3,7 +3,7 @@ const THEMES = {
   "Nombres et calculs": "🔢",
   "Espace et géométrie": "📐",
   "Données et probabilités": "📊",
-  "Proportionnalité et fonctions": "f(x)",
+  "Proportionnalité et fonctions": "%",
   "Algorithmique": "🐱",
 
   "Nombres entiers et décimaux": "🔢",
@@ -11,7 +11,7 @@ const THEMES = {
   "Longueurs et aires": "📐",
   "Repérage dans le temps et durées": "🔢",
   "Organisation et gestion de données": "📊",
-  "Proportionnalité": "f(x)",
+  "Proportionnalité": "%",
   "Géométrie plane et espace": "📐",
   "Calcul mental": "🔢"
 };
