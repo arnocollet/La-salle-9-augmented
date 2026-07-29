@@ -774,18 +774,18 @@ function updateChoiceSelection(){
 function makeChoiceMenu(){
   selectedChoiceNotions=new Set();
   const groups=choiceGroupsForCurrentLevel();
-  document.getElementById("choiceGroups").innerHTML=groups.map((category,index)=>{
+  document.getElementById("choiceGroups").innerHTML=groups.map(category=>{
     const panelId=`choice-panel-${category.id}`;
     const choices=category.notions.map((notion,notionIndex)=>{
       const inputId=`choice-${category.id}-${notionIndex}`;
       return `<label class="choice-option" for="${inputId}"><input id="${inputId}" type="checkbox" data-choice-notion="${escapeXml(notion)}"><span>${escapeXml(notion)}</span></label>`;
     }).join("");
     return `<section class="choice-group" data-choice-group="${category.id}">
-      <button class="choice-group-toggle" type="button" aria-expanded="${index===0}" aria-controls="${panelId}">
+      <button class="choice-group-toggle" type="button" aria-expanded="false" aria-controls="${panelId}">
         <span><span aria-hidden="true">${category.icon}</span> ${category.label}</span>
-        <span class="choice-arrow" aria-hidden="true">${index===0?"▲":"▼"}</span>
+        <span class="choice-arrow" aria-hidden="true">▼</span>
       </button>
-      <div class="choice-panel" id="${panelId}"${index===0?"":" hidden"}>
+      <div class="choice-panel" id="${panelId}" hidden>
         <button class="choice-check-all" type="button" data-choice-category="${category.id}">Tout cocher / décocher</button>
         <div class="choice-options">${choices}</div>
       </div>
