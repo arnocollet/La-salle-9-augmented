@@ -670,7 +670,7 @@ if(!state.levels){
 if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
-let currentQuiz=[],index=0,score=0,answered=false;
+let currentQuiz=[],quizReview=[],index=0,score=0,answered=false;
 let printableSheets=[],printableLevel="";
 
 function levelState(){return state.levels[currentLevel]}
@@ -1014,7 +1014,7 @@ async function downloadWorksheetsPdf(){
 
 function startQuiz(mode,theme){
   currentQuiz=buildMixedLevelRoutine(5,{mode,theme});
-  index=0;score=0;answered=false;
+  quizReview=[];index=0;score=0;answered=false;
   document.getElementById("themeModal").classList.add("hidden");
   showView("training");renderQuestion();
 }
@@ -1208,6 +1208,7 @@ function validate(){
   const isEquivalentNumericCalculation=isEquivalentNumericExpression(x,rawUser,rawAcceptable);
   const hasExpectedParity=Boolean(x.parity)&&expressionParity(rawUser)===x.parity;
   const isCorrect=acceptable.includes(user)||isEquivalentPrimeProduct||isEquivalentFraction||isEquivalentMathExpression||isEquivalentNumericCalculation||hasExpectedParity;
+  quizReview[index]={question:x.text,userAnswer:rawUser,expectedAnswer:x.answer,isCorrect};
   answered=true;
   const s=levelState();
   if(isCorrect){score++;state.points+=10}
@@ -1225,6 +1226,17 @@ function validate(){
   document.getElementById("nextQuestion").classList.remove("hidden");
 }
 function next(){if(!answered)return;if(index<4){index++;renderQuestion()}else finishQuiz()}
+function renderQuizReview(){
+  document.getElementById("resultReview").innerHTML=quizReview.map((result,questionIndex)=>{
+    const statusIcon=result.isCorrect?"✓":"✕";
+    const statusLabel=result.isCorrect?"Réponse correcte":"Réponse incorrecte";
+    return `<tr class="${result.isCorrect?"review-correct":"review-incorrect"}">
+      <td><span class="review-question-number">${questionIndex+1}.</span> ${mathPreviewMarkup(result.question)}</td>
+      <td><span class="review-student-answer"><span class="review-status" aria-hidden="true">${statusIcon}</span><span class="sr-only">${statusLabel} : </span><span>${mathPreviewMarkup(result.userAnswer)}</span></span></td>
+      <td><span class="review-expected-answer">${mathPreviewMarkup(result.expectedAnswer)}</span></td>
+    </tr>`;
+  }).join("");
+}
 function finishQuiz(){
   const s=levelState(); s.sessions++;
   const today=new Date().toISOString().slice(0,10);
@@ -1233,6 +1245,7 @@ function finishQuiz(){
   s.history=s.history.slice(0,10);save();
   document.getElementById("finalScore").textContent=`${score} / 5`;
   document.getElementById("resultMessage").textContent=score===5?"Excellent travail !":score>=3?"Bonne routine. Continue régulièrement.":"Certaines notions sont à revoir.";
+  renderQuizReview();
   document.getElementById("resultModal").classList.remove("hidden");
 }
 function successRate(n){let s=levelState().byNotion[n];return s&&s.q?s.c/s.q:0}

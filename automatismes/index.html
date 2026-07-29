@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=31" />
-  <link rel="stylesheet" href="styles.css?v=57" />
+  <link rel="stylesheet" href="styles.css?v=58" />
 </head>
 <body>
   <header class="navbar">
@@ -318,13 +318,31 @@
       </div>
     </div>
 
-    <div id="resultModal" class="modal hidden">
+    <div id="resultModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
       <div class="modal-box result-box">
         <div class="trophy">🏆</div>
-        <h2>Routine terminée</h2>
+        <h2 id="resultTitle">Routine terminée</h2>
         <p>Ton score :</p>
         <strong id="finalScore">0 / 5</strong>
         <div id="resultMessage"></div>
+        <h3 class="result-review-title">Synthèse de l’entraînement</h3>
+        <div class="result-review-wrap">
+          <table class="result-review">
+            <colgroup>
+              <col class="review-question-column">
+              <col class="review-answer-column">
+              <col class="review-correction-column">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Question</th>
+                <th scope="col">Ta réponse</th>
+                <th scope="col">Correction</th>
+              </tr>
+            </thead>
+            <tbody id="resultReview"></tbody>
+          </table>
+        </div>
         <button id="returnHome" class="primary">Retour à l’accueil</button>
       </div>
     </div>
@@ -349,6 +367,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="app.js?v=50"></script>
+  <script src="app.js?v=51"></script>
 </body>
 </html>
