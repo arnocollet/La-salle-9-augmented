@@ -3,17 +3,17 @@ const THEMES = {
   "Nombres et calculs": "🔢",
   "Espace et géométrie": "📐",
   "Données et probabilités": "📊",
-  "Proportionnalité et fonctions": "％",
-  "Algorithmique": "🧩",
+  "Proportionnalité et fonctions": "f(x)",
+  "Algorithmique": "🐱",
 
   "Nombres entiers et décimaux": "🔢",
-  "Fractions": "◔",
-  "Longueurs et aires": "📏",
-  "Repérage dans le temps et durées": "🕒",
+  "Fractions": "🔢",
+  "Longueurs et aires": "📐",
+  "Repérage dans le temps et durées": "🔢",
   "Organisation et gestion de données": "📊",
-  "Proportionnalité": "％",
+  "Proportionnalité": "f(x)",
   "Géométrie plane et espace": "📐",
-  "Calcul mental": "🧠"
+  "Calcul mental": "🔢"
 };
 
 const WORKSHEET_COLORS = {
@@ -665,31 +665,31 @@ const SIXTH_GRADE_THEME_EQUIVALENTS={
 const CHOICE_CATEGORIES=[
   {
     id:"numbers",
-    icon:"🔢",
+    icon:THEMES["Nombres et calculs"],
     label:"Nombres et calculs",
     themes:["Nombres et calculs","Nombres entiers et décimaux","Fractions","Repérage dans le temps et durées","Calcul mental"]
   },
   {
     id:"algebra",
-    icon:"🧩",
+    icon:THEMES["Proportionnalité et fonctions"],
     label:"Calcul littéral et fonctions",
     themes:["Proportionnalité et fonctions","Proportionnalité"]
   },
   {
     id:"geometry",
-    icon:"📐",
+    icon:THEMES["Espace et géométrie"],
     label:"Espace, géométrie et grandeurs",
     themes:["Espace et géométrie","Longueurs et aires","Géométrie plane et espace"]
   },
   {
     id:"statistics",
-    icon:"📊",
+    icon:THEMES["Données et probabilités"],
     label:"Probabilités et statistiques",
     themes:["Données et probabilités","Organisation et gestion de données"]
   },
   {
     id:"scratch",
-    icon:"🐱",
+    icon:THEMES.Algorithmique,
     label:"Algorithmique Scratch",
     themes:["Algorithmique"]
   }
