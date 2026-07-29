@@ -814,7 +814,7 @@ function makeChoiceMenu(){
   updateChoiceSelection();
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
-document.getElementById("startReview").onclick=()=>startQuiz("review");
+document.getElementById("startReview").onclick=openReviewPlan;
 document.getElementById("openProgress").onclick=()=>showView("progress");
 document.getElementById("openWorksheets").onclick=()=>showView("worksheets");
 document.getElementById("openNotions").onclick=()=>showView("notions");
@@ -822,13 +822,20 @@ document.getElementById("openChoices").onclick=()=>{
   makeChoiceMenu();
   document.getElementById("choiceModal").classList.remove("hidden");
 };
+document.getElementById("closeReviewModal").onclick=closeReviewPlan;
+document.getElementById("startPreparedReview").onclick=beginCurrentQuiz;
+document.getElementById("reviewModal").onclick=event=>{
+  if(event.target===event.currentTarget)closeReviewPlan();
+};
 document.getElementById("closeChoiceModal").onclick=()=>document.getElementById("choiceModal").classList.add("hidden");
 document.getElementById("startChoice").onclick=()=>startQuiz("choice",null,[...selectedChoiceNotions]);
 document.getElementById("choiceModal").onclick=event=>{
   if(event.target===event.currentTarget)event.currentTarget.classList.add("hidden");
 };
 document.addEventListener("keydown",event=>{
-  if(event.key==="Escape")document.getElementById("choiceModal").classList.add("hidden");
+  if(event.key!=="Escape")return;
+  document.getElementById("choiceModal").classList.add("hidden");
+  closeReviewPlan();
 });
 document.getElementById("quitQuiz").onclick=()=>showView("home");
 document.getElementById("returnHome").onclick=()=>{document.getElementById("resultModal").classList.add("hidden");showView("home");renderAll()};
@@ -920,6 +927,53 @@ function prepareGeneratorPool(generators,{mode="random",theme=null,notions=[],pr
     pool=pool.slice(0,Math.max(8,Math.floor(pool.length/2)));
   }
   return pool;
+}
+function reviewReason(exercise){
+  const results=levelState().byNotion[exercise.notion];
+  let reason;
+  if(!results?.q){
+    reason="Cette notion n’a pas encore été travaillée : elle permettra de repérer ce qui est déjà acquis.";
+  }else{
+    const rate=results.c/results.q;
+    const answers=`${results.c} bonne${results.c===1?"":"s"} réponse${results.c===1?"":"s"} sur ${results.q}`;
+    if(rate<.5)reason=`${answers} : cette notion fait partie de celles qui réussissent le moins.`;
+    else if(rate<.8)reason=`${answers} : cette notion est encore en cours d’acquisition.`;
+    else reason=`${answers} : cet exercice permettra de consolider cet acquis.`;
+  }
+  if(exercise.sourceLevel!==currentLevel){
+    reason+=` C’est une révision de ${exercise.sourceLevel} utile pour consolider les bases du niveau ${currentLevel}.`;
+  }
+  return reason;
+}
+function openReviewPlan(){
+  currentQuiz=buildMixedLevelRoutine(5,{mode:"review"});
+  if(!currentQuiz.length)return;
+  const completedQuestions=levelState().questions;
+  const previousLevelExercises=currentQuiz.filter(exercise=>exercise.sourceLevel!==currentLevel).length;
+  document.getElementById("reviewPlanReason").textContent=completedQuestions
+    ?`Cette sélection s’appuie sur tes ${completedQuestions} réponse${completedQuestions>1?"s":""} enregistrée${completedQuestions>1?"s":""} en ${currentLevel}.`
+    :`Comme tu n’as pas encore de résultats en ${currentLevel}, cette première routine servira à repérer les notions à renforcer.`;
+  document.getElementById("reviewMethodReason").textContent=previousLevelExercises
+    ?`Le site privilégie les notions les moins réussies. Cette routine contient ${currentQuiz.length-previousLevelExercises} exercices de ${currentLevel} et ${previousLevelExercises} révisions de niveaux précédents pour consolider les bases utiles.`
+    :`Le site privilégie les notions les moins réussies ou qui n’ont pas encore été travaillées.`;
+  document.getElementById("reviewPlanList").innerHTML=currentQuiz.map((exercise,exerciseIndex)=>`
+    <article class="review-plan-item">
+      <span class="review-plan-number">${exerciseIndex+1}</span>
+      <div>
+        <span class="review-plan-theme">${escapeXml(exercise.theme)}</span>
+        <h4>${escapeXml(exercise.notion)}</h4>
+        <p>${escapeXml(reviewReason(exercise))}</p>
+      </div>
+    </article>
+  `).join("");
+  document.getElementById("reviewModal").classList.remove("hidden");
+  document.getElementById("startPreparedReview").focus();
+}
+function closeReviewPlan(){
+  const modal=document.getElementById("reviewModal");
+  if(modal.classList.contains("hidden"))return;
+  modal.classList.add("hidden");
+  document.getElementById("startReview").focus();
 }
 function shuffleQuestions(questions){
   for(let i=questions.length-1;i>0;i--){
@@ -1143,8 +1197,13 @@ async function downloadWorksheetsPdf(){
 function startQuiz(mode,theme=null,notions=[]){
   currentQuiz=buildMixedLevelRoutine(5,{mode,theme,notions});
   if(!currentQuiz.length)return;
+  beginCurrentQuiz();
+}
+function beginCurrentQuiz(){
+  if(!currentQuiz.length)return;
   quizReview=[];index=0;score=0;answered=false;
   document.getElementById("choiceModal").classList.add("hidden");
+  document.getElementById("reviewModal").classList.add("hidden");
   showView("training");renderQuestion();
 }
 function renderQuestion(){

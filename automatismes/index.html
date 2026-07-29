@@ -9,7 +9,7 @@
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/style.css?v=32" />
-  <link rel="stylesheet" href="styles.css?v=62" />
+  <link rel="stylesheet" href="styles.css?v=63" />
 </head>
 <body>
   <header class="navbar">
@@ -309,6 +309,25 @@
       </article>
     </section>
 
+    <div id="reviewModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+      <div class="modal-box review-modal-box">
+        <button class="close" id="closeReviewModal" type="button" aria-label="Fermer">×</button>
+        <div class="review-modal-heading">
+          <h2 id="reviewModalTitle">🧠 Ta routine « Mes difficultés »</h2>
+          <p id="reviewPlanReason"></p>
+        </div>
+        <div class="review-plan-explanation">
+          <strong>Pourquoi ces exercices ?</strong>
+          <p id="reviewMethodReason"></p>
+        </div>
+        <h3>Ce que tu vas travailler</h3>
+        <div id="reviewPlanList" class="review-plan-list"></div>
+        <div class="review-modal-footer">
+          <button id="startPreparedReview" class="primary" type="button">Commencer la routine</button>
+        </div>
+      </div>
+    </div>
+
     <div id="choiceModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="choiceModalTitle">
       <div class="modal-box choice-modal-box">
         <button class="close" id="closeChoiceModal" type="button" aria-label="Fermer">×</button>
@@ -373,6 +392,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="app.js?v=59"></script>
+  <script src="app.js?v=60"></script>
 </body>
 </html>
