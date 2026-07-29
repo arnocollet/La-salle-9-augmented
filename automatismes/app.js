@@ -1362,10 +1362,11 @@ function renderQuizReview(){
   document.getElementById("resultReview").innerHTML=quizReview.map((result,questionIndex)=>{
     const statusIcon=result.isCorrect?"✓":"✕";
     const statusLabel=result.isCorrect?"Réponse correcte":"Réponse incorrecte";
+    const correctionAnswer=result.isCorrect?result.userAnswer:result.expectedAnswer;
     return `<tr class="${result.isCorrect?"review-correct":"review-incorrect"}">
       <td><span class="review-question-number">${questionIndex+1}.</span> ${mathPreviewMarkup(result.question)}</td>
       <td><span class="review-student-answer"><span class="review-status" role="img" aria-label="${statusLabel}">${statusIcon}</span><span>${mathPreviewMarkup(result.userAnswer)}</span></span></td>
-      <td><span class="review-expected-answer">${mathPreviewMarkup(result.expectedAnswer)}</span></td>
+      <td><span class="review-expected-answer">${mathPreviewMarkup(correctionAnswer)}</span></td>
     </tr>`;
   }).join("");
 }
