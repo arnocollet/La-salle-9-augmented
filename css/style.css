@@ -1254,8 +1254,8 @@ body[data-grade="3e"] .page-header {
     right: 0;
     background-color: var(--menu-surface);
     flex-direction: column;
-    padding: 2rem;
-    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    gap: 1.25rem;
     border-bottom: 1px solid var(--card-border);
     box-shadow: var(--shadow-lg);
   }
