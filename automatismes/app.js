@@ -963,7 +963,7 @@ function reviewReason(exercise){
   const results=levelState().byNotion[exercise.notion];
   let reason;
   if(!results?.q){
-    reason="Cette notion n’a pas encore été travaillée : elle permettra de repérer ce qui est déjà acquis.";
+    return "Cette notion n’a pas encore été travaillée.";
   }else{
     const rate=results.c/results.q;
     const answers=`${results.c} bonne${results.c===1?"":"s"} réponse${results.c===1?"":"s"} sur ${results.q}`;
@@ -979,14 +979,14 @@ function reviewReason(exercise){
 function openReviewPlan(){
   currentQuiz=buildMixedLevelRoutine(5,{mode:"review"});
   if(!currentQuiz.length)return;
-  const completedQuestions=levelState().questions;
   const previousLevelExercises=currentQuiz.filter(exercise=>exercise.sourceLevel!==currentLevel).length;
-  document.getElementById("reviewPlanReason").textContent=completedQuestions
-    ?`Cette sélection s’appuie sur tes ${completedQuestions} réponse${completedQuestions>1?"s":""} enregistrée${completedQuestions>1?"s":""} en ${currentLevel}.`
-    :`Comme tu n’as pas encore de résultats en ${currentLevel}, cette première routine servira à repérer les notions à renforcer.`;
-  document.getElementById("reviewMethodReason").textContent=previousLevelExercises
-    ?`Le site privilégie les notions les moins réussies. Cette routine contient ${currentQuiz.length-previousLevelExercises} exercices de ${currentLevel} et ${previousLevelExercises} révisions de niveaux précédents pour consolider les bases utiles.`
-    :`Le site privilégie les notions les moins réussies ou qui n’ont pas encore été travaillées.`;
+  const currentLevelExercises=currentQuiz.length-previousLevelExercises;
+  document.getElementById("reviewMethodReason").textContent=
+    `• Le site privilégie les notions les moins réussies.\n`+
+    `• Cette routine contient ${currentLevelExercises} exercice${currentLevelExercises>1?"s":""} de ${currentLevel}`+
+    (previousLevelExercises
+      ?` et ${previousLevelExercises} de révision${previousLevelExercises>1?"s":""}.`
+      :".");
   document.getElementById("reviewPlanList").innerHTML=currentQuiz.map((exercise,exerciseIndex)=>`
     <article class="review-plan-item">
       <span class="review-plan-number">${exerciseIndex+1}</span>
