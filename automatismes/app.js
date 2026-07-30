@@ -54,6 +54,9 @@ themeToggleButton?.addEventListener("click",()=>{
   const theme=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
   applySiteTheme(theme);
   localStorage.setItem("theme",theme);
+  if(document.getElementById("training")?.classList.contains("active")&&currentQuiz[index]){
+    renderQuestionVisual(currentQuiz[index]);
+  }
 });
 mobileMenuButton?.addEventListener("click",event=>{
   event.stopPropagation();
@@ -207,6 +210,147 @@ function escapeXml(value){
 function geometrySvg(label,body,viewBox="0 0 320 200"){
   return `<svg class="geometry-svg" viewBox="${viewBox}" role="img" aria-label="${escapeXml(label)}"><title>${escapeXml(label)}</title>${body}</svg>`;
 }
+let activeGeometryBoard=null;
+let geometryBoardSequence=0;
+function clearActiveGeometryBoard(){
+  if(activeGeometryBoard&&window.JXG?.JSXGraph){
+    try{window.JXG.JSXGraph.freeBoard(activeGeometryBoard)}catch(error){console.warn("Impossible de libérer la figure JSXGraph.",error)}
+  }
+  activeGeometryBoard=null;
+}
+function geometryPalette(){
+  const styles=getComputedStyle(document.documentElement);
+  return {
+    accent:styles.getPropertyValue("--accent").trim()||"#7c3aed",
+    accentLight:styles.getPropertyValue("--accent-light").trim()||"#ede9fe",
+    border:styles.getPropertyValue("--card-border").trim()||"#dce3ee",
+    text:styles.getPropertyValue("--text-primary").trim()||"#172033",
+    secondary:styles.getPropertyValue("--text-secondary").trim()||"#52637b"
+  };
+}
+function jsxPoint(board,coordinates,name,palette,labelOffset=[8,8]){
+  return board.create("point",coordinates,{
+    name,
+    fixed:true,
+    highlight:false,
+    size:2.5,
+    face:"o",
+    fillColor:palette.accent,
+    strokeColor:palette.accent,
+    label:{color:palette.text,fontSize:14,cssStyle:"font-weight:700",offset:labelOffset}
+  });
+}
+function jsxSegment(board,start,end,palette,attributes={}){
+  return board.create("segment",[start,end],{
+    fixed:true,
+    highlight:false,
+    strokeColor:palette.text,
+    strokeWidth:2.4,
+    ...attributes
+  });
+}
+function jsxRightAngleMarker(board,x,y,palette){
+  return board.create("curve",[[x,x+.5,x+.5],[y+.5,y+.5,y]],{
+    fixed:true,
+    highlight:false,
+    strokeColor:palette.accent,
+    strokeWidth:2
+  });
+}
+function jsxText(board,x,y,text,palette,attributes={}){
+  return board.create("text",[x,y,text],{
+    fixed:true,
+    highlight:false,
+    color:palette.accent,
+    fontSize:13,
+    cssStyle:"font-weight:700",
+    anchorX:"middle",
+    anchorY:"middle",
+    ...attributes
+  });
+}
+function jsxTriangle(board,coordinates,names,palette,labelOffsets=[]){
+  const points=coordinates.map((coordinates,index)=>jsxPoint(board,coordinates,names[index],palette,labelOffsets[index]));
+  board.create("polygon",points,{
+    fixed:true,
+    highlight:false,
+    fillColor:palette.accent,
+    fillOpacity:.07,
+    borders:{strokeColor:palette.text,strokeWidth:2.4,highlight:false},
+    vertices:{fixed:true,highlight:false}
+  });
+  return points;
+}
+function renderJsxGeometry(exercise,host){
+  const supportedNotions=new Set(["Somme des angles d’un triangle","Égalité de Pythagore","Théorème de Thalès","Rapports trigonométriques"]);
+  if(!supportedNotions.has(exercise.notion)||!window.JXG?.JSXGraph)return false;
+  const palette=geometryPalette();
+  const boardId=`geometry-board-${++geometryBoardSequence}`;
+  host.innerHTML=`<div id="${boardId}" class="geometry-board jxgbox" role="img"></div>`;
+  const container=host.firstElementChild;
+  const labels={
+    "Somme des angles d’un triangle":"Triangle avec deux angles connus et un angle inconnu",
+    "Égalité de Pythagore":"Triangle ABC rectangle en A, sans égalité indiquée",
+    "Théorème de Thalès":"Configuration de Thalès avec AN inconnu",
+    "Rapports trigonométriques":"Triangle ABC rectangle en A avec les longueurs données"
+  };
+  container.setAttribute("aria-label",labels[exercise.notion]);
+  try{
+    const board=window.JXG.JSXGraph.initBoard(boardId,{
+      renderer:"svg",
+      boundingbox:[-5,4.4,5,-3.4],
+      keepaspectratio:true,
+      axis:false,
+      showNavigation:false,
+      showCopyright:false,
+      showInfobox:false,
+      pan:{enabled:false},
+      zoom:{enabled:false},
+      keyboard:{enabled:false}
+    });
+    activeGeometryBoard=board;
+    const values=questionNumbers(exercise.text);
+    if(exercise.notion==="Somme des angles d’un triangle"){
+      const [A,B,C]=jsxTriangle(board,[[-4,-2.1],[.2,3.05],[4.1,-2.1]],["","",""],palette);
+      board.create("angle",[C,A,B],{name:"",withLabel:false,radius:.75,fixed:true,highlight:false,strokeColor:palette.accent,fillColor:palette.accent,fillOpacity:.12});
+      board.create("angle",[B,C,A],{name:"",withLabel:false,radius:.75,fixed:true,highlight:false,strokeColor:palette.accent,fillColor:palette.accent,fillOpacity:.12});
+      board.create("angle",[A,B,C],{name:"",withLabel:false,radius:.65,fixed:true,highlight:false,strokeColor:palette.text,fillColor:palette.border,fillOpacity:.2});
+      jsxText(board,-3.25,-1.62,`${values[0]}°`,palette);
+      jsxText(board,3.25,-1.62,`${values[1]}°`,palette);
+      jsxText(board,.2,2.18,"?",palette,{color:palette.text,fontSize:16});
+    }else if(exercise.notion==="Égalité de Pythagore"){
+      const [A,B,C]=jsxTriangle(board,[[-3.4,-2.3],[-3.4,3],[4,-2.3]],["A","B","C"],palette,[[10,-14],[10,10],[10,-12]]);
+      jsxRightAngleMarker(board,A.X(),A.Y(),palette);
+    }else if(exercise.notion==="Théorème de Thalès"){
+      const [am,ab,ac]=values,visualRatio=.42;
+      const [A,B,C]=jsxTriangle(board,[[0,3.4],[-4.2,-2.5],[4.4,-2.5]],["A","B","C"],palette,[[10,10],[-14,8],[10,8]]);
+      const M=jsxPoint(board,[A.X()+visualRatio*(B.X()-A.X()),A.Y()+visualRatio*(B.Y()-A.Y())],"M",palette);
+      const N=jsxPoint(board,[A.X()+visualRatio*(C.X()-A.X()),A.Y()+visualRatio*(C.Y()-A.Y())],"N",palette);
+      jsxSegment(board,M,N,palette,{strokeColor:palette.accent});
+      jsxText(board,-1.55,2.55,`AM = ${am} cm`,palette);
+      jsxText(board,-3.35,-.45,`AB = ${ab} cm`,palette);
+      jsxText(board,1.7,2.55,"AN = ?",palette,{color:palette.text});
+      jsxText(board,3.45,-.45,`AC = ${ac} cm`,palette);
+    }else{
+      const [ab,ac,bc]=values;
+      const [A,B,C]=jsxTriangle(board,[[-3.5,-2.3],[-3.5,2.8],[4,-2.3]],["A","B","C"],palette,[[10,-14],[10,10],[10,-12]]);
+      jsxRightAngleMarker(board,A.X(),A.Y(),palette);
+      board.create("angle",[A,B,C],{name:"",withLabel:false,radius:.7,fixed:true,highlight:false,strokeColor:palette.accent,fillColor:palette.accent,fillOpacity:.12});
+      jsxText(board,-4.35,.2,`AB = ${ab} cm`,palette);
+      jsxText(board,.2,-2.75,`AC = ${ac} cm`,palette);
+      jsxText(board,.9,.8,`BC = ${bc} cm`,palette);
+      jsxText(board,-2.45,2.2,"angle B̂",palette);
+    }
+    board.update();
+    host.insertAdjacentHTML("beforeend",`<small class="geometry-note">Schéma non à l’échelle.</small>`);
+    return true;
+  }catch(error){
+    console.warn("JSXGraph indisponible : utilisation de la figure SVG de secours.",error);
+    clearActiveGeometryBoard();
+    host.innerHTML="";
+    return false;
+  }
+}
 function scratchTokensMarkup(value,variableMode="dropdown"){
   const pattern=/([−-]?\d+(?:[.,]\d+)?|compteur|résultat|nombre|points|score|réponse|\bx\b)/giu;
   let markup="",lastIndex=0;
@@ -328,9 +472,9 @@ function functionGraphSvg(exercise){
 }
 function angleSvg(exercise){
   const angle=Number(exercise.answer);
-  if(angle===180)return geometrySvg("Angle plat",`<line class="geo-line" x1="35" y1="120" x2="285" y2="120"/><circle class="geo-point" cx="160" cy="120" r="4"/><path class="geo-accent geo-dash" d="M85 118 A75 75 0 0 1 235 118"/><text class="geo-accent-label" x="160" y="55">180°</text>`);
-  if(angle===360)return geometrySvg("Angle plein",`<circle class="geo-accent" cx="160" cy="102" r="62"/><path class="geo-line" d="M160 102 L222 102"/><path class="geo-point" d="M218 94 L232 102 L218 110 Z"/><text class="geo-accent-label" x="160" y="185">360°</text>`);
-  return geometrySvg("Angle droit",`<path class="geo-line" d="M75 160 L75 55 M75 160 L245 160"/><path class="geo-accent" d="M75 138 L97 138 L97 160"/><text class="geo-accent-label" x="116" y="132">90°</text>`);
+  if(angle===180)return geometrySvg("Schéma d’un angle plat, sans mesure indiquée",`<line class="geo-line" x1="35" y1="120" x2="285" y2="120"/><circle class="geo-point" cx="160" cy="120" r="4"/><path class="geo-accent geo-dash" d="M88 116 A72 72 0 0 1 232 116"/><text class="geo-unknown-label" x="160" y="63">?</text>`);
+  if(angle===360)return geometrySvg("Schéma d’un angle plein, sans mesure indiquée",`<circle class="geo-accent" cx="160" cy="102" r="62"/><path class="geo-line" d="M160 102 L222 102"/><path class="geo-point" d="M218 94 L232 102 L218 110 Z"/><text class="geo-unknown-label" x="160" y="185">?</text>`);
+  return geometrySvg("Schéma d’un angle droit, sans mesure indiquée",`<path class="geo-line" d="M75 160 L75 55 M75 160 L245 160"/><path class="geo-accent" d="M75 138 L97 138 L97 160"/><text class="geo-unknown-label" x="120" y="125">?</text>`);
 }
 function triangleSvg(exercise){
   const notion=exercise.notion,numbers=questionNumbers(exercise.text);
@@ -338,10 +482,10 @@ function triangleSvg(exercise){
     return geometrySvg("Triangle ABC rectangle en A",`<path class="geo-line" d="M75 160 L75 45 L255 160 Z"/><path class="geo-accent" d="M75 140 L95 140 L95 160"/><text class="geo-label" x="62" y="177">A</text><text class="geo-label" x="61" y="39">B</text><text class="geo-label" x="263" y="177">C</text>`);
   }
   if(notion==="Triangle rectangle et cercle circonscrit"){
-    return geometrySvg("Triangle rectangle inscrit dans un cercle",`<circle class="geo-accent" cx="160" cy="105" r="72"/><path class="geo-line" d="M88 105 L160 33 L232 105 Z"/><path class="geo-accent" d="M150 43 L160 53 L170 43"/><circle class="geo-point" cx="160" cy="105" r="4"/><text class="geo-accent-label" x="160" y="124">O</text>`);
+    return geometrySvg("Triangle rectangle inscrit dans un cercle, centre non indiqué",`<circle class="geo-accent" cx="160" cy="105" r="72"/><path class="geo-line" d="M88 105 L160 33 L232 105 Z"/><path class="geo-accent" d="M150 43 L160 53 L170 43"/><text class="geo-unknown-label" x="160" y="123">?</text>`);
   }
   if(notion==="Droite des milieux"){
-    return geometrySvg("Segment des milieux dans un triangle",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/><line class="geo-accent" x1="106" y1="100" x2="214" y2="100"/><circle class="geo-point" cx="106" cy="100" r="4"/><circle class="geo-point" cx="214" cy="100" r="4"/><path class="geo-tick" d="M74 128 l8 7 M128 68 l8 7 M184 68 l8 7 M238 128 l8 7"/><path class="geo-parallel" d="M149 100 l8 -5 l8 5 M149 165 l8 -5 l8 5"/>`);
+    return geometrySvg("Segment joignant les milieux de deux côtés d’un triangle",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/><line class="geo-accent" x1="106" y1="100" x2="214" y2="100"/><circle class="geo-point" cx="106" cy="100" r="4"/><circle class="geo-point" cx="214" cy="100" r="4"/><path class="geo-tick" d="M74 128 l8 7 M128 68 l8 7 M184 68 l8 7 M238 128 l8 7"/><text class="geo-label" x="96" y="91">M</text><text class="geo-label" x="224" y="91">N</text>`);
   }
   if(notion==="Droites remarquables dans un triangle"){
     const answer=exercise.answer;
@@ -352,12 +496,16 @@ function triangleSvg(exercise){
     return geometrySvg("Triangle et droite remarquable",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/>${special}`);
   }
   const first=numbers[0],second=numbers[1],kind=exercise.text;
-  if(kind.includes("équilatéral"))return geometrySvg("Triangle équilatéral",`<path class="geo-line" d="M60 165 L160 35 L260 165 Z"/><path class="geo-tick" d="M105 94 l10 8 M205 102 l10 -8 M155 165 l10 -10"/><text class="geo-accent-label" x="160" y="142">60°</text>`);
-  if(kind.includes("rectangle"))return geometrySvg("Triangle rectangle",`<path class="geo-line" d="M70 165 L70 45 L255 165 Z"/><path class="geo-accent" d="M70 145 L90 145 L90 165"/>`);
-  return geometrySvg("Triangle avec deux angles connus",`<path class="geo-line" d="M55 165 L150 40 L265 165 Z"/><path class="geo-accent" d="M78 165 A24 24 0 0 1 70 146"/><path class="geo-accent" d="M236 165 A28 28 0 0 0 246 144"/><text class="geo-accent-label" x="82" y="145">${first??"α"}°</text><text class="geo-accent-label" x="228" y="142">${second??"β"}°</text>`);
+  if(kind.includes("équilatéral"))return geometrySvg("Triangle équilatéral avec angle inconnu",`<path class="geo-line" d="M60 165 L160 35 L260 165 Z"/><path class="geo-tick" d="M105 94 l10 8 M205 102 l10 -8 M155 165 l10 -10"/><path class="geo-accent" d="M82 165 A23 23 0 0 1 75 147"/><text class="geo-unknown-label" x="91" y="143">?</text>`);
+  if(kind.includes("isocèle rectangle"))return geometrySvg("Triangle isocèle rectangle avec angle aigu inconnu",`<path class="geo-line" d="M70 165 L70 45 L190 165 Z"/><path class="geo-accent" d="M70 145 L90 145 L90 165"/><path class="geo-tick" d="M62 102 l16 0 M125 157 l10 10"/><text class="geo-unknown-label" x="81" y="71">?</text>`);
+  if(kind.includes("rectangle"))return geometrySvg("Triangle rectangle avec angle droit inconnu",`<path class="geo-line" d="M70 165 L70 45 L255 165 Z"/><text class="geo-unknown-label" x="92" y="142">?</text>`);
+  return geometrySvg("Triangle avec deux angles connus et un angle inconnu",`<path class="geo-line" d="M55 165 L150 40 L265 165 Z"/><path class="geo-accent" d="M78 165 A24 24 0 0 1 70 146 M236 165 A28 28 0 0 0 246 144 M137 56 A22 22 0 0 1 164 58"/><text class="geo-accent-label" x="82" y="145">${first??"α"}°</text><text class="geo-accent-label" x="228" y="142">${second??"β"}°</text><text class="geo-unknown-label" x="151" y="72">?</text>`);
 }
 function mediatrixSvg(){
   return geometrySvg("Médiatrice d’un segment",`<line class="geo-line" x1="55" y1="125" x2="265" y2="125"/><line class="geo-accent geo-dash" x1="160" y1="30" x2="160" y2="185"/><circle class="geo-point" cx="160" cy="125" r="4"/><path class="geo-accent" d="M160 107 L178 107 L178 125"/><path class="geo-tick" d="M103 117 l8 16 M209 117 l8 16"/><text class="geo-label" x="45" y="146">A</text><text class="geo-label" x="272" y="146">B</text><text class="geo-accent-label" x="172" y="145">M</text>`);
+}
+function segmentContextSvg(){
+  return geometrySvg("Segment AB et son milieu M, sans droite tracée",`<line class="geo-line" x1="55" y1="112" x2="265" y2="112"/><circle class="geo-point" cx="55" cy="112" r="4"/><circle class="geo-point" cx="160" cy="112" r="4"/><circle class="geo-point" cx="265" cy="112" r="4"/><path class="geo-tick" d="M103 104 l8 16 M209 104 l8 16"/><text class="geo-label" x="55" y="138">A</text><text class="geo-label" x="160" y="138">M</text><text class="geo-label" x="265" y="138">B</text>`);
 }
 function areaSvg(exercise){
   const values=questionNumbers(exercise.text);
@@ -365,11 +513,48 @@ function areaSvg(exercise){
   if(exercise.text.includes("rectangle"))return geometrySvg("Rectangle avec ses dimensions",`<rect class="geo-line" x="65" y="50" width="190" height="110"/><text class="geo-accent-label" x="160" y="184">${values[0]} cm</text><text class="geo-accent-label" x="42" y="108" transform="rotate(-90 42 108)">${values[1]} cm</text>`);
   return geometrySvg("Triangle avec base et hauteur",`<path class="geo-line" d="M55 165 L185 35 L265 165 Z"/><line class="geo-accent geo-dash" x1="185" y1="35" x2="185" y2="165"/><path class="geo-accent" d="M185 148 L202 148 L202 165"/><text class="geo-accent-label" x="160" y="188">b = ${values[0]} cm</text><text class="geo-accent-label" x="198" y="102">h = ${values[1]} cm</text>`);
 }
+function perimeterSvg(exercise){
+  const values=questionNumbers(exercise.text);
+  if(exercise.text.includes("carré"))return geometrySvg("Carré avec la longueur du côté indiquée",`<rect class="geo-line geo-surface" x="90" y="35" width="140" height="140"/><text class="geo-accent-label" x="160" y="192">${values[0]} cm</text>`);
+  return geometrySvg("Rectangle avec sa longueur et sa largeur indiquées",`<rect class="geo-line geo-surface" x="55" y="55" width="210" height="110"/><text class="geo-accent-label" x="160" y="187">${values[0]} cm</text><text class="geo-accent-label" x="34" y="110" transform="rotate(-90 34 110)">${values[1]} cm</text>`);
+}
+function compareAreasSvg(exercise){
+  const values=questionNumbers(exercise.text);
+  return geometrySvg("Deux rectangles A et B avec leurs dimensions",`<rect class="geo-line geo-surface" x="24" y="60" width="118" height="84"/><rect class="geo-line geo-surface" x="178" y="60" width="118" height="84"/><text class="geo-label" x="83" y="42">A</text><text class="geo-label" x="237" y="42">B</text><text class="geo-accent-label" x="83" y="162">${values[0]} × ${values[1]}</text><text class="geo-accent-label" x="237" y="162">${values[2]} × ${values[3]}</text>`);
+}
+function gridAreaSvg(exercise){
+  const [columns,rows]=questionNumbers(exercise.text),left=60,top=24,width=200,height=160,cellWidth=width/columns,cellHeight=height/rows;
+  let grid=`<rect class="geo-surface" x="${left}" y="${top}" width="${width}" height="${height}"/>`;
+  for(let column=0;column<=columns;column++){
+    const x=left+column*cellWidth;
+    grid+=`<line class="geo-grid-strong" x1="${x}" y1="${top}" x2="${x}" y2="${top+height}"/>`;
+  }
+  for(let row=0;row<=rows;row++){
+    const y=top+row*cellHeight;
+    grid+=`<line class="geo-grid-strong" x1="${left}" y1="${y}" x2="${left+width}" y2="${y}"/>`;
+  }
+  return geometrySvg(`Rectangle quadrillé de ${columns} carreaux sur ${rows}`,grid);
+}
+function thalesSvg(exercise){
+  const [am,ab,ac]=questionNumbers(exercise.text);
+  return geometrySvg("Configuration de Thalès avec les données connues et AN inconnue",`<path class="geo-line" d="M160 25 L48 180 L278 180 Z"/><line class="geo-accent" x1="104" y1="102" x2="219" y2="102"/><path class="geo-parallel" d="M151 102 l8 -5 l8 5 M151 180 l8 -5 l8 5"/><circle class="geo-point" cx="104" cy="102" r="4"/><circle class="geo-point" cx="219" cy="102" r="4"/><text class="geo-label" x="160" y="12">A</text><text class="geo-label" x="37" y="191">B</text><text class="geo-label" x="289" y="191">C</text><text class="geo-label" x="93" y="93">M</text><text class="geo-label" x="230" y="93">N</text><text class="geo-accent-label" x="118" y="57">AM = ${am}</text><text class="geo-accent-label" x="72" y="139">AB = ${ab}</text><text class="geo-unknown-label" x="211" y="58">AN = ?</text><text class="geo-accent-label" x="255" y="139">AC = ${ac}</text>`);
+}
+function trigonometrySvg(exercise){
+  const [ab,ac,bc]=questionNumbers(exercise.text);
+  return geometrySvg("Triangle ABC rectangle en A avec les trois longueurs données",`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text><text class="geo-accent-label" x="40" y="108">AB = ${ab}</text><text class="geo-accent-label" x="162" y="188">AC = ${ac}</text><text class="geo-accent-label" x="180" y="96">BC = ${bc}</text><text class="geo-unknown-label" x="102" y="66">angle B̂</text>`);
+}
+function symmetryShapeSvg(exercise){
+  const source=exercise.text.toLowerCase();
+  if(source.includes("carré"))return geometrySvg("Carré sans axes tracés",`<rect class="geo-line geo-surface" x="90" y="35" width="140" height="140"/>`);
+  if(source.includes("rectangle"))return geometrySvg("Rectangle sans axes tracés",`<rect class="geo-line geo-surface" x="55" y="60" width="210" height="105"/>`);
+  if(source.includes("cercle"))return geometrySvg("Cercle sans axes tracés",`<circle class="geo-line geo-surface" cx="160" cy="105" r="72"/>`);
+  return geometrySvg("Triangle équilatéral sans axes tracés",`<path class="geo-line geo-surface" d="M58 172 L160 32 L262 172 Z"/>`);
+}
 function solidSvg(exercise){
-  const source=`${exercise.text} ${exercise.answer}`.toLowerCase(),values=questionNumbers(exercise.text);
-  if(source.includes("cylindre"))return geometrySvg("Cylindre",`<ellipse class="geo-line" cx="160" cy="48" rx="58" ry="20"/><path class="geo-line" d="M102 48 V150 M218 48 V150"/><ellipse class="geo-line" cx="160" cy="150" rx="58" ry="20"/><line class="geo-accent geo-dash" x1="160" y1="48" x2="218" y2="48"/><text class="geo-accent-label" x="185" y="38">${exercise.text.includes("rayon")&&values[0]?`r = ${values[0]} cm`:""}</text>`);
+  const source=exercise.text.toLowerCase(),values=questionNumbers(exercise.text);
+  if(source.includes("cylindre"))return geometrySvg("Cylindre avec les dimensions données",`<ellipse class="geo-line geo-surface" cx="160" cy="48" rx="58" ry="20"/><path class="geo-line" d="M102 48 V150 M218 48 V150"/><ellipse class="geo-line geo-surface" cx="160" cy="150" rx="58" ry="20"/><line class="geo-accent geo-dash" x1="160" y1="48" x2="218" y2="48"/><line class="geo-accent geo-dash" x1="232" y1="48" x2="232" y2="150"/><text class="geo-accent-label" x="185" y="36">r = ${values[0]} cm</text><text class="geo-accent-label" x="253" y="99">h = ${values[1]} cm</text>`);
   if(source.includes("cône"))return geometrySvg("Cône",`<ellipse class="geo-line" cx="160" cy="155" rx="65" ry="21"/><path class="geo-line" d="M95 155 L160 35 L225 155"/><line class="geo-accent geo-dash" x1="160" y1="35" x2="160" y2="155"/>`);
-  if(source.includes("pyramide"))return geometrySvg("Pyramide",`<path class="geo-line" d="M62 150 L220 150 L258 120 L103 120 Z M160 35 L62 150 M160 35 L220 150 M160 35 L258 120 M160 35 L103 120"/><line class="geo-accent geo-dash" x1="160" y1="35" x2="160" y2="135"/><text class="geo-accent-label" x="170" y="89">${values[1]?`h = ${values[1]} cm`:""}</text>`);
+  if(source.includes("pyramide"))return geometrySvg("Pyramide avec aire de base et hauteur données",`<path class="geo-line" d="M62 150 L220 150 L258 120 L103 120 Z M160 35 L62 150 M160 35 L220 150 M160 35 L258 120 M160 35 L103 120"/><line class="geo-accent geo-dash" x1="160" y1="35" x2="160" y2="135"/><text class="geo-accent-label" x="183" y="84">h = ${values[1]} cm</text><text class="geo-accent-label" x="163" y="174">Aire de base = ${values[0]} cm²</text>`);
   if(source.includes("boule"))return geometrySvg("Boule",`<circle class="geo-line" cx="160" cy="105" r="70"/><ellipse class="geo-accent geo-dash" cx="160" cy="105" rx="70" ry="24"/><path class="geo-accent" d="M110 55 A70 70 0 0 0 110 155"/>`);
   if(source.includes("prisme"))return geometrySvg("Prisme droit",`<path class="geo-line" d="M70 150 L70 70 L130 35 L130 115 Z M70 70 L190 70 L250 35 L130 35 M190 70 L190 150 L250 115 L250 35 M70 150 L190 150 M130 115 L250 115"/>`);
   const label=source.includes("pavé")?"Pavé droit":"Cube";
@@ -400,18 +585,23 @@ function geometryQuestionSvg(exercise){
   if(notion.includes("abscisse")||notion.includes("nombre relatif"))return numberLineSvg(exercise);
   if(notion.includes("Coordonnées")||notion.includes("Symétrie centrale"))return coordinateSvg(exercise);
   if(notion==="Angles usuels")return angleSvg(exercise);
-  if(notion.includes("Médiatrice"))return mediatrixSvg();
+  if(notion==="Somme des angles d’un triangle"||notion==="Triangles particuliers")return triangleSvg(exercise);
+  if(notion==="Médiatrice et cercle circonscrit")return segmentContextSvg();
   if(notion==="Aires des figures usuelles")return areaSvg(exercise);
-  if(notion.includes("solide")||notion.includes("Solides")||notion.includes("Volumes")||notion.includes("Volume d’une")||notion.includes("pyramide"))return solidSvg(exercise);
-  if(notion.includes("Parallélogramme")||notion.includes("parallélogramme")||notion.includes("carré"))return quadrilateralSvg(exercise);
-  if(notion==="Axes de symétrie")return axesSvg(exercise);
-  if(notion.includes("Symétrie axiale"))return transformationSvg(exercise);
-  if(notion.includes("triangle")||notion.includes("Triangle")||notion.includes("Pythagore")||notion.includes("Droite")||notion.includes("Triangles"))return triangleSvg(exercise);
-  return geometrySvg("Figure géométrique",`<circle class="geo-accent" cx="160" cy="105" r="58"/><path class="geo-line" d="M55 165 L160 35 L265 165 Z"/><line class="geo-accent geo-dash" x1="55" y1="105" x2="265" y2="105"/>`);
+  if(notion==="Périmètre du carré et du rectangle")return perimeterSvg(exercise);
+  if(notion==="Comparer des aires")return compareAreasSvg(exercise);
+  if(notion==="Calculer une aire sur quadrillage")return gridAreaSvg(exercise);
+  if(notion==="Volumes du cube, du pavé, du prisme et du cylindre"||notion==="Volume d’une pyramide ou d’un cône")return solidSvg(exercise);
+  if(notion==="Axes de symétrie")return symmetryShapeSvg(exercise);
+  if(notion==="Égalité de Pythagore"||notion==="Triangle rectangle et cercle circonscrit"||notion==="Droite des milieux")return triangleSvg(exercise);
+  if(notion==="Théorème de Thalès")return thalesSvg(exercise);
+  if(notion==="Rapports trigonométriques")return trigonometrySvg(exercise);
+  return "";
 }
 function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
   const notion=exercise.notion;
+  clearActiveGeometryBoard();
   if(exercise.scratchBlocks){
     host.innerHTML=scratchProgramMarkup(exercise.scratchBlocks);
     return;
@@ -433,7 +623,8 @@ function renderQuestionVisual(exercise){
     host.innerHTML=coordinateSvg(exercise);
     return;
   }
-  host.innerHTML="";
+  if(renderJsxGeometry(exercise,host))return;
+  host.innerHTML=geometryQuestionSvg(exercise);
 }
 
 const G5 = [
@@ -612,7 +803,7 @@ const G6 = [
 {theme:"Fractions",notion:"Multiplier une fraction par un entier",make:()=>{let d=[2,3,4,5][rand(0,3)],a=rand(1,d-1),n=d*rand(2,8);return q(`Calcule : ${a}/${d} × ${n}`,a*n/d,`${n} ÷ ${d} × ${a} = ${a*n/d}.`)}},
 {theme:"Fractions",notion:"Calculer une fraction d’une quantité",make:()=>{let d=[2,3,4,5][rand(0,3)],a=rand(1,d-1),n=d*rand(2,12);return q(`Calcule ${a}/${d} de ${n}.`,a*n/d,`${n} ÷ ${d} × ${a} = ${a*n/d}.`)}},
 
-{theme:"Longueurs et aires",notion:"Unités de longueur",make:()=>{let items=[["1 km","1000 m"],["1 m","100 cm"],["1 cm","10 mm"],["1 dm","10 cm"]],z=items[rand(0,3)];return q(`Complète : ${z[0]} = …`,z[1],`C’est une relation entre unités usuelles.`)}},
+{theme:"Longueurs et aires",notion:"Unités de longueur",make:()=>{let items=[["1 km",1000,"m"],["1 m",100,"cm"],["1 cm",10,"mm"],["1 dm",10,"cm"]],z=items[rand(0,3)];return q(`Complète : ${z[0]} = … ${z[2]}`,z[1],`${z[0]} = ${z[1]} ${z[2]}.`,[`${z[1]} ${z[2]}`])}},
 {theme:"Longueurs et aires",notion:"Convertir des longueurs",make:()=>{let n=rand(1,30),type=rand(0,2);if(type===0)return q(`Convertis ${n} m en cm.`,n*100,`1 m = 100 cm.`);if(type===1)return q(`Convertis ${n} cm en mm.`,n*10,`1 cm = 10 mm.`);return q(`Convertis ${n} km en m.`,n*1000,`1 km = 1 000 m.`)}},
 {theme:"Longueurs et aires",notion:"Périmètre du carré et du rectangle",make:()=>{if(Math.random()<.5){let c=rand(2,15);return q(`Calcule le périmètre d’un carré de côté ${c} cm.`,4*c,`P = 4 × ${c} = ${4*c} cm.`)}let l=rand(3,15),w=rand(2,10);return q(`Calcule le périmètre d’un rectangle de longueur ${l} cm et de largeur ${w} cm.`,2*(l+w),`P = 2 × (${l}+${w}) = ${2*(l+w)} cm.`)}},
 {theme:"Longueurs et aires",notion:"Comparer des aires",make:()=>{let a=rand(2,10),b=rand(2,10),c=rand(2,10),d=rand(2,10);while(a*b===c*d)d=rand(2,10);return q(`Quel rectangle a la plus grande aire : A (${a}×${b}) ou B (${c}×${d}) ?`,a*b>c*d?"A":"B",`Aire A = ${a*b}, aire B = ${c*d}.`)}},
