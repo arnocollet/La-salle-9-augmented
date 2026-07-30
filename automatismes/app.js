@@ -359,7 +359,7 @@ function renderJsxGeometry(exercise,host){
       if(abLabel)jsxText(board,-4.35,.2,abLabel,palette,{color:data.unknown==="AB"?palette.text:palette.accent});
       if(acLabel)jsxText(board,.2,-2.75,acLabel,palette,{color:data.unknown==="AC"?palette.text:palette.accent});
       if(bcLabel)jsxText(board,1.45,1.55,bcLabel,palette,{color:data.unknown==="BC"?palette.text:palette.accent});
-      jsxText(board,-2.45,2.2,"B̂",palette,{fontSize:16});
+      jsxText(board,-2.75,1.75,"B̂",palette,{fontSize:16});
     }
     board.update();
     host.insertAdjacentHTML("beforeend",`<small class="geometry-note">Schéma non à l’échelle.</small>`);
@@ -566,7 +566,7 @@ function trigonometrySvg(exercise){
     const text=trigonometryLengthLabel(data,name,value);
     return text?`<text class="${name===data.unknown?"geo-unknown-label":"geo-accent-label"}" x="${x}" y="${y}">${text}</text>`:"";
   };
-  return geometrySvg(`Triangle ABC rectangle en A avec ${data.unknown||"des longueurs données"} à calculer`,`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text>${sideLabel("AB",ab,40,108)}${sideLabel("AC",ac,162,188)}${sideLabel("BC",bc,180,96)}<text class="geo-unknown-label" x="102" y="66">B̂</text>`);
+  return geometrySvg(`Triangle ABC rectangle en A avec ${data.unknown||"des longueurs données"} à calculer`,`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text>${sideLabel("AB",ab,40,108)}${sideLabel("AC",ac,162,188)}${sideLabel("BC",bc,180,96)}<text class="geo-unknown-label" x="105" y="92">B̂</text>`);
 }
 function symmetryShapeSvg(exercise){
   const source=exercise.text.toLowerCase();
