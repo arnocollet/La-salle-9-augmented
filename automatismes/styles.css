@@ -45,6 +45,8 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
 .geometry-svg{display:block;width:min(100%,380px);height:auto;max-height:240px;padding:8px;overflow:visible;border:1px solid var(--card-border);border-radius:14px;background:color-mix(in srgb,var(--bg-secondary) 94%,var(--accent) 6%);box-shadow:0 7px 18px rgba(31,58,95,.08)}
 .geometry-board{width:min(100%,420px);height:250px;overflow:hidden;border:1px solid var(--card-border)!important;border-radius:14px;background:color-mix(in srgb,var(--bg-secondary) 94%,var(--accent) 6%)!important;box-shadow:0 7px 18px rgba(31,58,95,.08);touch-action:none}
 .geometry-board .JXGtext{font-family:"Plus Jakarta Sans",Calibri,Arial,sans-serif!important;user-select:none}
+.vertex-angle-symbol{position:relative;display:inline-block;min-width:.8em;padding-top:.2em;line-height:1;font-weight:800}
+.vertex-angle-symbol::before{content:"";position:absolute;top:0;left:50%;width:.48em;height:.48em;border-top:1.8px solid currentColor;border-left:1.8px solid currentColor;transform:translateX(-50%) rotate(45deg);transform-origin:center}
 .geometry-note{display:block;margin-top:4px;color:var(--text-secondary);font-size:.72rem;font-style:italic}
 .figure-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:min(100%,520px)}
 .figure-choice{display:grid;grid-template-rows:auto 1fr;min-width:0;height:130px;padding:9px 10px 12px;border:2px solid var(--card-border);border-radius:14px;background:var(--bg-secondary);color:var(--text-primary);cursor:pointer;transition:border-color .2s ease,background-color .2s ease,transform .2s ease,box-shadow .2s ease}
@@ -91,6 +93,7 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
 .scratch-flag{display:inline-grid;width:20px;height:17px;place-items:center;margin:0 2px;border-radius:3px;color:#22a447;font-size:19px;line-height:1;text-shadow:0 1px 0 #fff}
 [data-theme="dark"] .scratch-program{--scratch-canvas:#eef2f7;border-color:#64748b}
 .geo-dash{stroke-dasharray:5 5}
+.geo-angle-hat{fill:none;stroke:var(--text-primary);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .geo-tick,.geo-parallel{stroke:var(--accent);stroke-width:1.8}
 .geo-fill,.geo-point{fill:var(--accent)}
 .geo-label,.geo-small-label,.geo-accent-label,.geo-unknown-label{font-family:"Plus Jakarta Sans",Calibri,Arial,sans-serif;text-anchor:middle;dominant-baseline:middle}
