@@ -967,7 +967,7 @@ function reviewReason(exercise){
   }else{
     const rate=results.c/results.q;
     const answers=`${results.c} bonne${results.c===1?"":"s"} réponse${results.c===1?"":"s"} sur ${results.q}`;
-    if(rate<.5)reason=`${answers} : cette notion fait partie de celles qui réussissent le moins.`;
+    if(rate<.5)reason=`${answers}.`;
     else if(rate<.8)reason=`${answers} : cette notion est encore en cours d’acquisition.`;
     else reason=`${answers} : cet exercice permettra de consolider cet acquis.`;
   }
