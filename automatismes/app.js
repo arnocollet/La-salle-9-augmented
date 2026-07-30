@@ -281,6 +281,14 @@ function jsxTriangle(board,coordinates,names,palette,labelOffsets=[]){
   });
   return points;
 }
+function thalesFigureData(exercise){
+  if(exercise.thales)return exercise.thales;
+  const [am,ab,ac]=questionNumbers(exercise.text);
+  return {am,ab,an:exercise.answer,ac,unknown:"AN"};
+}
+function thalesLengthLabel(name,value,unknown){
+  return `${name} = ${name===unknown?"?":`${value} cm`}`;
+}
 function renderJsxGeometry(exercise,host){
   const supportedNotions=new Set(["Somme des angles d’un triangle","Égalité de Pythagore","Théorème de Thalès","Rapports trigonométriques"]);
   if(!supportedNotions.has(exercise.notion)||!window.JXG?.JSXGraph)return false;
@@ -291,14 +299,15 @@ function renderJsxGeometry(exercise,host){
   const labels={
     "Somme des angles d’un triangle":"Triangle avec deux angles connus et un angle inconnu",
     "Égalité de Pythagore":"Triangle ABC rectangle en A, sans égalité indiquée",
-    "Théorème de Thalès":"Configuration de Thalès avec AN inconnu",
+    "Théorème de Thalès":"Configuration de Thalès avec une longueur inconnue",
     "Rapports trigonométriques":"Triangle ABC rectangle en A avec les longueurs données"
   };
+  if(exercise.notion==="Théorème de Thalès")labels[exercise.notion]=`Configuration de Thalès avec ${thalesFigureData(exercise).unknown} inconnue`;
   container.setAttribute("aria-label",labels[exercise.notion]);
   try{
     const board=window.JXG.JSXGraph.initBoard(boardId,{
       renderer:"svg",
-      boundingbox:[-5,4.4,5,-3.4],
+      boundingbox:[-5.8,4.6,5.8,-3.6],
       keepaspectratio:true,
       axis:false,
       showNavigation:false,
@@ -322,15 +331,15 @@ function renderJsxGeometry(exercise,host){
       const [A,B,C]=jsxTriangle(board,[[-3.4,-2.3],[-3.4,3],[4,-2.3]],["A","B","C"],palette,[[10,-14],[10,10],[10,-12]]);
       jsxRightAngleMarker(board,A.X(),A.Y(),palette);
     }else if(exercise.notion==="Théorème de Thalès"){
-      const [am,ab,ac]=values,visualRatio=.42;
-      const [A,B,C]=jsxTriangle(board,[[0,3.4],[-4.2,-2.5],[4.4,-2.5]],["A","B","C"],palette,[[10,10],[-14,8],[10,8]]);
-      const M=jsxPoint(board,[A.X()+visualRatio*(B.X()-A.X()),A.Y()+visualRatio*(B.Y()-A.Y())],"M",palette);
-      const N=jsxPoint(board,[A.X()+visualRatio*(C.X()-A.X()),A.Y()+visualRatio*(C.Y()-A.Y())],"N",palette);
+      const {am,ab,an,ac,unknown}=thalesFigureData(exercise),visualRatio=.42;
+      const [A,B,C]=jsxTriangle(board,[[0,3.4],[-4.2,-2.5],[4.4,-2.5]],["A","B","C"],palette,[[8,13],[-17,-2],[13,-2]]);
+      const M=jsxPoint(board,[A.X()+visualRatio*(B.X()-A.X()),A.Y()+visualRatio*(B.Y()-A.Y())],"M",palette,[-22,7]);
+      const N=jsxPoint(board,[A.X()+visualRatio*(C.X()-A.X()),A.Y()+visualRatio*(C.Y()-A.Y())],"N",palette,[13,7]);
       jsxSegment(board,M,N,palette,{strokeColor:palette.accent});
-      jsxText(board,-1.55,2.55,`AM = ${am} cm`,palette);
-      jsxText(board,-3.35,-.45,`AB = ${ab} cm`,palette);
-      jsxText(board,1.7,2.55,"AN = ?",palette,{color:palette.text});
-      jsxText(board,3.45,-.45,`AC = ${ac} cm`,palette);
+      jsxText(board,-2.15,2.45,thalesLengthLabel("AM",am,unknown),palette,{color:unknown==="AM"?palette.text:palette.accent});
+      jsxText(board,-4.25,-.45,thalesLengthLabel("AB",ab,unknown),palette,{color:unknown==="AB"?palette.text:palette.accent});
+      jsxText(board,2.15,2.45,thalesLengthLabel("AN",an,unknown),palette,{color:unknown==="AN"?palette.text:palette.accent});
+      jsxText(board,4.35,-.45,thalesLengthLabel("AC",ac,unknown),palette,{color:unknown==="AC"?palette.text:palette.accent});
     }else{
       const [ab,ac,bc]=values;
       const [A,B,C]=jsxTriangle(board,[[-3.5,-2.3],[-3.5,2.8],[4,-2.3]],["A","B","C"],palette,[[10,-14],[10,10],[10,-12]]);
@@ -338,7 +347,7 @@ function renderJsxGeometry(exercise,host){
       board.create("angle",[A,B,C],{name:"",withLabel:false,radius:.7,fixed:true,highlight:false,strokeColor:palette.accent,fillColor:palette.accent,fillOpacity:.12});
       jsxText(board,-4.35,.2,`AB = ${ab} cm`,palette);
       jsxText(board,.2,-2.75,`AC = ${ac} cm`,palette);
-      jsxText(board,.9,.8,`BC = ${bc} cm`,palette);
+      jsxText(board,1.45,1.55,`BC = ${bc} cm`,palette);
       jsxText(board,-2.45,2.2,"angle B̂",palette);
     }
     board.update();
@@ -536,8 +545,9 @@ function gridAreaSvg(exercise){
   return geometrySvg(`Rectangle quadrillé de ${columns} carreaux sur ${rows}`,grid);
 }
 function thalesSvg(exercise){
-  const [am,ab,ac]=questionNumbers(exercise.text);
-  return geometrySvg("Configuration de Thalès avec les données connues et AN inconnue",`<path class="geo-line" d="M160 25 L48 180 L278 180 Z"/><line class="geo-accent" x1="104" y1="102" x2="219" y2="102"/><path class="geo-parallel" d="M151 102 l8 -5 l8 5 M151 180 l8 -5 l8 5"/><circle class="geo-point" cx="104" cy="102" r="4"/><circle class="geo-point" cx="219" cy="102" r="4"/><text class="geo-label" x="160" y="12">A</text><text class="geo-label" x="37" y="191">B</text><text class="geo-label" x="289" y="191">C</text><text class="geo-label" x="93" y="93">M</text><text class="geo-label" x="230" y="93">N</text><text class="geo-accent-label" x="118" y="57">AM = ${am}</text><text class="geo-accent-label" x="72" y="139">AB = ${ab}</text><text class="geo-unknown-label" x="211" y="58">AN = ?</text><text class="geo-accent-label" x="255" y="139">AC = ${ac}</text>`);
+  const {am,ab,an,ac,unknown}=thalesFigureData(exercise);
+  const label=(name,value)=>`<text class="${name===unknown?"geo-unknown-label":"geo-accent-label"}"`;
+  return geometrySvg(`Configuration de Thalès avec ${unknown} inconnue`,`<path class="geo-line" d="M160 25 L58 180 L262 180 Z"/><line class="geo-accent" x1="117" y1="90" x2="203" y2="90"/><path class="geo-parallel" d="M151 90 l8 -5 l8 5 M151 180 l8 -5 l8 5"/><circle class="geo-point" cx="117" cy="90" r="4"/><circle class="geo-point" cx="203" cy="90" r="4"/><text class="geo-label" x="160" y="10">A</text><text class="geo-label" x="45" y="191">B</text><text class="geo-label" x="275" y="191">C</text><text class="geo-label" x="103" y="83">M</text><text class="geo-label" x="217" y="83">N</text>${label("AM",am)} x="91" y="48">${thalesLengthLabel("AM",am,unknown)}</text>${label("AB",ab)} x="66" y="132">${thalesLengthLabel("AB",ab,unknown)}</text>${label("AN",an)} x="229" y="48">${thalesLengthLabel("AN",an,unknown)}</text>${label("AC",ac)} x="255" y="132">${thalesLengthLabel("AC",ac,unknown)}</text>`);
 }
 function trigonometrySvg(exercise){
   const [ab,ac,bc]=questionNumbers(exercise.text);
@@ -732,7 +742,24 @@ const G3 = [
 {theme:"Espace et géométrie",notion:"Nature d’une face de pyramide",make:()=>q(`Quelle est la nature d’une face latérale d’une pyramide ?`,`triangle`,`Les faces latérales d’une pyramide sont des triangles.`)},
 {theme:"Espace et géométrie",notion:"Triangle rectangle et cercle circonscrit",make:()=>q(`Dans un triangle rectangle, où se situe le centre du cercle circonscrit ?`,`milieu de l’hypoténuse`,`Dans un triangle rectangle, le centre du cercle circonscrit est le milieu de l’hypoténuse.`)},
 {theme:"Espace et géométrie",notion:"Égalité de Pythagore",make:()=>{let a=rand(3,8),b=rand(a+1,12);return q(`Dans le triangle ABC rectangle en A, écris l’égalité de Pythagore.`,`BC²=AB²+AC²`,`L’hypoténuse est [BC].`,["BC^2=AB^2+AC^2"])}},
-{theme:"Espace et géométrie",notion:"Théorème de Thalès",make:()=>{let k=rand(2,5),am=rand(2,6),an=rand(2,7),ab=am*k,ac=an*k;return q(`Dans le triangle ABC, M appartient à [AB], N appartient à [AC] et (MN) est parallèle à (BC). On donne AM = ${am} cm, AB = ${ab} cm et AC = ${ac} cm. Calcule AN.`,an,`D’après Thalès, AM/AB = AN/AC = 1/${k}, donc AN = ${ac} ÷ ${k} = ${an} cm.`)}},
+{theme:"Espace et géométrie",notion:"Théorème de Thalès",make:()=>{
+  const k=rand(2,5),am=rand(2,6),an=rand(2,7),ab=am*k,ac=an*k;
+  const lengths={AM:am,AB:ab,AN:an,AC:ac},unknown=["AM","AB","AN","AC"][rand(0,3)];
+  const known=Object.entries(lengths).filter(([name])=>name!==unknown).map(([name,value])=>`${name} = ${value} cm`);
+  const calculations={
+    AM:`AM = AB × AN ÷ AC = ${ab} × ${an} ÷ ${ac} = ${am} cm`,
+    AB:`AB = AM × AC ÷ AN = ${am} × ${ac} ÷ ${an} = ${ab} cm`,
+    AN:`AN = AC × AM ÷ AB = ${ac} × ${am} ÷ ${ab} = ${an} cm`,
+    AC:`AC = AN × AB ÷ AM = ${an} × ${ab} ÷ ${am} = ${ac} cm`
+  };
+  return q(
+    `Dans le triangle ABC, M appartient à [AB], N appartient à [AC] et (MN) est parallèle à (BC). On donne ${known.slice(0,-1).join(", ")} et ${known[known.length-1]}. Calcule ${unknown}.`,
+    lengths[unknown],
+    `D’après Thalès, AM/AB = AN/AC. Donc ${calculations[unknown]}.`,
+    [],
+    {thales:{am,ab,an,ac,unknown}}
+  );
+}},
 {theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{
   const k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],article=ratio==="tangente"?"la":"le";
   const definitions={
