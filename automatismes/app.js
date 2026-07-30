@@ -359,7 +359,13 @@ function renderJsxGeometry(exercise,host){
       if(abLabel)jsxText(board,-4.35,.2,abLabel,palette,{color:data.unknown==="AB"?palette.text:palette.accent});
       if(acLabel)jsxText(board,.2,-2.75,acLabel,palette,{color:data.unknown==="AC"?palette.text:palette.accent});
       if(bcLabel)jsxText(board,1.45,1.55,bcLabel,palette,{color:data.unknown==="BC"?palette.text:palette.accent});
-      jsxText(board,-2.75,1.75,`<span class="vertex-angle-symbol" aria-label="angle B">B</span>`,palette,{fontSize:16});
+      jsxText(board,-2.75,1.72,"B",palette,{fontSize:16});
+      board.create("curve",[[-2.94,-2.75,-2.56],[1.96,2.09,1.96]],{
+        fixed:true,
+        highlight:false,
+        strokeColor:palette.text,
+        strokeWidth:1.8
+      });
     }
     board.update();
     host.insertAdjacentHTML("beforeend",`<small class="geometry-note">Schéma non à l’échelle.</small>`);
