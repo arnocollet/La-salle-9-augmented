@@ -981,11 +981,11 @@ function openReviewPlan(){
   if(!currentQuiz.length)return;
   const previousLevelExercises=currentQuiz.filter(exercise=>exercise.sourceLevel!==currentLevel).length;
   const currentLevelExercises=currentQuiz.length-previousLevelExercises;
-  document.getElementById("reviewMethodReason").textContent=
-    `• Le site privilégie les notions les moins réussies.\n`+
-    `• Cette routine contient ${currentLevelExercises} exercice${currentLevelExercises>1?"s":""} de ${currentLevel}`+
+  document.getElementById("reviewMethodReason").innerHTML=
+    `• Le site privilégie les notions les moins réussies.<br>`+
+    `• Cette routine contient <b>${currentLevelExercises} exercice${currentLevelExercises>1?"s":""} de ${escapeXml(currentLevel)}</b>`+
     (previousLevelExercises
-      ?` et ${previousLevelExercises} de révision${previousLevelExercises>1?"s":""}.`
+      ?` et <b>${previousLevelExercises} de révision${previousLevelExercises>1?"s":""}.</b>`
       :".");
   document.getElementById("reviewPlanList").innerHTML=currentQuiz.map((exercise,exerciseIndex)=>`
     <article class="review-plan-item">
