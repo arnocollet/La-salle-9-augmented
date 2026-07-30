@@ -184,20 +184,21 @@
         <div class="question-zone">
           <h2 id="questionText">Choisis une routine pour commencer.</h2>
           <div id="questionVisual"></div>
-          <input
-            id="answerInput"
-            type="text"
-            autocomplete="off"
-            aria-autocomplete="none"
-            autocapitalize="none"
-            autocorrect="off"
-            enterkeyhint="done"
-            spellcheck="false"
-            placeholder="Écris ta réponse"
-          />
-          <div class="math-preview hidden" id="mathPreview" aria-live="polite">
-            <span class="math-preview-label">Aperçu :</span>
-            <span class="math-preview-value" id="mathPreviewValue"></span>
+          <div class="answer-field">
+            <input
+              id="answerInput"
+              type="text"
+              autocomplete="off"
+              aria-autocomplete="none"
+              autocapitalize="none"
+              autocorrect="off"
+              enterkeyhint="done"
+              spellcheck="false"
+              placeholder="Écris ta réponse"
+            />
+            <div class="math-preview hidden" id="mathPreview" aria-hidden="true">
+              <span class="math-preview-value" id="mathPreviewValue"></span>
+            </div>
           </div>
           <div class="math-keypad" aria-label="Clavier mathématique">
             <button type="button" class="math-key" data-insert="×" aria-label="Insérer le signe multiplier">×</button>
@@ -401,6 +402,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="app.js?v=78"></script>
+  <script src="app.js?v=80"></script>
 </body>
 </html>

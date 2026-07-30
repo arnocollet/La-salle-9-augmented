@@ -813,18 +813,18 @@ const G3 = [
 {theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{
   const k=rand(1,4),ab=3*k,ac=4*k,bc=5*k;
   const variants=[
-    {unknown:"AB",known:"BC",ratio:"cosinus",fraction:"3/5",definition:"AB/BC",calculation:`AB = BC × 3/5 = ${bc} × 3/5 = ${ab} cm`},
-    {unknown:"AB",known:"AC",ratio:"tangente",fraction:"4/3",definition:"AC/AB",calculation:`AB = AC ÷ (4/3) = ${ac} ÷ (4/3) = ${ab} cm`},
-    {unknown:"AC",known:"BC",ratio:"sinus",fraction:"4/5",definition:"AC/BC",calculation:`AC = BC × 4/5 = ${bc} × 4/5 = ${ac} cm`},
-    {unknown:"AC",known:"AB",ratio:"tangente",fraction:"4/3",definition:"AC/AB",calculation:`AC = AB × 4/3 = ${ab} × 4/3 = ${ac} cm`},
-    {unknown:"BC",known:"AC",ratio:"sinus",fraction:"4/5",definition:"AC/BC",calculation:`BC = AC ÷ (4/5) = ${ac} ÷ (4/5) = ${bc} cm`},
-    {unknown:"BC",known:"AB",ratio:"cosinus",fraction:"3/5",definition:"AB/BC",calculation:`BC = AB ÷ (3/5) = ${ab} ÷ (3/5) = ${bc} cm`}
+    {unknown:"AB",known:"BC",ratio:"cos",fraction:"3/5",definition:"AB/BC",calculation:`AB = BC × 3/5 = ${bc} × 3/5 = ${ab} cm`},
+    {unknown:"AB",known:"AC",ratio:"tan",fraction:"4/3",definition:"AC/AB",calculation:`AB = AC ÷ (4/3) = ${ac} ÷ (4/3) = ${ab} cm`},
+    {unknown:"AC",known:"BC",ratio:"sin",fraction:"4/5",definition:"AC/BC",calculation:`AC = BC × 4/5 = ${bc} × 4/5 = ${ac} cm`},
+    {unknown:"AC",known:"AB",ratio:"tan",fraction:"4/3",definition:"AC/AB",calculation:`AC = AB × 4/3 = ${ab} × 4/3 = ${ac} cm`},
+    {unknown:"BC",known:"AC",ratio:"sin",fraction:"4/5",definition:"AC/BC",calculation:`BC = AC ÷ (4/5) = ${ac} ÷ (4/5) = ${bc} cm`},
+    {unknown:"BC",known:"AB",ratio:"cos",fraction:"3/5",definition:"AB/BC",calculation:`BC = AB ÷ (3/5) = ${ab} ÷ (3/5) = ${bc} cm`}
   ];
-  const selected=variants[rand(0,variants.length-1)],lengths={AB:ab,AC:ac,BC:bc},article=selected.ratio==="tangente"?"la":"le";
+  const selected=variants[rand(0,variants.length-1)],lengths={AB:ab,AC:ac,BC:bc};
   return q(
-    `ABC est rectangle en A. On donne ${article} ${selected.ratio} de l’angle AB̂C : ${selected.ratio}(AB̂C) = ${selected.fraction}, ainsi que ${selected.known} = ${lengths[selected.known]} cm. Calcule ${selected.unknown}.`,
+    `ABC est rectangle en A. On donne ${selected.ratio}(AB̂C) = ${selected.fraction} et ${selected.known} = ${lengths[selected.known]} cm. Calcule ${selected.unknown}.`,
     lengths[selected.unknown],
-    `${article[0].toUpperCase()+article.slice(1)} ${selected.ratio} de l’angle AB̂C vaut ${selected.definition} = ${selected.fraction}. Donc ${selected.calculation}.`,
+    `${selected.ratio}(AB̂C) = ${selected.definition} = ${selected.fraction}. Donc ${selected.calculation}.`,
     [],
     {trigonometry:{ab,ac,bc,unknown:selected.unknown,known:selected.known}}
   );
@@ -1564,8 +1564,9 @@ function stylizeAnswerVariables(){
   input.setSelectionRange(styledStart,styledEnd);
 }
 function updateMathPreview(){
-  const value=document.getElementById("answerInput").value.trim();
+  const input=document.getElementById("answerInput"),value=input.value.trim();
   const preview=document.getElementById("mathPreview");
+  input.classList.toggle("preview-active",Boolean(value));
   preview.classList.toggle("hidden",!value);
   document.getElementById("mathPreviewValue").innerHTML=value?mathPreviewMarkup(value):"";
 }
