@@ -289,6 +289,16 @@ function thalesFigureData(exercise){
 function thalesLengthLabel(name,value,unknown){
   return `${name} = ${name===unknown?"?":`${value} cm`}`;
 }
+function trigonometryFigureData(exercise){
+  if(exercise.trigonometry)return exercise.trigonometry;
+  const [ab,ac,bc]=questionNumbers(exercise.text);
+  return {ab,ac,bc,unknown:null,known:["AB","AC","BC"]};
+}
+function trigonometryLengthLabel(data,name,value){
+  if(name===data.unknown)return `${name} = ?`;
+  if(data.known===name||Array.isArray(data.known)&&data.known.includes(name))return `${name} = ${value} cm`;
+  return "";
+}
 function renderJsxGeometry(exercise,host){
   const supportedNotions=new Set(["Somme des angles d’un triangle","Égalité de Pythagore","Théorème de Thalès","Rapports trigonométriques"]);
   if(!supportedNotions.has(exercise.notion)||!window.JXG?.JSXGraph)return false;
@@ -300,7 +310,7 @@ function renderJsxGeometry(exercise,host){
     "Somme des angles d’un triangle":"Triangle avec deux angles connus et un angle inconnu",
     "Égalité de Pythagore":"Triangle ABC rectangle en A, sans égalité indiquée",
     "Théorème de Thalès":"Configuration de Thalès avec une longueur inconnue",
-    "Rapports trigonométriques":"Triangle ABC rectangle en A avec les longueurs données"
+    "Rapports trigonométriques":"Triangle ABC rectangle en A avec une longueur à calculer"
   };
   if(exercise.notion==="Théorème de Thalès")labels[exercise.notion]=`Configuration de Thalès avec ${thalesFigureData(exercise).unknown} inconnue`;
   container.setAttribute("aria-label",labels[exercise.notion]);
@@ -341,14 +351,15 @@ function renderJsxGeometry(exercise,host){
       jsxText(board,2.15,2.45,thalesLengthLabel("AN",an,unknown),palette,{color:unknown==="AN"?palette.text:palette.accent});
       jsxText(board,4.35,-.45,thalesLengthLabel("AC",ac,unknown),palette,{color:unknown==="AC"?palette.text:palette.accent});
     }else{
-      const [ab,ac,bc]=values;
+      const data=trigonometryFigureData(exercise),{ab,ac,bc}=data;
       const [A,B,C]=jsxTriangle(board,[[-3.5,-2.3],[-3.5,2.8],[4,-2.3]],["A","B","C"],palette,[[10,-14],[10,10],[10,-12]]);
       jsxRightAngleMarker(board,A.X(),A.Y(),palette);
       board.create("angle",[A,B,C],{name:"",withLabel:false,radius:.7,fixed:true,highlight:false,strokeColor:palette.accent,fillColor:palette.accent,fillOpacity:.12});
-      jsxText(board,-4.35,.2,`AB = ${ab} cm`,palette);
-      jsxText(board,.2,-2.75,`AC = ${ac} cm`,palette);
-      jsxText(board,1.45,1.55,`BC = ${bc} cm`,palette);
-      jsxText(board,-2.45,2.2,"angle B̂",palette);
+      const abLabel=trigonometryLengthLabel(data,"AB",ab),acLabel=trigonometryLengthLabel(data,"AC",ac),bcLabel=trigonometryLengthLabel(data,"BC",bc);
+      if(abLabel)jsxText(board,-4.35,.2,abLabel,palette,{color:data.unknown==="AB"?palette.text:palette.accent});
+      if(acLabel)jsxText(board,.2,-2.75,acLabel,palette,{color:data.unknown==="AC"?palette.text:palette.accent});
+      if(bcLabel)jsxText(board,1.45,1.55,bcLabel,palette,{color:data.unknown==="BC"?palette.text:palette.accent});
+      jsxText(board,-2.45,2.2,"B̂",palette,{fontSize:16});
     }
     board.update();
     host.insertAdjacentHTML("beforeend",`<small class="geometry-note">Schéma non à l’échelle.</small>`);
@@ -550,8 +561,12 @@ function thalesSvg(exercise){
   return geometrySvg(`Configuration de Thalès avec ${unknown} inconnue`,`<path class="geo-line" d="M160 25 L58 180 L262 180 Z"/><line class="geo-accent" x1="117" y1="90" x2="203" y2="90"/><path class="geo-parallel" d="M151 90 l8 -5 l8 5 M151 180 l8 -5 l8 5"/><circle class="geo-point" cx="117" cy="90" r="4"/><circle class="geo-point" cx="203" cy="90" r="4"/><text class="geo-label" x="160" y="10">A</text><text class="geo-label" x="45" y="191">B</text><text class="geo-label" x="275" y="191">C</text><text class="geo-label" x="103" y="83">M</text><text class="geo-label" x="217" y="83">N</text>${label("AM",am)} x="91" y="48">${thalesLengthLabel("AM",am,unknown)}</text>${label("AB",ab)} x="66" y="132">${thalesLengthLabel("AB",ab,unknown)}</text>${label("AN",an)} x="229" y="48">${thalesLengthLabel("AN",an,unknown)}</text>${label("AC",ac)} x="255" y="132">${thalesLengthLabel("AC",ac,unknown)}</text>`);
 }
 function trigonometrySvg(exercise){
-  const [ab,ac,bc]=questionNumbers(exercise.text);
-  return geometrySvg("Triangle ABC rectangle en A avec les trois longueurs données",`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text><text class="geo-accent-label" x="40" y="108">AB = ${ab}</text><text class="geo-accent-label" x="162" y="188">AC = ${ac}</text><text class="geo-accent-label" x="180" y="96">BC = ${bc}</text><text class="geo-unknown-label" x="102" y="66">angle B̂</text>`);
+  const data=trigonometryFigureData(exercise),{ab,ac,bc}=data;
+  const sideLabel=(name,value,x,y)=>{
+    const text=trigonometryLengthLabel(data,name,value);
+    return text?`<text class="${name===data.unknown?"geo-unknown-label":"geo-accent-label"}" x="${x}" y="${y}">${text}</text>`:"";
+  };
+  return geometrySvg(`Triangle ABC rectangle en A avec ${data.unknown||"des longueurs données"} à calculer`,`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text>${sideLabel("AB",ab,40,108)}${sideLabel("AC",ac,162,188)}${sideLabel("BC",bc,180,96)}<text class="geo-unknown-label" x="102" y="66">B̂</text>`);
 }
 function symmetryShapeSvg(exercise){
   const source=exercise.text.toLowerCase();
@@ -608,10 +623,39 @@ function geometryQuestionSvg(exercise){
   if(notion==="Rapports trigonométriques")return trigonometrySvg(exercise);
   return "";
 }
+function figureChoiceShapeSvg(shape){
+  const drawings={
+    carré:`<rect x="31" y="17" width="38" height="38"/>`,
+    rectangle:`<rect x="21" y="20" width="58" height="32"/>`,
+    triangle:`<path d="M50 12 L78 57 L22 57 Z"/>`
+  };
+  return `<svg viewBox="0 0 100 70" aria-hidden="true" focusable="false"><g>${drawings[shape]||""}</g></svg>`;
+}
+function renderFigureChoices(exercise,host){
+  host.innerHTML=`<div class="figure-choice-grid" role="group" aria-label="Choisis une figure">${exercise.figureChoices.map((choice,index)=>`
+    <button class="figure-choice" type="button" data-figure-answer="${escapeXml(choice)}" aria-label="Figure ${String.fromCharCode(65+index)}" aria-pressed="false">
+      <strong aria-hidden="true">${String.fromCharCode(65+index)}</strong>
+      ${figureChoiceShapeSvg(choice)}
+    </button>
+  `).join("")}</div>`;
+  host.querySelectorAll(".figure-choice").forEach(button=>button.addEventListener("click",()=>{
+    if(answered)return;
+    host.querySelectorAll(".figure-choice").forEach(choice=>{
+      const selected=choice===button;
+      choice.classList.toggle("selected",selected);
+      choice.setAttribute("aria-pressed",String(selected));
+    });
+    document.getElementById("answerInput").value=button.dataset.figureAnswer;
+  }));
+}
 function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
   const notion=exercise.notion;
   clearActiveGeometryBoard();
+  if(exercise.figureChoices){
+    renderFigureChoices(exercise,host);
+    return;
+  }
   if(exercise.scratchBlocks){
     host.innerHTML=scratchProgramMarkup(exercise.scratchBlocks);
     return;
@@ -761,18 +805,22 @@ const G3 = [
   );
 }},
 {theme:"Espace et géométrie",notion:"Rapports trigonométriques",make:()=>{
-  const k=rand(1,4),ratio=["sinus","cosinus","tangente"][rand(0,2)],article=ratio==="tangente"?"la":"le";
-  const definitions={
-    sinus:{numerator:4,denominator:5,sides:["AC/BC","CA/BC","AC/CB","CA/CB"]},
-    cosinus:{numerator:3,denominator:5,sides:["AB/BC","BA/BC","AB/CB","BA/CB"]},
-    tangente:{numerator:4,denominator:3,sides:["AC/AB","CA/AB","AC/BA","CA/BA"]}
-  };
-  const selected=definitions[ratio],answer=simp(selected.numerator*k,selected.denominator*k);
+  const k=rand(1,4),ab=3*k,ac=4*k,bc=5*k;
+  const variants=[
+    {unknown:"AB",known:"BC",ratio:"cosinus",fraction:"3/5",definition:"AB/BC",calculation:`AB = BC × 3/5 = ${bc} × 3/5 = ${ab} cm`},
+    {unknown:"AB",known:"AC",ratio:"tangente",fraction:"4/3",definition:"AC/AB",calculation:`AB = AC ÷ (4/3) = ${ac} ÷ (4/3) = ${ab} cm`},
+    {unknown:"AC",known:"BC",ratio:"sinus",fraction:"4/5",definition:"AC/BC",calculation:`AC = BC × 4/5 = ${bc} × 4/5 = ${ac} cm`},
+    {unknown:"AC",known:"AB",ratio:"tangente",fraction:"4/3",definition:"AC/AB",calculation:`AC = AB × 4/3 = ${ab} × 4/3 = ${ac} cm`},
+    {unknown:"BC",known:"AC",ratio:"sinus",fraction:"4/5",definition:"AC/BC",calculation:`BC = AC ÷ (4/5) = ${ac} ÷ (4/5) = ${bc} cm`},
+    {unknown:"BC",known:"AB",ratio:"cosinus",fraction:"3/5",definition:"AB/BC",calculation:`BC = AB ÷ (3/5) = ${ab} ÷ (3/5) = ${bc} cm`}
+  ];
+  const selected=variants[rand(0,variants.length-1)],lengths={AB:ab,AC:ac,BC:bc},article=selected.ratio==="tangente"?"la":"le";
   return q(
-    `ABC est rectangle en A avec AB = ${3*k} cm, AC = ${4*k} cm et BC = ${5*k} cm. Donne ${article} ${ratio} de l’angle AB̂C.`,
-    answer,
-    `Par rapport à l’angle AB̂C : le côté opposé est AC, l’adjacent est AB et l’hypoténuse est BC. Ainsi, ${article} ${ratio} vaut ${selected.sides[0]} = ${answer}.`,
-    [...selected.sides,`${selected.numerator*k}/${selected.denominator*k}`]
+    `ABC est rectangle en A. On donne ${article} ${selected.ratio} de l’angle AB̂C : ${selected.ratio}(AB̂C) = ${selected.fraction}, ainsi que ${selected.known} = ${lengths[selected.known]} cm. Calcule ${selected.unknown}.`,
+    lengths[selected.unknown],
+    `${article[0].toUpperCase()+article.slice(1)} ${selected.ratio} de l’angle AB̂C vaut ${selected.definition} = ${selected.fraction}. Donc ${selected.calculation}.`,
+    [],
+    {trigonometry:{ab,ac,bc,unknown:selected.unknown,known:selected.known}}
   );
 }},
 {theme:"Espace et géométrie",notion:"Droite des milieux",make:()=>q(`Dans un triangle, que peut-on dire du segment joignant les milieux de deux côtés ?`,`il est parallèle au troisième côté`,`La droite des milieux est parallèle au troisième côté et le segment mesure la moitié de ce côté.`)},
@@ -848,7 +896,17 @@ const G6 = [
 {theme:"Proportionnalité",notion:"Repérer des relations multiplicatives simples",make:()=>{let a=rand(2,9),k=rand(2,6);return q(`Par quel nombre faut-il multiplier ${a} pour obtenir ${a*k} ?`,k,`${a} × ${k} = ${a*k}.`)}},
 {theme:"Proportionnalité",notion:"Comprendre les expressions fois plus ou fois moins",make:()=>{let n=rand(3,20),k=rand(2,5),up=Math.random()<.5;return q(`Quel nombre est ${k} fois ${up?"plus grand":"plus petit"} que ${n*k}?`,up?n*k*k:n,up?`On multiplie ${n*k} par ${k}.`:`On divise ${n*k} par ${k}.`)}},
 
-{theme:"Géométrie plane et espace",notion:"Reconnaître un carré, un rectangle et un triangle",make:()=>{let items=[["4 côtés égaux et 4 angles droits","carré"],["4 angles droits","rectangle"],["3 côtés","triangle"]],z=items[rand(0,2)];return q(`Quelle figure possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
+{theme:"Géométrie plane et espace",notion:"Reconnaître un carré, un rectangle et un triangle",make:()=>{
+  const items=[
+    ["quatre côtés égaux et quatre angles droits","carré"],
+    ["quatre angles droits et deux longueurs de côtés différentes","rectangle"],
+    ["trois côtés","triangle"]
+  ],[description,answer]=items[rand(0,items.length-1)];
+  if(Math.random()>=.67)return q(`Quelle figure possède ${description} ?`,answer,`Il s’agit d’un ${answer}.`);
+  const figureChoices=shuffleQuestions(["carré","rectangle","triangle"]);
+  const correctLetter=String.fromCharCode(65+figureChoices.indexOf(answer));
+  return q(`Quelle figure possède ${description} ?`,answer,`La figure ${correctLetter} est un ${answer}.`,[correctLetter],{figureChoices});
+}},
 {theme:"Géométrie plane et espace",notion:"Axes de symétrie",make:()=>{let items=[["carré",4],["rectangle",2],["triangle équilatéral",3],["cercle","une infinité"]],z=items[rand(0,3)];return q(`Combien d’axes de symétrie possède un ${z[0]} ?`,z[1],`Un ${z[0]} possède ${z[1]} axe(s) de symétrie.`)}},
 {theme:"Géométrie plane et espace",notion:"Reconnaître des solides usuels",make:()=>{let items=[["6 faces carrées","cube"],["2 bases circulaires et une surface courbe","cylindre"],["une base circulaire et un sommet","cône"],["une surface entièrement courbe","boule"]],z=items[rand(0,3)];return q(`Quel solide possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
 
@@ -1464,12 +1522,17 @@ function renderQuestion(){
   document.getElementById("questionTheme").textContent=x.theme;
   document.getElementById("questionText").innerHTML=mathPreviewMarkup(x.text);
   renderQuestionVisual(x);
-  document.getElementById("answerInput").value="";
+  const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices);
+  answerInput.value="";
+  answerInput.classList.toggle("hidden",hasFigureChoices);
+  document.querySelector(".math-keypad").classList.toggle("hidden",hasFigureChoices);
   updateMathPreview();
   document.getElementById("feedback").className="feedback hidden";
   document.getElementById("validateAnswer").classList.remove("hidden");
   answered=false;
-  setTimeout(()=>document.getElementById("answerInput").focus(),100);
+  setTimeout(()=>hasFigureChoices
+    ?document.querySelector(".figure-choice")?.focus()
+    :answerInput.focus(),100);
 }
 function mathPreviewMarkup(value){
   let markup=escapeXml(value.trim());
