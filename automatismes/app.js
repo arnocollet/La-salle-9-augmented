@@ -359,8 +359,8 @@ function renderJsxGeometry(exercise,host){
       if(abLabel)jsxText(board,-4.35,.2,abLabel,palette,{color:data.unknown==="AB"?palette.text:palette.accent});
       if(acLabel)jsxText(board,.2,-2.75,acLabel,palette,{color:data.unknown==="AC"?palette.text:palette.accent});
       if(bcLabel)jsxText(board,1.45,1.55,bcLabel,palette,{color:data.unknown==="BC"?palette.text:palette.accent});
-      jsxText(board,-2.75,1.72,"B",palette,{fontSize:16});
-      board.create("curve",[[-2.94,-2.75,-2.56],[1.96,2.09,1.96]],{
+      jsxText(board,-2.87,1.61,"B",palette,{fontSize:16});
+      board.create("curve",[[-3.06,-2.87,-2.68],[1.85,1.98,1.85]],{
         fixed:true,
         highlight:false,
         strokeColor:palette.text,
@@ -522,7 +522,7 @@ function triangleSvg(exercise){
     return geometrySvg("Triangle et droite remarquable",`<path class="geo-line" d="M52 165 L160 35 L268 165 Z"/>${special}`);
   }
   const first=numbers[0],second=numbers[1],kind=exercise.text;
-  if(kind.includes("équilatéral"))return geometrySvg("Triangle équilatéral avec angle inconnu",`<path class="geo-line" d="M60 165 L160 35 L260 165 Z"/><path class="geo-tick" d="M105 94 l10 8 M205 102 l10 -8 M155 165 l10 -10"/><path class="geo-accent" d="M82 165 A23 23 0 0 1 75 147"/><text class="geo-unknown-label" x="91" y="143">?</text>`);
+  if(kind.includes("équilatéral"))return geometrySvg("Triangle équilatéral avec angle inconnu",`<path class="geo-line" d="M70 175 L160 19.1154 L250 175 Z"/><path class="geo-tick" d="M110 94 L120 100 M200 100 L210 94 M160 169 L160 181"/><path class="geo-accent" d="M94 175 A24 24 0 0 0 82 154.2"/><text class="geo-unknown-label" x="101" y="153">?</text>`);
   if(kind.includes("isocèle rectangle"))return geometrySvg("Triangle isocèle rectangle avec angle aigu inconnu",`<path class="geo-line" d="M70 165 L70 45 L190 165 Z"/><path class="geo-accent" d="M70 145 L90 145 L90 165"/><path class="geo-tick" d="M62 102 l16 0 M125 157 l10 10"/><text class="geo-unknown-label" x="81" y="71">?</text>`);
   if(kind.includes("rectangle"))return geometrySvg("Triangle rectangle avec angle droit inconnu",`<path class="geo-line" d="M70 165 L70 45 L255 165 Z"/><text class="geo-unknown-label" x="92" y="142">?</text>`);
   return geometrySvg("Triangle avec deux angles connus et un angle inconnu",`<path class="geo-line" d="M55 165 L150 40 L265 165 Z"/><path class="geo-accent" d="M78 165 A24 24 0 0 1 70 146 M236 165 A28 28 0 0 0 246 144 M137 56 A22 22 0 0 1 164 58"/><text class="geo-accent-label" x="82" y="145">${first??"α"}°</text><text class="geo-accent-label" x="228" y="142">${second??"β"}°</text><text class="geo-unknown-label" x="151" y="72">?</text>`);
@@ -572,7 +572,7 @@ function trigonometrySvg(exercise){
     const text=trigonometryLengthLabel(data,name,value);
     return text?`<text class="${name===data.unknown?"geo-unknown-label":"geo-accent-label"}" x="${x}" y="${y}">${text}</text>`:"";
   };
-  return geometrySvg(`Triangle ABC rectangle en A avec ${data.unknown||"des longueurs données"} à calculer`,`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text>${sideLabel("AB",ab,40,108)}${sideLabel("AC",ac,162,188)}${sideLabel("BC",bc,180,96)}<text class="geo-unknown-label" x="105" y="94">B</text><path class="geo-angle-hat" d="M99 86 L105 81 L111 86"/>`);
+  return geometrySvg(`Triangle ABC rectangle en A avec ${data.unknown||"des longueurs données"} à calculer`,`<path class="geo-line geo-surface" d="M62 170 L62 45 L262 170 Z"/><path class="geo-accent" d="M62 150 L82 150 L82 170"/><path class="geo-accent" d="M62 72 A27 27 0 0 1 88 62"/><text class="geo-label" x="48" y="184">A</text><text class="geo-label" x="48" y="34">B</text><text class="geo-label" x="276" y="184">C</text>${sideLabel("AB",ab,40,108)}${sideLabel("AC",ac,162,188)}${sideLabel("BC",bc,180,96)}<text class="geo-unknown-label" x="94" y="103">B</text><path class="geo-angle-hat" d="M88 95 L94 90 L100 95"/>`);
 }
 function symmetryShapeSvg(exercise){
   const source=exercise.text.toLowerCase();
@@ -633,9 +633,27 @@ function figureChoiceShapeSvg(shape){
   const drawings={
     carré:`<rect x="31" y="17" width="38" height="38"/>`,
     rectangle:`<rect x="21" y="20" width="58" height="32"/>`,
-    triangle:`<path d="M50 12 L78 57 L22 57 Z"/>`
+    triangle:`<path d="M50 12 L78 57 L22 57 Z"/>`,
+    "triangle équilatéral":`<path d="M20 58 L50 6.038 L80 58 Z"/><path class="figure-choice-wire" d="M32 34 L39 38 M61 38 L68 34 M50 53 L50 63"/>`,
+    "triangle isocèle rectangle":`<path d="M22 58 L22 16 L64 58 Z"/><path class="figure-choice-wire" d="M22 48 H32 V58 M17 36 H27 M42 53 V63"/>`,
+    "triangle rectangle":`<path d="M18 58 L18 12 L84 58 Z"/><path class="figure-choice-wire" d="M18 48 H28 V58"/>`,
+    cube:`<path class="figure-choice-wire" d="M24 24 H62 V58 H24 Z M38 12 H76 V46 H62 M24 24 L38 12 M62 24 L76 12 M62 58 L76 46"/>`,
+    "pavé droit":`<path class="figure-choice-wire" d="M16 28 H66 V57 H16 Z M34 13 H84 V42 H66 M16 28 L34 13 M66 28 L84 13 M66 57 L84 42"/>`,
+    cylindre:`<ellipse cx="50" cy="18" rx="25" ry="8"/><path class="figure-choice-wire" d="M25 18 V52 M75 18 V52"/><ellipse cx="50" cy="52" rx="25" ry="8"/>`,
+    cône:`<ellipse cx="50" cy="54" rx="29" ry="8"/><path class="figure-choice-wire" d="M21 54 L50 10 L79 54"/>`,
+    boule:`<circle cx="50" cy="35" r="27"/><ellipse class="figure-choice-wire figure-choice-dash" cx="50" cy="35" rx="27" ry="9"/>`,
+    pyramide:`<path d="M20 52 L64 58 L82 45 L38 40 Z"/><path class="figure-choice-wire" d="M51 10 L20 52 M51 10 L64 58 M51 10 L82 45 M51 10 L38 40"/><path class="figure-choice-wire figure-choice-dash" d="M38 40 L82 45"/>`,
+    "prisme droit":`<path d="M19 53 L35 19 L51 53 Z M51 53 L67 19 L83 53 Z"/><path class="figure-choice-wire" d="M19 53 L51 53 M35 19 L67 19 M51 53 L83 53"/>`
   };
   return `<svg viewBox="0 0 100 70" aria-hidden="true" focusable="false"><g>${drawings[shape]||""}</g></svg>`;
+}
+function optionalSolidChoiceQuestion(description,answer,solidChoices){
+  const question=`Quel solide possède ${description} ?`,feminine=["boule","pyramide"].includes(answer);
+  if(Math.random()>=.67)return q(question,answer,`Il s’agit ${feminine?"d’une":"d’un"} ${answer}.`);
+  const distractors=shuffleQuestions(solidChoices.filter(solid=>solid!==answer)).slice(0,2);
+  const figureChoices=shuffleQuestions([answer,...distractors]);
+  const correctLetter=String.fromCharCode(65+figureChoices.indexOf(answer));
+  return q(question,answer,`La figure ${correctLetter} représente ${feminine?"une":"un"} ${answer}.`,[correctLetter],{figureChoices});
 }
 function renderFigureChoices(exercise,host){
   host.innerHTML=`<div class="figure-choice-grid" role="group" aria-label="Choisis une figure">${exercise.figureChoices.map((choice,index)=>`
@@ -658,6 +676,10 @@ function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
   const notion=exercise.notion;
   clearActiveGeometryBoard();
+  if(exercise.textOnly){
+    host.innerHTML="";
+    return;
+  }
   if(exercise.figureChoices){
     renderFigureChoices(exercise,host);
     return;
@@ -707,8 +729,27 @@ const G5 = [
 {theme:"Espace et géométrie", notion:"Placer un point d’abscisse décimale", make:()=>{let n=rand(-20,50)/10;return q(`Quelle est l’abscisse du point situé à ${Math.abs(n)} unité(s) ${n>=0?"à droite":"à gauche"} de 0 ?`,fmt(n),`À droite de 0, l’abscisse est positive ; à gauche, elle est négative.`)}},
 {theme:"Espace et géométrie", notion:"Angles usuels", make:()=>{let choices=[["angle droit",90],["angle plat",180],["angle plein",360]];let [name,v]=choices[rand(0,2)];return q(`Quelle est la mesure d’un ${name} ?`,v,`Un ${name} mesure ${v}°.`)}},
 {theme:"Espace et géométrie", notion:"Somme des angles d’un triangle", make:()=>{let a=rand(25,80),b=rand(25,80);while(a+b>=160)b=rand(25,80);return q(`Dans un triangle, deux angles mesurent ${a}° et ${b}°. Quelle est la mesure du troisième ?`,180-a-b,`La somme des angles d’un triangle vaut 180° : 180 − ${a} − ${b} = ${180-a-b}°.`)}},
-{theme:"Espace et géométrie", notion:"Triangles particuliers", make:()=>{let kind=["équilatéral","isocèle rectangle","rectangle"][rand(0,2)];let ans=kind==="équilatéral"?"60":kind==="isocèle rectangle"?"45":"90";return q(`Quelle mesure d’angle caractéristique associe-t-on à un triangle ${kind} ?`,ans, kind==="équilatéral"?"Ses trois angles mesurent 60°.":kind==="isocèle rectangle"?"Ses deux angles aigus mesurent 45°.":"Il possède un angle droit de 90°.",[ans+"°"])}},
-{theme:"Espace et géométrie", notion:"Reconnaître un solide en perspective", make:()=>{let items=[["6 faces carrées","cube"],["2 bases circulaires et une surface courbe","cylindre"],["6 faces rectangulaires","pavé droit"]];let [desc,ans]=items[rand(0,2)];return q(`Quel solide possède ${desc} ?`,ans,`Il s’agit d’un ${ans}.`)}},
+{theme:"Espace et géométrie", notion:"Triangles particuliers", make:()=>{
+  if(Math.random()>=.67){
+    const kind=["équilatéral","isocèle rectangle","rectangle"][rand(0,2)],answer=kind==="équilatéral"?"60":kind==="isocèle rectangle"?"45":"90";
+    return q(
+      `Quelle mesure d’angle caractéristique associe-t-on à un triangle ${kind} ?`,
+      answer,
+      kind==="équilatéral"?"Ses trois angles mesurent 60°.":kind==="isocèle rectangle"?"Ses deux angles aigus mesurent 45°.":"Il possède un angle droit de 90°.",
+      [answer+"°"],
+      {textOnly:true}
+    );
+  }
+  const items=[
+    ["trois côtés de même longueur","triangle équilatéral"],
+    ["un angle droit et deux côtés de même longueur","triangle isocèle rectangle"],
+    ["un angle droit et trois côtés de longueurs différentes","triangle rectangle"]
+  ],[description,answer]=items[rand(0,items.length-1)];
+  const figureChoices=shuffleQuestions(["triangle équilatéral","triangle isocèle rectangle","triangle rectangle"]);
+  const correctLetter=String.fromCharCode(65+figureChoices.indexOf(answer));
+  return q(`Quel triangle possède ${description} ?`,answer,`La figure ${correctLetter} représente un ${answer}.`,[correctLetter],{figureChoices});
+}},
+{theme:"Espace et géométrie", notion:"Reconnaître un solide en perspective", make:()=>{let items=[["6 faces carrées","cube"],["2 bases circulaires et une surface courbe","cylindre"],["6 faces rectangulaires dont certaines ont des dimensions différentes","pavé droit"]],[desc,ans]=items[rand(0,2)];return optionalSolidChoiceQuestion(desc,ans,["cube","cylindre","pavé droit"])}},
 {theme:"Espace et géométrie", notion:"Médiatrice et cercle circonscrit", make:()=>q(`Comment s’appelle la droite perpendiculaire à un segment et passant par son milieu ?`,`médiatrice`,`C’est la médiatrice du segment.`)},
 {theme:"Données et probabilités", notion:"Échelle de probabilités", make:()=>{let p=[0,0.25,0.5,0.75,1][rand(0,4)];let ans=p===0?"impossible":p===1?"certain":p===.5?"autant de chances":"possible";return q(`Un événement a une probabilité de ${fmt(p)}. Comment peut-on le qualifier ?`,ans,`0 signifie impossible, 1 certain, et 0,5 autant de chances de se produire que de ne pas se produire.`)}},
 {theme:"Données et probabilités", notion:"Écriture d’une probabilité", make:()=>{let total=[4,5,8,10][rand(0,3)],fav=rand(1,total-1);return q(`Une urne contient ${total} boules dont ${fav} rouges. Quelle est la probabilité de tirer une boule rouge ?`,`${fav}/${total}`,`Il y a ${fav} issues favorables sur ${total} issues possibles.`)}},
@@ -745,7 +786,7 @@ const G4 = [
 {theme:"Espace et géométrie",notion:"Symétrie centrale d’un point",make:()=>{let x=rand(-5,5),y=rand(-5,5);return q(`Le point A(${x};${y}) a pour symétrique A' par rapport à l’origine O. Quelles sont les coordonnées de A' ?`,`${-x};${-y}`,`Une symétrie centrale de centre O change les deux signes.`,[`(${-x};${-y})`,`${-x},${-y}`])}},
 {theme:"Espace et géométrie",notion:"Placer un nombre relatif sur une droite graduée",make:()=>{let n=rand(-20,20)/2;return q(`Un point est situé à ${Math.abs(n)} unité(s) ${n>=0?"à droite":"à gauche"} de 0. Quelle est son abscisse ?`,fmt(n),`À droite de 0 l’abscisse est positive ; à gauche elle est négative.`)}},
 {theme:"Espace et géométrie",notion:"Coordonnées dans un repère orthogonal",make:()=>{let x=rand(-6,6),y=rand(-6,6);return q(`Un point est à l’abscisse ${x} et à l’ordonnée ${y}. Écris ses coordonnées.`,`${x};${y}`,`On écrit d’abord l’abscisse, puis l’ordonnée.`,[`(${x};${y})`,`${x},${y}`])}},
-{theme:"Espace et géométrie",notion:"Reconnaître des solides",make:()=>{let items=[["deux bases circulaires parallèles","cylindre"],["deux bases polygonales identiques et parallèles","prisme droit"],["six faces carrées","cube"],["six faces rectangulaires","pavé droit"]],z=items[rand(0,3)];return q(`Quel solide possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
+{theme:"Espace et géométrie",notion:"Reconnaître des solides",make:()=>{let items=[["deux bases circulaires parallèles","cylindre"],["deux bases triangulaires identiques et trois faces rectangulaires","prisme droit"],["six faces carrées","cube"],["six faces rectangulaires dont certaines ont des dimensions différentes","pavé droit"]],[description,answer]=items[rand(0,3)];return optionalSolidChoiceQuestion(description,answer,["cylindre","prisme droit","cube","pavé droit"])}},
 {theme:"Espace et géométrie",notion:"Volumes du cube, du pavé, du prisme et du cylindre",make:()=>{let type=rand(0,2);if(type===0){let a=rand(2,8);return q(`Calcule le volume d’un cube d’arête ${a} cm.`,a**3,`V = ${a}³ = ${a**3} cm³.`)}if(type===1){let l=rand(2,9),w=rand(2,8),h=rand(2,7);return q(`Calcule le volume d’un pavé droit de dimensions ${l} cm, ${w} cm et ${h} cm.`,l*w*h,`V = ${l} × ${w} × ${h} = ${l*w*h} cm³.`)}let r=rand(1,5),h=rand(2,10),coefficient=r*r*h,answer=piTerm(coefficient);return q(`Donne l’expression exacte du volume d’un cylindre de rayon ${r} cm et de hauteur ${h} cm.`,answer,`V = π × ${r}² × ${h} = ${answer} cm³.`,[answer.replace("π","pi")])}},
 {theme:"Espace et géométrie",notion:"Aires des figures usuelles",make:()=>{let type=rand(0,2);if(type===0){let b=rand(3,12),h=rand(2,10);return q(`Calcule l’aire d’un triangle de base ${b} cm et de hauteur ${h} cm.`,b*h/2,`A = base × hauteur ÷ 2 = ${b*h/2} cm².`)}if(type===1){let l=rand(3,12),w=rand(2,10);return q(`Calcule l’aire d’un rectangle de longueur ${l} cm et de largeur ${w} cm.`,l*w,`A = ${l} × ${w} = ${l*w} cm².`)}let r=rand(1,6),coefficient=r*r,answer=piTerm(coefficient);return q(`Donne l’aire exacte d’un disque de rayon ${r} cm.`,answer,`A = π × ${r}² = ${answer} cm².`,[answer.replace("π","pi")])}},
 {theme:"Espace et géométrie",notion:"Reconnaître un parallélogramme",make:()=>q(`Quel quadrilatère a ses côtés opposés parallèles deux à deux ?`,`parallélogramme`,`C’est la définition d’un parallélogramme.`)},
@@ -787,7 +828,7 @@ const G3 = [
 
 {theme:"Espace et géométrie",notion:"Placer un nombre relatif sur une droite graduée",make:()=>{let n=rand(-20,20)/2;return q(`Un point est situé à ${Math.abs(n)} unité(s) ${n>=0?"à droite":"à gauche"} de 0. Quelle est son abscisse ?`,fmt(n),`À droite de 0 l’abscisse est positive ; à gauche elle est négative.`)}},
 {theme:"Espace et géométrie",notion:"Coordonnées dans un repère orthogonal",make:()=>{let x=rand(-6,6),y=rand(-6,6);return q(`Un point a pour abscisse ${x} et pour ordonnée ${y}. Écris ses coordonnées.`,`${x};${y}`,`On écrit d’abord l’abscisse, puis l’ordonnée.`,[`(${x};${y})`,`${x},${y}`])}},
-{theme:"Espace et géométrie",notion:"Reconnaître des solides",make:()=>{let items=[["une base polygonale et des faces triangulaires","pyramide"],["une base circulaire et un sommet","cône"],["deux bases circulaires parallèles","cylindre"],["deux bases polygonales identiques","prisme droit"]],z=items[rand(0,3)];return q(`Quel solide possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
+{theme:"Espace et géométrie",notion:"Reconnaître des solides",make:()=>{let items=[["une base polygonale et des faces triangulaires","pyramide"],["une base circulaire et un sommet","cône"],["deux bases circulaires parallèles","cylindre"],["deux bases triangulaires identiques et trois faces rectangulaires","prisme droit"]],[description,answer]=items[rand(0,3)];return optionalSolidChoiceQuestion(description,answer,["pyramide","cône","cylindre","prisme droit"])}},
 {theme:"Espace et géométrie",notion:"Volume d’une pyramide ou d’un cône",make:()=>{let base=rand(12,60),h=3*rand(1,4),volume=base*(h/3);return q(`Une pyramide a une aire de base de ${base} cm² et une hauteur de ${h} cm. Calcule son volume.`,volume,`V = aire de base × hauteur ÷ 3 = ${base} × ${h/3} = ${volume} cm³.`)}},
 {theme:"Espace et géométrie",notion:"Nature d’une face de pyramide",make:()=>q(`Quelle est la nature d’une face latérale d’une pyramide ?`,`triangle`,`Les faces latérales d’une pyramide sont des triangles.`)},
 {theme:"Espace et géométrie",notion:"Triangle rectangle et cercle circonscrit",make:()=>q(`Dans un triangle rectangle, où se situe le centre du cercle circonscrit ?`,`milieu de l’hypoténuse`,`Dans un triangle rectangle, le centre du cercle circonscrit est le milieu de l’hypoténuse.`)},
@@ -914,7 +955,7 @@ const G6 = [
   return q(`Quelle figure possède ${description} ?`,answer,`La figure ${correctLetter} est un ${answer}.`,[correctLetter],{figureChoices});
 }},
 {theme:"Géométrie plane et espace",notion:"Axes de symétrie",make:()=>{let items=[["carré",4],["rectangle",2],["triangle équilatéral",3],["cercle","une infinité"]],z=items[rand(0,3)];return q(`Combien d’axes de symétrie possède un ${z[0]} ?`,z[1],`Un ${z[0]} possède ${z[1]} axe(s) de symétrie.`)}},
-{theme:"Géométrie plane et espace",notion:"Reconnaître des solides usuels",make:()=>{let items=[["6 faces carrées","cube"],["2 bases circulaires et une surface courbe","cylindre"],["une base circulaire et un sommet","cône"],["une surface entièrement courbe","boule"]],z=items[rand(0,3)];return q(`Quel solide possède ${z[0]} ?`,z[1],`Il s’agit d’un ${z[1]}.`)}},
+{theme:"Géométrie plane et espace",notion:"Reconnaître des solides usuels",make:()=>{let items=[["6 faces carrées","cube"],["2 bases circulaires et une surface courbe","cylindre"],["une base circulaire et un sommet","cône"],["une surface entièrement courbe","boule"]],[description,answer]=items[rand(0,3)];return optionalSolidChoiceQuestion(description,answer,["cube","cylindre","cône","boule"])}},
 
 {theme:"Calcul mental",notion:"Ajouter ou soustraire un entier à un décimal",make:()=>{let a=rand(10,150)/10,b=rand(1,20),op=Math.random()<.5?"+":"−";return q(`Calcule mentalement : ${fmt(a)} ${op} ${b}`,fmt(op==="+"?a+b:a-b),`On agit sur la partie entière du nombre décimal.`)}},
 {theme:"Calcul mental",notion:"Tables de multiplication",make:()=>{let a=rand(2,12),b=rand(2,12);return q(`Calcule : ${a} × ${b}`,a*b,`${a} × ${b} = ${a*b}.`)}},
