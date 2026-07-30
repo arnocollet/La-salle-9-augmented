@@ -637,13 +637,13 @@ function figureChoiceShapeSvg(shape){
     "triangle équilatéral":`<path d="M20 58 L50 6.038 L80 58 Z"/><path class="figure-choice-wire" d="M32 34 L39 38 M61 38 L68 34 M50 53 L50 63"/>`,
     "triangle isocèle rectangle":`<path d="M22 58 L22 16 L64 58 Z"/><path class="figure-choice-wire" d="M22 48 H32 V58 M17 36 H27 M42 53 V63"/>`,
     "triangle rectangle":`<path d="M18 58 L18 12 L84 58 Z"/><path class="figure-choice-wire" d="M18 48 H28 V58"/>`,
-    cube:`<path class="figure-choice-wire" d="M24 24 H62 V58 H24 Z M38 12 H76 V46 H62 M24 24 L38 12 M62 24 L76 12 M62 58 L76 46"/>`,
-    "pavé droit":`<path class="figure-choice-wire" d="M16 28 H66 V57 H16 Z M34 13 H84 V42 H66 M16 28 L34 13 M66 28 L84 13 M66 57 L84 42"/>`,
-    cylindre:`<ellipse cx="50" cy="18" rx="25" ry="8"/><path class="figure-choice-wire" d="M25 18 V52 M75 18 V52"/><ellipse cx="50" cy="52" rx="25" ry="8"/>`,
-    cône:`<ellipse cx="50" cy="54" rx="29" ry="8"/><path class="figure-choice-wire" d="M21 54 L50 10 L79 54"/>`,
-    boule:`<circle cx="50" cy="35" r="27"/><ellipse class="figure-choice-wire figure-choice-dash" cx="50" cy="35" rx="27" ry="9"/>`,
-    pyramide:`<path d="M20 52 L64 58 L82 45 L38 40 Z"/><path class="figure-choice-wire" d="M51 10 L20 52 M51 10 L64 58 M51 10 L82 45 M51 10 L38 40"/><path class="figure-choice-wire figure-choice-dash" d="M38 40 L82 45"/>`,
-    "prisme droit":`<path d="M19 53 L35 19 L51 53 Z M51 53 L67 19 L83 53 Z"/><path class="figure-choice-wire" d="M19 53 L51 53 M35 19 L67 19 M51 53 L83 53"/>`
+    cube:`<path class="figure-choice-wire" d="M24 24 H62 V58 H24 Z M38 12 H76 V47 M24 24 L38 12 M62 24 L76 12 M62 58 L76 47"/><path class="figure-choice-wire figure-choice-dash" d="M38 12 V47 H76 M24 58 L38 47"/>`,
+    "pavé droit":`<path class="figure-choice-wire" d="M16 28 H66 V57 H16 Z M34 13 H84 V42 M16 28 L34 13 M66 28 L84 13 M66 57 L84 42"/><path class="figure-choice-wire figure-choice-dash" d="M34 13 V42 H84 M16 57 L34 42"/>`,
+    cylindre:`<ellipse cx="50" cy="18" rx="25" ry="8"/><path class="figure-choice-wire" d="M25 18 V52 M75 18 V52 M25 52 A25 8 0 0 0 75 52"/><path class="figure-choice-wire figure-choice-dash" d="M25 52 A25 8 0 0 1 75 52"/>`,
+    cône:`<path class="figure-choice-wire" d="M21 54 L50 10 L79 54 M21 54 A29 8 0 0 0 79 54"/><path class="figure-choice-wire figure-choice-dash" d="M21 54 A29 8 0 0 1 79 54"/>`,
+    boule:`<circle cx="50" cy="35" r="27"/><path class="figure-choice-wire" d="M23 35 A27 9 0 0 0 77 35"/><path class="figure-choice-wire figure-choice-dash" d="M23 35 A27 9 0 0 1 77 35"/>`,
+    pyramide:`<path class="figure-choice-surface" d="M20 52 L64 58 L82 45 L38 40 Z"/><path class="figure-choice-wire" d="M20 52 L64 58 L82 45 M20 52 L38 40 M51 10 L20 52 M51 10 L64 58 M51 10 L82 45 M51 10 L38 40"/><path class="figure-choice-wire figure-choice-dash" d="M38 40 L82 45"/>`,
+    "prisme droit":`<path class="figure-choice-surface" d="M15 55 L30 20 L45 55 Z M53 50 L68 15 L83 50 Z"/><path class="figure-choice-wire" d="M15 55 L30 20 L45 55 Z M68 15 L83 50 L53 50 M30 20 L68 15 M45 55 L83 50"/><path class="figure-choice-wire figure-choice-dash" d="M15 55 L53 50 M53 50 L68 15"/>`
   };
   return `<svg viewBox="0 0 100 70" aria-hidden="true" focusable="false"><g>${drawings[shape]||""}</g></svg>`;
 }
