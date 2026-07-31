@@ -23,7 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const clamp = (value, min, max) => Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
   const getValue = id => clamp(Math.round(Number.parseFloat(document.getElementById(id).value)), 0, 20);
-  const formatNumber = (value, minimumFractionDigits = 0) => value.toLocaleString('fr-FR', {
+  const getLocale = () => ({
+    en: 'en-US',
+    es: 'es-ES',
+    de: 'de-DE'
+  })[window.i18n && window.i18n.getLanguage()] || 'fr-FR';
+  const formatNumber = (value, minimumFractionDigits = 0) => value.toLocaleString(getLocale(), {
     minimumFractionDigits,
     maximumFractionDigits: 2
   });
@@ -47,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('printFinalScore').textContent = document.getElementById('finalScore').textContent;
     document.getElementById('printStatus').textContent = document.getElementById('status').textContent;
     document.getElementById('printMention').textContent = document.getElementById('mention').textContent;
-    document.getElementById('printDate').textContent = new Intl.DateTimeFormat('fr-FR').format(new Date());
+    document.getElementById('printDate').textContent = new Intl.DateTimeFormat(getLocale()).format(new Date());
   };
 
   const calculate = () => {
@@ -70,14 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const roundedFinalScore = roundToTenth(finalScore);
     const admitted = roundedFinalScore >= 10;
 
-    let mention = 'Non admis';
-    if (roundedFinalScore >= 18) mention = 'Très bien — Félicitations du jury';
-    else if (roundedFinalScore >= 16) mention = 'Très bien';
-    else if (roundedFinalScore >= 14) mention = 'Bien';
-    else if (roundedFinalScore >= 12) mention = 'Assez bien';
-    else if (admitted) mention = 'Admis';
+    let mention = window.i18n ? window.i18n.t('brevet.mention_ajourne') : 'Non admis';
+    if (roundedFinalScore >= 18) mention = window.i18n ? window.i18n.t('brevet.mention_tb') + ' — ' + window.i18n.t('brevet.felicitations', 'Félicitations du jury') : 'Très bien — Félicitations du jury';
+    else if (roundedFinalScore >= 16) mention = window.i18n ? window.i18n.t('brevet.mention_tb') : 'Très bien';
+    else if (roundedFinalScore >= 14) mention = window.i18n ? window.i18n.t('brevet.mention_b') : 'Bien';
+    else if (roundedFinalScore >= 12) mention = window.i18n ? window.i18n.t('brevet.mention_ab') : 'Assez bien';
+    else if (admitted) mention = window.i18n ? window.i18n.t('brevet.mention_admis') : 'Admis';
 
-    document.getElementById('finalScore').textContent = `${roundedFinalScore.toLocaleString('fr-FR', {
+    document.getElementById('finalScore').textContent = `${roundedFinalScore.toLocaleString(getLocale(), {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1
     })} / 20`;
@@ -89,7 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const status = document.getElementById('status');
     const mentionBox = document.getElementById('mentionBox');
-    status.textContent = admitted ? '✓ Admis' : '✕ Non admis';
+    const admittedText = window.i18n ? window.i18n.t('brevet.mention_admis') : 'Admis';
+    const notAdmittedText = window.i18n ? window.i18n.t('brevet.mention_ajourne') : 'Non admis';
+    status.textContent = admitted ? `✓ ${admittedText}` : `✕ ${notAdmittedText}`;
     status.classList.toggle('fail', !admitted);
     mentionBox.classList.toggle('fail', !admitted);
     document.getElementById('mention').textContent = mention;
@@ -108,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       nextMention.textContent = `Encore ${formatNumber(missingPoints, minimumDecimals)} ${missingPoints === 1 ? 'point' : 'points'} pour ${nextThreshold.label}`;
       nextMention.classList.remove('maximum');
     } else {
-      nextMention.textContent = 'Niveau maximal atteint : félicitations du jury !';
+      nextMention.textContent = window.i18n ? window.i18n.t('brevet.max_reached', 'Niveau maximal atteint : félicitations du jury !') : 'Niveau maximal atteint : félicitations du jury !';
       nextMention.classList.add('maximum');
     }
     syncPrintSummary();
@@ -132,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.print();
   });
   window.addEventListener('beforeprint', calculate);
+  window.addEventListener('langchange', calculate);
 
   calculate();
 });

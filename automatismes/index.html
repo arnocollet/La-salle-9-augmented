@@ -15,21 +15,21 @@
 <body>
   <header class="navbar">
     <div class="container nav-container">
-      <a href="../index.html" class="logo" aria-label="La Salle 9 - Accueil">
+      <a href="../index.html" class="logo" aria-label="La Salle 9 - Accueil" data-i18n-aria-label="nav.logo_alt">
         <img class="logo-image" src="../assets/logo-providence.png" alt="">
       </a>
 
       <nav aria-label="Navigation principale">
         <ul class="nav-links">
-          <li><a href="../index.html" class="nav-link">Accueil</a></li>
-          <li><a href="../scratch.html" class="nav-link">Scratch</a></li>
-          <li><a href="index.html" class="nav-link active" aria-current="page">Automatismes</a></li>
-          <li><a href="../calculateur-brevet.html" class="nav-link">Simulateur Brevet</a></li>
+          <li><a href="../index.html" class="nav-link" data-i18n="nav.home">Accueil</a></li>
+          <li><a href="../scratch.html" class="nav-link" data-i18n="nav.scratch">Scratch</a></li>
+          <li><a href="index.html" class="nav-link active" aria-current="page" data-i18n="nav.automatismes">Automatismes</a></li>
+          <li><a href="../calculateur-brevet.html" class="nav-link" data-i18n="nav.brevet">Simulateur Brevet</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
-        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème" data-i18n-aria-label="nav.theme_toggle">
           <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
@@ -38,7 +38,7 @@
             <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
           </svg>
         </button>
-        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false">
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false" data-i18n-aria-label="nav.menu_toggle">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" aria-hidden="true">
             <path d="M4 6h16M4 12h16M4 18h16" />
@@ -51,8 +51,8 @@
   <main class="auto-main">
     <header class="topbar product-header-card auto-title-card">
       <div class="auto-title-copy">
-        <h1 class="product-title">Automatismes</h1>
-        <p class="privacy-note product-subtitle">🔒 Données enregistrées uniquement dans votre navigateur — Rien n’est envoyé au site.</p>
+        <h1 class="product-title" data-i18n="auto.title">Automatismes</h1>
+        <p class="privacy-note product-subtitle" data-i18n="auto.privacy">🔒 Données enregistrées uniquement dans votre navigateur — Rien n’est envoyé au site.</p>
       </div>
       <img
         class="auto-title-image"
@@ -377,6 +377,57 @@
             <tbody id="resultReview"></tbody>
           </table>
         </div>
+          <strong>Pourquoi ces exercices ?</strong>
+          <p id="reviewMethodReason"></p>
+        </div>
+        <h3>Ce que tu vas travailler</h3>
+        <div id="reviewPlanList" class="review-plan-list"></div>
+        <div class="review-modal-footer">
+          <button id="startPreparedReview" class="primary" type="button">Commencer la routine</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="choiceModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="choiceModalTitle">
+      <div class="modal-box choice-modal-box">
+        <button class="close" id="closeChoiceModal" type="button" aria-label="Fermer">×</button>
+        <div class="choice-modal-heading">
+          <h2 id="choiceModalTitle">🎯 Exercices au choix</h2>
+          <p>Sélectionne les types d’exercices à inclure dans ta routine.</p>
+        </div>
+        <div id="choiceGroups" class="choice-groups"></div>
+        <div class="choice-modal-footer">
+          <p id="choiceStatus" aria-live="polite">Aucun exercice sélectionné</p>
+          <button id="startChoice" class="primary" type="button" disabled>Commencer la routine</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <div class="modal-box result-box">
+        <div class="trophy">🏆</div>
+        <h2 id="resultTitle">Routine terminée</h2>
+        <p>Ton score :</p>
+        <strong id="finalScore">0 / 5</strong>
+        <div id="resultMessage"></div>
+        <h3 class="result-review-title">Synthèse de l’entraînement</h3>
+        <div class="result-review-wrap">
+          <table class="result-review">
+            <colgroup>
+              <col class="review-question-column">
+              <col class="review-answer-column">
+              <col class="review-correction-column">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Question</th>
+                <th scope="col">Ta réponse</th>
+                <th scope="col">Correction</th>
+              </tr>
+            </thead>
+            <tbody id="resultReview"></tbody>
+          </table>
+        </div>
         <button id="returnHome" class="primary">Retour à l’accueil</button>
       </div>
     </div>
@@ -385,19 +436,21 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-nav">
-        <a href="../index.html" class="footer-nav-link">Accueil</a>
-        <a href="../scratch.html" class="footer-nav-link">Scratch</a>
-        <a href="index.html" class="footer-nav-link">Automatismes</a>
-        <a href="../calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+        <a href="../index.html" class="footer-nav-link" data-i18n="nav.home">Accueil</a>
+        <a href="../scratch.html" class="footer-nav-link" data-i18n="nav.scratch">Scratch</a>
+        <a href="index.html" class="footer-nav-link" data-i18n="nav.automatismes">Automatismes</a>
+        <a href="../calculateur-brevet.html" class="footer-nav-link" data-i18n="nav.brevet">Simulateur Brevet</a>
       </div>
       <div class="copyright">
-        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span data-i18n="footer.copyright">Arnaud COLLET - Réalisé avec Codex</span>
         <span class="divider">|</span>
         <span>08/2026</span>
       </div>
     </div>
   </footer>
 
+  <script src="../js/translations.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraphcore.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"

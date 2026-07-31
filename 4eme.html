@@ -18,28 +18,28 @@
   <!-- Navigation Bar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil">
+      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil" data-i18n-aria-label="nav.logo_alt">
         <img class="logo-image" src="assets/logo-providence.png" alt="">
       </a>
       
       <nav>
         <ul class="nav-links">
-          <li><a href="index.html" class="nav-link" id="link-accueil">Accueil</a></li>
-          <li><a href="scratch.html" class="nav-link active" id="link-scratch" aria-current="page">Scratch</a></li>
-          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes">Automatismes</a></li>
-          <li><a href="calculateur-brevet.html" class="nav-link" id="link-calculateur">Simulateur Brevet</a></li>
+          <li><a href="index.html" class="nav-link" id="link-accueil" data-i18n="nav.home">Accueil</a></li>
+          <li><a href="scratch.html" class="nav-link active" id="link-scratch" aria-current="page" data-i18n="nav.scratch">Scratch</a></li>
+          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes" data-i18n="nav.automatismes">Automatismes</a></li>
+          <li><a href="calculateur-brevet.html" class="nav-link" id="link-calculateur" data-i18n="nav.brevet">Simulateur Brevet</a></li>
         </ul>
       </nav>
       
       <div class="nav-actions">
         <!-- Theme Toggle Button -->
-        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème" data-i18n-aria-label="nav.theme_toggle">
           <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
         
         <!-- Mobile Menu Toggle -->
-        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal">
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" data-i18n-aria-label="nav.menu_toggle">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
         </button>
       </div>
@@ -51,12 +51,12 @@
     <div class="container">
       <a href="scratch.html" class="back-link">
         <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        Retour aux classes
+        <span data-i18n="grade.back">Retour aux classes</span>
       </a>
       <div class="page-title-section">
-        <h1 class="page-title">Classe de 4<sup>ème</sup></h1>
+        <h1 class="page-title" data-i18n="grade.4e_title">Classe de 4<sup>ème</sup></h1>
       </div>
-      <p class="page-subtitle">Algorithmique et programmation : explorer les repères de géométrie, les théorèmes de géométrie et le calcul algébrique sous Scratch.</p>
+      <p class="page-subtitle" data-i18n="grade.4e_subtitle">Algorithmique et programmation : explorer les repères de géométrie, les théorèmes de géométrie et le calcul algébrique sous Scratch.</p>
     </div>
   </section>
 
@@ -259,13 +259,13 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-nav">
-        <a href="index.html" class="footer-nav-link">Accueil</a>
-        <a href="scratch.html" class="footer-nav-link">Scratch</a>
-        <a href="automatismes/index.html" class="footer-nav-link">Automatismes</a>
-        <a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+        <a href="index.html" class="footer-nav-link" data-i18n="nav.home">Accueil</a>
+        <a href="scratch.html" class="footer-nav-link" data-i18n="nav.scratch">Scratch</a>
+        <a href="automatismes/index.html" class="footer-nav-link" data-i18n="nav.automatismes">Automatismes</a>
+        <a href="calculateur-brevet.html" class="footer-nav-link" data-i18n="nav.brevet">Simulateur Brevet</a>
       </div>
       <div class="copyright">
-        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span data-i18n="footer.copyright">Arnaud COLLET - Réalisé avec Codex</span>
         <span class="divider">|</span>
         <span>08/2026</span>
       </div>
@@ -273,6 +273,8 @@
   </footer>
 
   <!-- JavaScript -->
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js?v=2"></script>
 </body>
 </html>

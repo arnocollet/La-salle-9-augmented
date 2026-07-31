@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="La Salle 9 : activités Scratch, entraînement aux automatismes et simulateur du brevet.">
+    content="La Salle 9 : activités Scratch, entraînement aux automatismes et simulateur du brevet." data-i18n-content="home.meta_desc">
   <meta name="author" content="Arnaud Collet">
   <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
@@ -18,21 +18,21 @@
 <body>
   <header class="navbar">
     <div class="container nav-container">
-      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil">
+      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil" data-i18n-aria-label="nav.logo_alt">
         <img class="logo-image" src="assets/logo-providence.png" alt="">
       </a>
 
       <nav aria-label="Navigation principale">
         <ul class="nav-links">
-          <li><a href="index.html" class="nav-link active" aria-current="page">Accueil</a></li>
-          <li><a href="scratch.html" class="nav-link">Scratch</a></li>
-          <li><a href="automatismes/index.html" class="nav-link">Automatismes</a></li>
-          <li><a href="calculateur-brevet.html" class="nav-link">Simulateur Brevet</a></li>
+          <li><a href="index.html" class="nav-link active" aria-current="page" data-i18n="nav.home">Accueil</a></li>
+          <li><a href="scratch.html" class="nav-link" data-i18n="nav.scratch">Scratch</a></li>
+          <li><a href="automatismes/index.html" class="nav-link" data-i18n="nav.automatismes">Automatismes</a></li>
+          <li><a href="calculateur-brevet.html" class="nav-link" data-i18n="nav.brevet">Simulateur Brevet</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
-        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème" data-i18n-aria-label="nav.theme_toggle">
           <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
@@ -41,7 +41,7 @@
             <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
           </svg>
         </button>
-        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false">
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false" data-i18n-aria-label="nav.menu_toggle">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" aria-hidden="true">
             <path d="M4 6h16M4 12h16M4 18h16" />
@@ -56,7 +56,7 @@
       <div class="portal-orb portal-orb-one"></div>
       <div class="portal-orb portal-orb-two"></div>
       <div class="container portal-hero-content">
-        <h1><span>La Salle 9</span></h1>
+        <h1><span data-i18n="home.title">La Salle 9</span></h1>
         <img class="portal-illustration" src="assets/accueil-effort.jpg"
           alt="Les maths, c’est comme le sport : pour progresser, il faut s’entraîner"
           width="900" height="1125" decoding="async" fetchpriority="high">
@@ -74,9 +74,9 @@
             </svg>
           </span>
           <span class="portal-card-copy">
-            <span class="portal-kicker">Programmer</span>
-            <strong>Scratch</strong>
-            <span>Activités guidées et programmes pour les classes de 5<sup>e</sup>, 4<sup>e</sup> et 3<sup>e</sup>.</span>
+            <span class="portal-kicker" data-i18n="home.scratch_kicker">Programmer</span>
+            <strong data-i18n="home.scratch_title">Scratch</strong>
+            <span data-i18n="home.scratch_desc">Activités guidées et programmes pour les classes de 5<sup>e</sup>, 4<sup>e</sup> et 3<sup>e</sup>.</span>
           </span>
           <span class="portal-arrow" aria-hidden="true">→</span>
         </a>
@@ -89,9 +89,9 @@
             </svg>
           </span>
           <span class="portal-card-copy">
-            <span class="portal-kicker">S’entraîner</span>
-            <strong>Automatismes</strong>
-            <span>Une routine de cinq à dix questions, du niveau 6<sup>e</sup> au niveau 3<sup>e</sup>.</span>
+            <span class="portal-kicker" data-i18n="home.auto_kicker">S’entraîner</span>
+            <strong data-i18n="home.auto_title">Automatismes</strong>
+            <span data-i18n="home.auto_desc">Une routine de cinq à dix questions, du niveau 6<sup>e</sup> au niveau 3<sup>e</sup>.</span>
           </span>
           <span class="portal-arrow" aria-hidden="true">→</span>
         </a>
@@ -104,9 +104,9 @@
             </svg>
           </span>
           <span class="portal-card-copy">
-            <span class="portal-kicker">Se projeter</span>
-            <strong>Simulateur Brevet</strong>
-            <span>Estime ta note finale et découvre la mention correspondant à tes résultats.</span>
+            <span class="portal-kicker" data-i18n="home.brevet_kicker">Se projeter</span>
+            <strong data-i18n="home.brevet_title">Simulateur Brevet</strong>
+            <span data-i18n="home.brevet_desc">Estime ta note finale et découvre la mention correspondant à tes résultats.</span>
           </span>
           <span class="portal-arrow" aria-hidden="true">→</span>
         </a>
@@ -117,19 +117,21 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-nav">
-        <a href="index.html" class="footer-nav-link">Accueil</a>
-        <a href="scratch.html" class="footer-nav-link">Scratch</a>
-        <a href="automatismes/index.html" class="footer-nav-link">Automatismes</a>
-        <a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+        <a href="index.html" class="footer-nav-link" data-i18n="nav.home">Accueil</a>
+        <a href="scratch.html" class="footer-nav-link" data-i18n="nav.scratch">Scratch</a>
+        <a href="automatismes/index.html" class="footer-nav-link" data-i18n="nav.automatismes">Automatismes</a>
+        <a href="calculateur-brevet.html" class="footer-nav-link" data-i18n="nav.brevet">Simulateur Brevet</a>
       </div>
       <div class="copyright">
-        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span data-i18n="footer.copyright">Arnaud COLLET - Réalisé avec Codex</span>
         <span class="divider">|</span>
         <span>08/2026</span>
       </div>
     </div>
   </footer>
 
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js?v=3"></script>
 </body>
 
