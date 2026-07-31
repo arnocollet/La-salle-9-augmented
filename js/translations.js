@@ -425,6 +425,10 @@ const translations = {
   }
 };
 
+if (typeof window !== 'undefined') {
+  window.translations = translations;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = translations;
 }
