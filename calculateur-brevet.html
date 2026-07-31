@@ -17,21 +17,21 @@
 <body>
   <header class="navbar">
     <div class="container nav-container">
-      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil">
+      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil" data-i18n-aria-label="nav.logo_alt">
         <img class="logo-image" src="assets/logo-providence.png" alt="">
       </a>
 
       <nav aria-label="Navigation principale">
         <ul class="nav-links">
-          <li><a href="index.html" class="nav-link" id="link-accueil">Accueil</a></li>
-          <li><a href="scratch.html" class="nav-link" id="link-scratch">Scratch</a></li>
-          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes">Automatismes</a></li>
-          <li><a href="calculateur-brevet.html" class="nav-link active" id="link-calculateur" aria-current="page">Simulateur Brevet</a></li>
+          <li><a href="index.html" class="nav-link" id="link-accueil" data-i18n="nav.home">Accueil</a></li>
+          <li><a href="scratch.html" class="nav-link" id="link-scratch" data-i18n="nav.scratch">Scratch</a></li>
+          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes" data-i18n="nav.automatismes">Automatismes</a></li>
+          <li><a href="calculateur-brevet.html" class="nav-link active" id="link-calculateur" aria-current="page" data-i18n="nav.brevet">Simulateur Brevet</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
-        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème" data-i18n-aria-label="nav.theme_toggle">
           <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
@@ -47,7 +47,7 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </svg>
         </button>
-        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false">
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false" data-i18n-aria-label="nav.menu_toggle">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="4" y1="12" x2="20" y2="12" />
@@ -237,19 +237,21 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-nav">
-        <a href="index.html" class="footer-nav-link">Accueil</a>
-        <a href="scratch.html" class="footer-nav-link">Scratch</a>
-        <a href="automatismes/index.html" class="footer-nav-link">Automatismes</a>
-        <a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+        <a href="index.html" class="footer-nav-link" data-i18n="nav.home">Accueil</a>
+        <a href="scratch.html" class="footer-nav-link" data-i18n="nav.scratch">Scratch</a>
+        <a href="automatismes/index.html" class="footer-nav-link" data-i18n="nav.automatismes">Automatismes</a>
+        <a href="calculateur-brevet.html" class="footer-nav-link" data-i18n="nav.brevet">Simulateur Brevet</a>
       </div>
       <div class="copyright">
-        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span data-i18n="footer.copyright">Arnaud COLLET - Réalisé avec Codex</span>
         <span class="divider">|</span>
         <span>08/2026</span>
       </div>
     </div>
   </footer>
 
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
   <script src="js/calculateur.js?v=11"></script>
 </body>

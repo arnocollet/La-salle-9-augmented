@@ -1838,3 +1838,7 @@ function renderNotions(){
   }).join("");
 }
 selectLevel(currentLevel);
+
+window.addEventListener('langchange', () => {
+  if (window.i18n) window.i18n.translateDOM();
+});

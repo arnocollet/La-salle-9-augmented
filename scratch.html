@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="La Salle 9 - Site d'activités d'algorithmique et de programmation mathématique pour les classes de 3ème, 4ème et 5ème.">
+    content="La Salle 9 - Site d'activités d'algorithmique et de programmation mathématique pour les classes de 3ème, 4ème et 5ème." data-i18n-content="scratch.meta_desc">
   <meta name="author" content="Arnaud Collet">
   <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
@@ -21,22 +21,22 @@
   <!-- Navigation Bar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil">
+      <a href="index.html" class="logo" id="nav-logo" aria-label="La Salle 9 - Accueil" data-i18n-aria-label="nav.logo_alt">
         <img class="logo-image" src="assets/logo-providence.png" alt="">
       </a>
 
       <nav>
         <ul class="nav-links">
-          <li><a href="index.html" class="nav-link" id="link-accueil">Accueil</a></li>
-          <li><a href="scratch.html" class="nav-link active" id="link-scratch" aria-current="page">Scratch</a></li>
-          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes">Automatismes</a></li>
-          <li><a href="calculateur-brevet.html" class="nav-link" id="link-calculateur">Simulateur Brevet</a></li>
+          <li><a href="index.html" class="nav-link" id="link-accueil" data-i18n="nav.home">Accueil</a></li>
+          <li><a href="scratch.html" class="nav-link active" id="link-scratch" aria-current="page" data-i18n="nav.scratch">Scratch</a></li>
+          <li><a href="automatismes/index.html" class="nav-link" id="link-automatismes" data-i18n="nav.automatismes">Automatismes</a></li>
+          <li><a href="calculateur-brevet.html" class="nav-link" id="link-calculateur" data-i18n="nav.brevet">Simulateur Brevet</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
         <!-- Theme Toggle Button -->
-        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème">
+        <button class="theme-toggle" id="theme-btn" aria-label="Changer le thème" data-i18n-aria-label="nav.theme_toggle">
           <svg class="moon-icon" viewBox="0 0 24 24">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
@@ -54,7 +54,7 @@
         </button>
 
         <!-- Mobile Menu Toggle -->
-        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false">
+        <button class="menu-toggle" id="menu-btn" aria-label="Menu principal" aria-expanded="false" data-i18n-aria-label="nav.menu_toggle">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" y1="12" x2="20" y2="12" />
@@ -71,8 +71,8 @@
     <div class="container">
       <div class="product-header-card scratch-header-card">
         <div class="scratch-header-copy">
-          <h1 class="product-title">Scratch</h1>
-          <p class="product-subtitle">Activités d’entraînement au logiciel Scratch.</p>
+          <h1 class="product-title" data-i18n="scratch.title">Scratch</h1>
+          <p class="product-subtitle" data-i18n="scratch.subtitle">Activités d’entraînement au logiciel Scratch.</p>
         </div>
         <img class="hero-image scratch-header-image" src="assets/image-scratch.jpg"
           alt="Illustration du chat Scratch entouré de petits personnages" width="900" height="900" decoding="async">
@@ -95,11 +95,11 @@
             <path class="icon-secondary" d="M23 34h12" />
           </svg>
         </div>
-        <h2 class="card-title">Classe de 3<sup>ème</sup></h2>
-        <p class="card-desc">Suivez les activités algorithmiques avancées, les nombres premiers, les antécédents, et
+        <h2 class="card-title" data-i18n="scratch.3e_title">Classe de 3<sup>ème</sup></h2>
+        <p class="card-desc" data-i18n="scratch.3e_desc">Suivez les activités algorithmiques avancées, les nombres premiers, les antécédents, et
           approfondissez la gestion de variables complexes sous Scratch.</p>
         <a href="3eme.html" class="card-button" id="btn-explore-3e">
-          Explorer les activités
+          <span data-i18n="scratch.3e_btn">Explorer les activités</span>
           <svg viewBox="0 0 24 24">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
@@ -117,11 +117,11 @@
             <circle class="icon-secondary-fill" cx="24" cy="24" r="3" />
           </svg>
         </div>
-        <h2 class="card-title">Classe de 4<sup>ème</sup></h2>
-        <p class="card-desc">Explorez les géométries algorithmiques, la réciproque de Pythagore, le calcul littéral et
+        <h2 class="card-title" data-i18n="scratch.4e_title">Classe de 4<sup>ème</sup></h2>
+        <p class="card-desc" data-i18n="scratch.4e_desc">Explorez les géométries algorithmiques, la réciproque de Pythagore, le calcul littéral et
           le traitement des moyennes et médianes à l'aide de scripts structurés.</p>
         <a href="4eme.html" class="card-button" id="btn-explore-4e">
-          Explorer les activités
+          <span data-i18n="scratch.4e_btn">Explorer les activités</span>
           <svg viewBox="0 0 24 24">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
@@ -141,11 +141,11 @@
             <path class="icon-primary" d="M8 23H4v8h4m32-8h4v8h-4" />
           </svg>
         </div>
-        <h2 class="card-title">Classe de 5<sup>ème</sup></h2>
-        <p class="card-desc">Initiez-vous aux priorités de calcul, aux opérations sur les nombres relatifs, aux
+        <h2 class="card-title" data-i18n="scratch.5e_title">Classe de 5<sup>ème</sup></h2>
+        <p class="card-desc" data-i18n="scratch.5e_desc">Initiez-vous aux priorités de calcul, aux opérations sur les nombres relatifs, aux
           fractions, et appliquez vos compétences d'algorithmes à des situations réelles.</p>
         <a href="5eme.html" class="card-button" id="btn-explore-5e">
-          Explorer les activités
+          <span data-i18n="scratch.5e_btn">Explorer les activités</span>
           <svg viewBox="0 0 24 24">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
@@ -159,13 +159,13 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-nav">
-        <a href="index.html" class="footer-nav-link">Accueil</a>
-        <a href="scratch.html" class="footer-nav-link">Scratch</a>
-        <a href="automatismes/index.html" class="footer-nav-link">Automatismes</a>
-        <a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+        <a href="index.html" class="footer-nav-link" data-i18n="nav.home">Accueil</a>
+        <a href="scratch.html" class="footer-nav-link" data-i18n="nav.scratch">Scratch</a>
+        <a href="automatismes/index.html" class="footer-nav-link" data-i18n="nav.automatismes">Automatismes</a>
+        <a href="calculateur-brevet.html" class="footer-nav-link" data-i18n="nav.brevet">Simulateur Brevet</a>
       </div>
       <div class="copyright">
-        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span data-i18n="footer.copyright">Arnaud COLLET - Réalisé avec Codex</span>
         <span class="divider">|</span>
         <span>08/2026</span>
       </div>
@@ -173,6 +173,8 @@
   </footer>
 
   <!-- JavaScript -->
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js?v=2"></script>
 </body>
 

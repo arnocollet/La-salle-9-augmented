@@ -138,6 +138,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!id || !pdfUrl || !pdfEmbedUrl || scratchIds.length === 0) return null;
 
+    const t = (key, fallback) => (window.i18n ? window.i18n.t(key) : fallback);
+
     article.className = 'card-assignment';
     article.id = `custom-${id}`;
     article.dataset.scratchProjects = scratchIds.join(',');
@@ -148,13 +150,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           <h2 class="assignment-title">${title}</h2>
         </div>
         <div class="assignment-badges">
-          <span class="badge badge-consignes">
+          <span class="badge badge-consignes" data-i18n="grade.badge_consignes">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h-2v-2h4v8zm0-10h-2V5h2v2z"/></svg>
-            Les consignes
+            ${t('grade.badge_consignes', 'Les consignes')}
           </span>
-          <span class="badge badge-programme">
+          <span class="badge badge-programme" data-i18n="grade.badge_programme">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            Le programme à réaliser
+            ${t('grade.badge_programme', 'Le programme à réaliser')}
           </span>
         </div>
       </div>
@@ -165,20 +167,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             ${pdfName}
           </div>
           <div class="embed-actions">
-            <a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener" class="btn-embed-action" title="Agrandir">
+            <a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener" class="btn-embed-action" title="${t('grade.btn_expand', 'Agrandir')}">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-              Agrandir
+              <span data-i18n="grade.btn_expand">${t('grade.btn_expand', 'Agrandir')}</span>
             </a>
-            <a href="${escapeHtml(pdfDownloadUrl)}" download class="btn-embed-action" title="Télécharger">
+            <a href="${escapeHtml(pdfDownloadUrl)}" download class="btn-embed-action" title="${t('grade.btn_download', 'Télécharger')}">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              Télécharger
+              <span data-i18n="grade.btn_download">${t('grade.btn_download', 'Télécharger')}</span>
             </a>
           </div>
         </div>
         <div class="embed-iframe-wrapper">
           <div class="skeleton-loader">
             <div class="spinner"></div>
-            <span class="loader-text">Chargement du document...</span>
+            <span class="loader-text" data-i18n="grade.loader">${t('grade.loader', 'Chargement du document...')}</span>
           </div>
           <iframe class="embed-iframe" data-src="${escapeHtml(pdfEmbedUrl)}" allowfullscreen></iframe>
         </div>
@@ -186,6 +188,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     return article;
   };
+
+  window.addEventListener('langchange', () => {
+    if (window.i18n) window.i18n.translateDOM();
+  });
 
   const loadAdditionalActivities = async () => {
     const grade = document.body.dataset.grade;

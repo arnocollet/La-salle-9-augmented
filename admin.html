@@ -15,9 +15,11 @@
     <a href="scratch.html" class="admin-brand">
       <img src="assets/favicon-light.svg" alt="" width="34" height="34">
       <span>La Salle 9</span>
-      <small>Administration</small>
+      <small data-i18n="admin.title">Administration</small>
     </a>
-    <button id="logout-btn" class="button button-quiet" type="button" hidden>Déconnexion</button>
+    <div class="nav-actions">
+      <button id="logout-btn" class="button button-quiet" type="button" hidden data-i18n="admin.logout">Déconnexion</button>
+    </div>
   </header>
 
   <main class="admin-shell">
@@ -28,7 +30,7 @@
       <p class="intro">Le panneau publie directement les activités dans votre dépôt. Le jeton reste uniquement dans ce navigateur et n’est jamais ajouté au site.</p>
 
       <form id="login-form" class="stack-form">
-        <label for="token">Jeton GitHub</label>
+        <label for="token" data-i18n="admin.github_token">Jeton GitHub</label>
         <div class="secret-field">
           <input id="token" name="token" type="password" autocomplete="off" spellcheck="false" required placeholder="github_pat_…">
           <button id="toggle-token" type="button" class="icon-button" aria-label="Afficher le jeton">👁</button>
@@ -37,7 +39,7 @@
           <input id="remember-token" type="checkbox" checked>
           <span>Mémoriser sur cet appareil</span>
         </label>
-        <button class="button button-primary" type="submit">Se connecter</button>
+        <button class="button button-primary" type="submit" data-i18n="admin.save_token">Se connecter</button>
       </form>
 
       <details class="token-help">
@@ -56,7 +58,7 @@
       <div class="page-heading">
         <div>
           <p class="eyebrow">Gestion des contenus</p>
-          <h1 id="editor-title">Ajouter une activité</h1>
+          <h1 id="editor-title" data-i18n="admin.add_activity">Ajouter une activité</h1>
           <p id="editor-description">Remplissez les quatre informations puis publiez. GitHub Pages fera le reste.</p>
         </div>
         <div id="connection-badge" class="connection-badge">Connecté</div>
@@ -66,7 +68,7 @@
         <form id="activity-form">
           <div class="form-grid">
             <div class="field-group">
-              <label for="grade">Classe</label>
+              <label for="grade" data-i18n="admin.grade_select">Classe</label>
               <select id="grade" name="grade" required>
                 <option value="3e">Classe de 3ème</option>
                 <option value="4e">Classe de 4ème</option>
@@ -74,7 +76,7 @@
               </select>
             </div>
             <div class="field-group">
-              <label for="emoji">Icône</label>
+              <label for="emoji" data-i18n="admin.activity_emoji">Icône</label>
               <select id="emoji" name="emoji">
                 <option value="💻">💻 Informatique</option>
                 <option value="🔢">🔢 Nombres</option>
@@ -94,12 +96,12 @@
           </div>
 
           <div class="field-group">
-            <label for="title">Titre de l’activité</label>
+            <label for="title" data-i18n="admin.activity_title">Titre de l’activité</label>
             <input id="title" name="title" type="text" maxlength="160" required placeholder="Ex. Programme de calcul">
           </div>
 
           <fieldset class="resource-fieldset">
-            <legend>Consignes PDF</legend>
+            <legend data-i18n="admin.pdf_file">Consignes PDF</legend>
             <label id="pdf-dropzone" class="dropzone" for="pdf-file">
               <span class="dropzone-icon" aria-hidden="true">＋</span>
               <strong>Glissez votre PDF ici</strong>
@@ -116,7 +118,7 @@
           </fieldset>
 
           <div class="field-group">
-            <label for="scratch-url">Lien du projet Scratch</label>
+            <label for="scratch-url" data-i18n="admin.scratch_id">Lien du projet Scratch</label>
             <input id="scratch-url" name="scratchUrl" type="url" inputmode="url" required placeholder="https://scratch.mit.edu/projects/123456789/">
             <small>Le projet doit être partagé publiquement sur Scratch.</small>
           </div>
@@ -131,7 +133,7 @@
             <p id="publish-status" class="status" role="status" aria-live="polite"></p>
             <div class="editor-actions">
               <button id="cancel-edit-btn" class="button button-quiet" type="button" hidden>Annuler</button>
-              <button id="publish-btn" class="button button-primary button-publish" type="submit">Publier l’activité</button>
+              <button id="publish-btn" class="button button-primary button-publish" type="submit" data-i18n="admin.submit_btn">Publier l’activité</button>
             </div>
           </div>
         </form>
@@ -141,7 +143,7 @@
         <div class="section-title-row">
           <div>
             <p class="eyebrow">Activités administrées</p>
-            <h2>Déjà ajoutées</h2>
+            <h2 data-i18n="admin.existing_activities">Déjà ajoutées</h2>
           </div>
           <button id="refresh-btn" class="button button-quiet" type="button">Actualiser</button>
         </div>
@@ -155,19 +157,21 @@
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-nav">
-        <a href="index.html" class="footer-nav-link">Accueil</a>
-        <a href="scratch.html" class="footer-nav-link">Scratch</a>
-        <a href="automatismes/index.html" class="footer-nav-link">Automatismes</a>
-        <a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a>
+        <a href="index.html" class="footer-nav-link" data-i18n="nav.home">Accueil</a>
+        <a href="scratch.html" class="footer-nav-link" data-i18n="nav.scratch">Scratch</a>
+        <a href="automatismes/index.html" class="footer-nav-link" data-i18n="nav.automatismes">Automatismes</a>
+        <a href="calculateur-brevet.html" class="footer-nav-link" data-i18n="nav.brevet">Simulateur Brevet</a>
       </div>
       <div class="copyright">
-        <span>Arnaud COLLET - Réalisé avec Codex</span>
+        <span data-i18n="footer.copyright">Arnaud COLLET - Réalisé avec Codex</span>
         <span class="divider">|</span>
         <span>08/2026</span>
       </div>
     </div>
   </footer>
 
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/admin.js?v=3"></script>
 </body>
 </html>
