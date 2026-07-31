@@ -40,6 +40,11 @@
 
   const getSavedLang = () => {
     try {
+      const urlLang = new URLSearchParams(window.location.search).get('lang');
+      if (urlLang && SUPPORTED_LANGS.includes(urlLang)) {
+        localStorage.setItem(STORAGE_KEY, urlLang);
+        return urlLang;
+      }
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
       const navLang = (navigator.language || '').slice(0, 2).toLowerCase();
@@ -51,6 +56,23 @@
   };
 
   let currentLang = getSavedLang();
+
+  const updateLocalizedLinks = () => {
+    document.querySelectorAll('a[href]').forEach(link => {
+      const rawHref = link.getAttribute('href');
+      if (!rawHref || rawHref.startsWith('#')) return;
+
+      try {
+        const url = new URL(rawHref, document.baseURI);
+        if (url.origin !== window.location.origin) return;
+        if (!(url.pathname.endsWith('.html') || url.pathname.endsWith('/'))) return;
+        url.searchParams.set('lang', currentLang);
+        link.href = url.href;
+      } catch (e) {
+        // Ignore links that cannot be represented as standard URLs.
+      }
+    });
+  };
 
   const t = (key, params = {}) => {
     const dict = (window.translations && window.translations[currentLang]) || (window.translations && window.translations[DEFAULT_LANG]) || {};
@@ -105,6 +127,8 @@
       const translated = t(key);
       if (translated) el.title = translated;
     });
+
+    updateLocalizedLinks();
   };
 
   const setLanguage = (lang) => {

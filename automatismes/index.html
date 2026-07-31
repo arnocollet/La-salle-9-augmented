@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)" />
   <title>Maths Automatismes — 6e à 3e</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="../css/style.css?v=33" />
+  <link rel="stylesheet" href="../css/style.css?v=34" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraph.css" />
   <link rel="stylesheet" href="styles.css?v=70" />
 </head>
@@ -67,7 +67,7 @@
       <article class="card level-progress-card">
         <div class="section-title">
           <span class="step">1</span>
-          <h2>Je choisis mon niveau</h2>
+          <h2 data-i18n="auto.choose_level">Je choisis mon niveau</h2>
         </div>
         <div class="level-progress-layout">
           <div class="levels">
@@ -79,7 +79,7 @@
 
           <section class="progress-summary" aria-labelledby="progress-summary-title">
             <div class="progress-heading">
-              <h3 id="progress-summary-title">Ma Progression</h3>
+              <h3 id="progress-summary-title" data-i18n="auto.progress">Ma Progression</h3>
               <div class="progress-badges">
                 <div class="streak-summary">
                   <span aria-hidden="true">🔥</span>
@@ -101,32 +101,32 @@
       <article class="card">
         <div class="section-title">
           <span class="step">2</span>
-          <h2>Je choisis ma routine</h2>
+          <h2 data-i18n="auto.choose_routine">Je choisis ma routine</h2>
         </div>
         <div class="routines">
           <div class="routine blue">
             <div class="routine-heading">
               <div class="emoji">🎲</div>
-              <h3>Aléatoire</h3>
+              <h3 data-i18n="auto.random_title">Aléatoire</h3>
             </div>
-            <p>5 questions choisies parmi plusieurs domaines.</p>
-            <button id="startRandom">Commencer</button>
+            <p data-i18n="auto.random_desc">5 questions choisies parmi plusieurs domaines.</p>
+            <button id="startRandom" data-i18n="auto.start">Commencer</button>
           </div>
           <div class="routine greenish">
             <div class="routine-heading">
               <div class="emoji">🎯</div>
-              <h3>Exercices au choix</h3>
+              <h3 data-i18n="auto.choice_title">Exercices au choix</h3>
             </div>
-            <p>Sélectionne précisément les types d’exercices à travailler.</p>
-            <button id="openChoices">Choisir les exercices</button>
+            <p data-i18n="auto.choice_desc">Sélectionne précisément les types d’exercices à travailler.</p>
+            <button id="openChoices" data-i18n="auto.choose_exercises">Choisir les exercices</button>
           </div>
           <div class="routine purple">
             <div class="routine-heading">
               <div class="emoji">🧠</div>
-              <h3>Mes difficultés</h3>
+              <h3 data-i18n="auto.difficulties_title">Mes difficultés</h3>
             </div>
-            <p>Le site privilégie les notions les moins réussies.</p>
-            <button id="startReview">Commencer</button>
+            <p data-i18n="auto.difficulties_desc">Le site privilégie les notions les moins réussies.</p>
+            <button id="startReview" data-i18n="auto.start">Commencer</button>
           </div>
         </div>
       </article>
@@ -134,32 +134,32 @@
       <article class="card">
         <div class="section-title">
           <span class="step">3</span>
-          <h2>Outils</h2>
+          <h2 data-i18n="auto.tools">Outils</h2>
         </div>
         <div class="routines">
           <div class="routine blue">
             <div class="routine-heading">
               <div class="emoji">📊</div>
-              <h3>Suivi</h3>
+              <h3 data-i18n="auto.tracking_title">Suivi</h3>
             </div>
-            <p>Consulte tes résultats et ta progression.</p>
-            <button id="openProgress">Voir mon suivi</button>
+            <p data-i18n="auto.tracking_desc">Consulte tes résultats et ta progression.</p>
+            <button id="openProgress" data-i18n="auto.view_tracking">Voir mon suivi</button>
           </div>
           <div class="routine greenish">
             <div class="routine-heading">
               <div class="emoji">▤</div>
-              <h3>Référentiel</h3>
+              <h3 data-i18n="auto.reference_title">Référentiel</h3>
             </div>
-            <p>Retrouve toutes les notions d’automatismes de ton niveau.</p>
-            <button id="openNotions">Consulter le référentiel</button>
+            <p data-i18n="auto.reference_desc">Retrouve toutes les notions d’automatismes de ton niveau.</p>
+            <button id="openNotions" data-i18n="auto.view_reference">Consulter le référentiel</button>
           </div>
           <div class="routine orangeish">
             <div class="routine-heading">
               <div class="emoji">🖨️</div>
-              <h3>Imprimer</h3>
+              <h3 data-i18n="auto.print_title">Imprimer</h3>
             </div>
-            <p>Crée des routines papier adaptées à ton niveau au format PDF.</p>
-            <button id="openWorksheets">Créer des fiches</button>
+            <p data-i18n="auto.print_desc">Crée des routines papier adaptées à ton niveau au format PDF.</p>
+            <button id="openWorksheets" data-i18n="auto.create_worksheets">Créer des fiches</button>
           </div>
         </div>
       </article>
@@ -449,8 +449,8 @@
     </div>
   </footer>
 
-  <script src="../js/translations.js?v=2"></script>
-  <script src="../js/i18n.js?v=2"></script>
+  <script src="../js/translations.js?v=3"></script>
+  <script src="../js/i18n.js?v=3"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.1/distrib/jsxgraphcore.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"

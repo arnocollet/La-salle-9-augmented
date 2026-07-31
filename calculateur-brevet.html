@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <title>La Salle 9 - Simulateur Brevet</title>
-  <link rel="stylesheet" href="css/style.css?v=33">
+  <link rel="stylesheet" href="css/style.css?v=34">
   <link rel="stylesheet" href="css/calculateur.css?v=21">
 </head>
 
@@ -63,8 +63,8 @@
     <div class="container">
       <div class="product-header-card brevet-header-card">
         <div class="brevet-header-copy">
-          <h1 class="product-title">Simulateur Brevet</h1>
-          <p class="product-subtitle">Estime ta note finale et la mention obtenue à partir du contrôle continu et des épreuves finales.</p>
+          <h1 class="product-title" data-i18n="brevet.title">Simulateur Brevet</h1>
+          <p class="product-subtitle" data-i18n="brevet.subtitle">Estime ta note finale et la mention obtenue à partir du contrôle continu et des épreuves finales.</p>
         </div>
         <img class="brevet-header-image" src="assets/image-simulateur.png"
           alt="Illustration du Simulateur Brevet avec du matériel de mathématiques" width="1916" height="821">
@@ -139,13 +139,13 @@
       <p class="print-disclaimer">Simulation indicative réalisée avec La Salle 9.</p>
     </section>
 
-    <p class="brevet-info"><span aria-hidden="true">ℹ️</span> Modifie les notes pour simuler ton résultat. Le calcul se met à jour automatiquement.</p>
+    <p class="brevet-info"><span aria-hidden="true">ℹ️</span> <span data-i18n="brevet.info">Modifie les notes pour simuler ton résultat. Le calcul se met à jour automatiquement.</span></p>
 
     <section class="brevet-grid" aria-label="Calcul de la note du brevet">
       <div class="brevet-column">
       <article class="brevet-card continuous-card">
         <div class="brevet-card-inner">
-          <h2 class="brevet-section-title"><span aria-hidden="true">✅</span> 1. Contrôle continu <small>40 %</small></h2>
+          <h2 class="brevet-section-title"><span aria-hidden="true">✅</span> <span data-i18n="brevet.continuous_title">1. Contrôle continu</span> <small>40 %</small></h2>
           <div class="continuous-head" aria-hidden="true"><div>Matière</div><div>Note /20</div></div>
           <div class="continuous-row"><label for="cc-fr">📘 Français</label><input id="cc-fr" class="calc-input continuous-input" type="number" min="0" max="20" step="1" value="10" inputmode="numeric"></div>
           <div class="continuous-row"><label for="cc-math">🧮 Mathématiques</label><input id="cc-math" class="calc-input continuous-input" type="number" min="0" max="20" step="1" value="10" inputmode="numeric"></div>
@@ -179,7 +179,7 @@
       <div class="brevet-column">
       <article class="brevet-card exam-card">
         <div class="brevet-card-inner">
-          <h2 class="brevet-section-title"><span aria-hidden="true">⚖️</span> 2. Épreuves finales <small>60 %</small></h2>
+          <h2 class="brevet-section-title"><span aria-hidden="true">⚖️</span> <span data-i18n="brevet.exams_title">2. Épreuves finales</span> <small>60 %</small></h2>
           <div class="exam-head" aria-hidden="true"><div>Épreuve</div><div>Note /20</div><div>Coef.</div></div>
           <div class="exam-row"><label for="fr">📘 Français</label><input id="fr" class="calc-input" type="number" min="0" max="20" step="1" value="10" inputmode="numeric"><div class="coefficient">2</div></div>
           <div class="exam-row"><label for="math">🧮 Mathématiques</label><input id="math" class="calc-input" type="number" min="0" max="20" step="1" value="10" inputmode="numeric"><div class="coefficient">2</div></div>
@@ -193,9 +193,9 @@
       </article>
 
       <aside class="brevet-card result-card" aria-live="polite">
-        <div class="result-head">🏆 Résultat</div>
+        <div class="result-head">🏆 <span data-i18n="brevet.result">Résultat</span></div>
         <div class="result-body">
-          <div class="result-label">Note finale</div>
+          <div class="result-label" data-i18n="brevet.final_score">Note finale</div>
           <div class="final-score" id="finalScore">10,0 / 20</div>
           <div id="status" class="result-status">✓ Admis</div>
           <div id="mentionBox" class="mention-box">Mention<strong id="mention">Admis</strong></div>
@@ -228,8 +228,8 @@
       </div>
 
       <div class="brevet-actions">
-        <button class="brevet-button export-button" id="exportPdf" type="button">🖨️ Exporter en PDF</button>
-        <button class="brevet-button primary-button" id="reset" type="button">↻ Réinitialiser</button>
+        <button class="brevet-button export-button" id="exportPdf" type="button">🖨️ <span data-i18n="brevet.export_pdf">Exporter en PDF</span></button>
+        <button class="brevet-button primary-button" id="reset" type="button">↻ <span data-i18n="brevet.reset">Réinitialiser</span></button>
       </div>
     </section>
   </main>
@@ -250,8 +250,8 @@
     </div>
   </footer>
 
-  <script src="js/translations.js?v=2"></script>
-  <script src="js/i18n.js?v=2"></script>
+  <script src="js/translations.js?v=3"></script>
+  <script src="js/i18n.js?v=3"></script>
   <script src="js/main.js"></script>
   <script src="js/calculateur.js?v=11"></script>
 </body>

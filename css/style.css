@@ -341,7 +341,7 @@ a {
   padding: 0.35rem;
   border: 1px solid var(--card-border, #e2e8f0);
   border-radius: 0.75rem;
-  background: var(--card-bg, #ffffff);
+  background: var(--bg-secondary, #ffffff);
   box-shadow: var(--shadow-lg);
 }
 
@@ -379,7 +379,7 @@ a {
 
 [data-theme="dark"] .lang-select-trigger,
 [data-theme="dark"] .lang-menu {
-  background: var(--card-bg, #1e293b);
+  background: var(--bg-secondary, #111827);
   border-color: var(--card-border, #334155);
   color: var(--text-primary, #f8fafc);
 }
