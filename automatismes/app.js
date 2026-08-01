@@ -1090,6 +1090,22 @@ function translateGeneratedText(value){
   if(lang==="fr"||!value)return value;
   return (GENERATED_TEXT_TRANSLATIONS[lang]||[]).reduce((text,[source,target])=>text.split(source).join(target),value);
 }
+const REFERENCE_TRANSLATIONS={
+  en:[
+    ["Nombres et calculs","Numbers and calculation"],["Espace et géométrie","Space and geometry"],["Données et probabilités","Data and probability"],["Proportionnalité et fonctions","Proportionality and functions"],["Algorithmique","Algorithms"],["Nombres entiers et décimaux","Whole numbers and decimals"],["Longueurs et aires","Lengths and areas"],["Repérage dans le temps et durées","Time and duration"],["Organisation et gestion de données","Data organisation and management"],["Géométrie plane et espace","Plane and solid geometry"],["Calcul mental","Mental arithmetic"],["Critères de divisibilité","Divisibility rules"],["Quotient et reste","Quotient and remainder"],["division euclidienne","Euclidean division"],["Fractions égales","Equivalent fractions"],["Comparer des fractions","Comparing fractions"],["Addition et soustraction","Addition and subtraction"],["Multiplier et diviser","Multiplying and dividing"],["Écritures décimales","Decimal notation"],["Reconnaître","Recognising"],["Reconnaître une","Recognising a"],["Comprendre","Understanding"],["Calculer","Calculating"],["Déterminer","Determining"],["Résoudre","Solving"],["Lire","Reading"],["Écrire","Writing"],["Placer","Plotting"],["Repérer","Locating"],["Unités de","Units of"],["Périmètre","Perimeter"],["Aires","Areas"],["Volumes","Volumes"],["Symétrie","Symmetry"],["Angles","Angles"],["Triangles","Triangles"],["Probabilité","Probability"],["pourcentage","percentage"],["fonction linéaire","linear function"],["fonction affine","affine function"],["vitesse moyenne","average speed"],["Exécuter","Running"],["Suivre","Following"],["variable","variable"]
+  ],
+  es:[
+    ["Nombres et calculs","Números y cálculo"],["Espace et géométrie","Espacio y geometría"],["Données et probabilités","Datos y probabilidad"],["Proportionnalité et fonctions","Proporcionalidad y funciones"],["Algorithmique","Algoritmia"],["Nombres entiers et décimaux","Números enteros y decimales"],["Longueurs et aires","Longitudes y áreas"],["Repérage dans le temps et durées","Tiempo y duración"],["Organisation et gestion de données","Organización y gestión de datos"],["Géométrie plane et espace","Geometría plana y del espacio"],["Calcul mental","Cálculo mental"],["Critères de divisibilité","Criterios de divisibilidad"],["Quotient et reste","Cociente y resto"],["division euclidienne","división euclídea"],["Fractions égales","Fracciones equivalentes"],["Comparer des fractions","Comparar fracciones"],["Addition et soustraction","Suma y resta"],["Multiplier et diviser","Multiplicar y dividir"],["Écritures décimales","Escrituras decimales"],["Reconnaître","Reconocer"],["Comprendre","Comprender"],["Calculer","Calcular"],["Déterminer","Determinar"],["Résoudre","Resolver"],["Lire","Leer"],["Écrire","Escribir"],["Placer","Colocar"],["Repérer","Localizar"],["Unités de","Unidades de"],["Périmètre","Perímetro"],["Aires","Áreas"],["Volumes","Volúmenes"],["Symétrie","Simetría"],["Probabilité","Probabilidad"],["pourcentage","porcentaje"],["fonction linéaire","función lineal"],["fonction affine","función afín"],["vitesse moyenne","velocidad media"],["variable","variable"]
+  ],
+  de:[
+    ["Nombres et calculs","Zahlen und Rechnen"],["Espace et géométrie","Raum und Geometrie"],["Données et probabilités","Daten und Wahrscheinlichkeit"],["Proportionnalité et fonctions","Proportionalität und Funktionen"],["Algorithmique","Algorithmen"],["Nombres entiers et décimaux","Ganze Zahlen und Dezimalzahlen"],["Longueurs et aires","Längen und Flächen"],["Repérage dans le temps et durées","Zeit und Dauer"],["Organisation et gestion de données","Datenorganisation"],["Géométrie plane et espace","Ebene und räumliche Geometrie"],["Calcul mental","Kopfrechnen"],["Critères de divisibilité","Teilbarkeitsregeln"],["Quotient et reste","Quotient und Rest"],["division euclidienne","euklidischen Division"],["Fractions égales","Gleichwertige Brüche"],["Comparer des fractions","Brüche vergleichen"],["Addition et soustraction","Addition und Subtraktion"],["Multiplier et diviser","Multiplizieren und dividieren"],["Écritures décimales","Dezimalschreibweisen"],["Reconnaître","Erkennen"],["Comprendre","Verstehen"],["Calculer","Berechnen"],["Déterminer","Bestimmen"],["Résoudre","Lösen"],["Lire","Lesen"],["Écrire","Schreiben"],["Placer","Eintragen"],["Repérer","Bestimmen"],["Unités de","Einheiten für"],["Périmètre","Umfang"],["Aires","Flächen"],["Volumes","Volumen"],["Symétrie","Symmetrie"],["Probabilité","Wahrscheinlichkeit"],["pourcentage","Prozentsatz"],["fonction linéaire","lineare Funktion"],["fonction affine","affine Funktion"],["vitesse moyenne","Durchschnittsgeschwindigkeit"],["variable","Variable"]
+  ]
+};
+function translateReferenceText(value){
+  const lang=window.i18n?.getLanguage?.()||"fr";
+  if(lang==="fr"||!value)return value;
+  return (REFERENCE_TRANSLATIONS[lang]||[]).reduce((text,[source,target])=>text.split(source).join(target),value);
+}
 function setLastText(selector,text){
   const node=document.querySelector(selector);
   if(!node)return;
@@ -1142,6 +1158,8 @@ function refreshAutomationModals(){
   const reference=document.querySelector("#notions .section-title h2");
   if(reference)reference.innerHTML=`${toolT("reference")} <span id="notionsLevelLabel">${currentLevel}</span>`;
   document.querySelectorAll("[data-return-home]").forEach(node=>node.textContent=`← ${modalT("returnHome")}`);
+  if(document.getElementById("notions")?.classList.contains("active"))renderNotions();
+  if(document.getElementById("progress")?.classList.contains("active"))renderProgress();
 }
 
 function levelState(){return state.levels[currentLevel]}
@@ -1942,13 +1960,13 @@ function renderProgress(){
   document.getElementById("statQuestions").textContent=s.questions;
   document.getElementById("statSuccess").textContent=(s.questions?Math.round(s.correct/s.questions*100):0)+"%";
   document.getElementById("statStreak").textContent=streak();
-  document.getElementById("themeProgress").innerHTML=availableThemes().map(t=>{let z=s.byTheme[t]||{q:0,c:0},p=z.q?Math.round(z.c/z.q*100):0;return `<div class="progress-row"><span>${translateGeneratedText(THEMES[t])} ${translateGeneratedText(t)}</span><div class="bar"><i style="width:${p}%"></i></div><b>${p}%</b></div>`}).join("");
+  document.getElementById("themeProgress").innerHTML=availableThemes().map(t=>{let z=s.byTheme[t]||{q:0,c:0},p=z.q?Math.round(z.c/z.q*100):0;return `<div class="progress-row"><span>${translateReferenceText(THEMES[t])} ${translateReferenceText(t)}</span><div class="bar"><i style="width:${p}%"></i></div><b>${p}%</b></div>`}).join("");
   document.getElementById("history").innerHTML=s.history.length?s.history.map(h=>`<div class="history-item"><span>${new Date(h.date).toLocaleDateString("fr-FR")} — ${h.level||currentLevel}</span><strong>${h.score}/5</strong></div>`).join(""):"<p class='muted'>Aucune routine terminée pour le moment.</p>";
 }
 function renderNotions(){
   document.getElementById("notionsList").innerHTML=Object.entries(NOTIONS[currentLevel]).map(([t,list])=>{
     const color=DOMAIN_COLORS[t]||"#4f46e5";
-    return `<div class="notion-group" style="--domain-color:${color}"><h3>${translateGeneratedText(THEMES[t])} ${translateGeneratedText(t)}</h3><ol>${list.map(x=>`<li>${translateGeneratedText(x)}</li>`).join("")}</ol></div>`;
+    return `<div class="notion-group" style="--domain-color:${color}"><h3>${translateReferenceText(THEMES[t])} ${translateReferenceText(t)}</h3><ol>${list.map(x=>`<li>${translateReferenceText(x)}</li>`).join("")}</ol></div>`;
   }).join("");
 }
 function refreshLocalizedDynamicUI(){

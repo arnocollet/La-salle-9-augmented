@@ -37,6 +37,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const translate = (key, fallback, params) => window.i18n
     ? window.i18n.t(key, params)
     : fallback;
+  const CALC_TEXT = {
+    fr: {fr:'Français',math:'Mathématiques',history:'Histoire-géographie',emc:'EMC',lv1:'Langue vivante 1',lv2:'Langue vivante 2',arts:'Arts plastiques',music:'Éducation musicale',svt:'SVT',physics:'Physique-chimie',tech:'Technologie',eps:'EPS',science:'Sciences',oral:'Oral',option:'Option facultative',subject:'Matière',exam:'Épreuve',note:'Note /20',coef:'Coef.',optionNote:'Seuls les points au-dessus de 10/20 à l’option facultative sont ajoutés au total des 12 matières, puis ce total est divisé par 12.',capNote:'La moyenne de contrôle continu retenue ne peut pas dépasser 20/20.',average12:'Moyenne des 12 matières',retained:'Note de contrôle continu retenue',finalAverage:'Moyenne des épreuves finales',scienceNote:'Sciences : 2 disciplines sont évaluées parmi physique-chimie, SVT et technologie.',mention:'Mention',printSummary:'Récapitulatif de la simulation',edited:'Édité le',simulation:'Résultat de la simulation',disclaimer:'Simulation indicative réalisée avec La Salle 9.',admitted:'Admis',fair:'Assez bien',good:'Bien',veryGood:'Très bien',congrats:'Félicitations'},
+    en: {fr:'French',math:'Mathematics',history:'History and geography',emc:'Civics',lv1:'Modern language 1',lv2:'Modern language 2',arts:'Visual arts',music:'Music',svt:'Life sciences',physics:'Physics and chemistry',tech:'Technology',eps:'Physical education',science:'Science',oral:'Oral exam',option:'Optional subject',subject:'Subject',exam:'Exam',note:'Score /20',coef:'Coeff.',optionNote:'Only points above 10/20 in the optional subject are added to the total for the 12 subjects, then divided by 12.',capNote:'The retained continuous-assessment average cannot exceed 20/20.',average12:'Average across 12 subjects',retained:'Retained continuous-assessment score',finalAverage:'Final-exam average',scienceNote:'Science: 2 subjects are assessed among physics and chemistry, life sciences, and technology.',mention:'Honors',printSummary:'Simulation summary',edited:'Edited on',simulation:'Simulation result',disclaimer:'Indicative simulation made with La Salle 9.',admitted:'Passed',fair:'Honors',good:'High honors',veryGood:'Highest honors',congrats:'Congratulations'},
+    es: {fr:'Francés',math:'Matemáticas',history:'Geografía e historia',emc:'Educación cívica',lv1:'Lengua extranjera 1',lv2:'Lengua extranjera 2',arts:'Artes plásticas',music:'Educación musical',svt:'Ciencias de la vida',physics:'Física y química',tech:'Tecnología',eps:'Educación física',science:'Ciencias',oral:'Examen oral',option:'Asignatura optativa',subject:'Materia',exam:'Examen',note:'Nota /20',coef:'Coef.',optionNote:'Solo los puntos por encima de 10/20 en la asignatura optativa se añaden al total de las 12 materias, que después se divide entre 12.',capNote:'La media de evaluación continua no puede superar 20/20.',average12:'Media de las 12 materias',retained:'Nota de evaluación continua retenida',finalAverage:'Media de los exámenes finales',scienceNote:'Ciencias: se evalúan 2 disciplinas entre física y química, ciencias de la vida y tecnología.',mention:'Mención',printSummary:'Resumen de la simulación',edited:'Editado el',simulation:'Resultado de la simulación',disclaimer:'Simulación orientativa realizada con La Salle 9.',admitted:'Aprobado',fair:'Notable',good:'Sobresaliente',veryGood:'Matrícula de honor',congrats:'Felicitaciones'},
+    de: {fr:'Französisch',math:'Mathematik',history:'Geschichte und Geografie',emc:'Staatsbürgerkunde',lv1:'Fremdsprache 1',lv2:'Fremdsprache 2',arts:'Bildende Kunst',music:'Musik',svt:'Biowissenschaften',physics:'Physik und Chemie',tech:'Technik',eps:'Sport',science:'Naturwissenschaften',oral:'Mündliche Prüfung',option:'Wahlfach',subject:'Fach',exam:'Prüfung',note:'Note /20',coef:'Koeff.',optionNote:'Nur Punkte über 10/20 im Wahlfach werden zur Summe der 12 Fächer addiert und anschließend durch 12 geteilt.',capNote:'Der berücksichtigte Durchschnitt der laufenden Bewertung darf 20/20 nicht überschreiten.',average12:'Durchschnitt der 12 Fächer',retained:'Berücksichtigte laufende Bewertung',finalAverage:'Durchschnitt der Abschlussprüfungen',scienceNote:'Naturwissenschaften: 2 Fächer aus Physik und Chemie, Biowissenschaften und Technik werden bewertet.',mention:'Auszeichnung',printSummary:'Zusammenfassung der Simulation',edited:'Bearbeitet am',simulation:'Simulationsergebnis',disclaimer:'Unverbindliche Simulation mit La Salle 9.',admitted:'Bestanden',fair:'Gut',good:'Sehr gut',veryGood:'Ausgezeichnet',congrats:'Glückwünsche'}
+  };
+  const calcText = key => CALC_TEXT[window.i18n?.getLanguage?.() || 'fr']?.[key] || CALC_TEXT.fr[key] || key;
+  const setText = (selector, value) => { const node = document.querySelector(selector); if (node) node.textContent = value; };
+  const setLabelText = (selector, value) => { const node=document.querySelector(selector); if(!node)return; const textNode=[...node.childNodes].find(child=>child.nodeType===Node.TEXT_NODE); if(textNode)textNode.textContent=`${value} `; else node.insertBefore(document.createTextNode(`${value} `),node.firstChild); };
+  const refreshCalculatorStaticText = () => {
+    const labels = [['cc-fr','fr'],['cc-math','math'],['cc-hg','history'],['cc-emc','emc'],['cc-lv1','lv1'],['cc-lv2','lv2'],['cc-arts','arts'],['cc-music','music'],['cc-svt','svt'],['cc-physics','physics'],['cc-tech','tech'],['cc-eps','eps'],['option','option'],['fr','fr'],['math','math'],['hg','history'],['emc','emc'],['sci','science'],['oral','oral']];
+    labels.forEach(([id,key]) => { const label=document.querySelector(`label[for="${id}"]`); if(label) label.textContent=calcText(key); });
+    document.querySelectorAll('.continuous-head > div')[0]?.replaceChildren(calcText('subject'));
+    document.querySelectorAll('.continuous-head > div')[1]?.replaceChildren(calcText('note'));
+    document.querySelectorAll('.exam-head > div')[0]?.replaceChildren(calcText('exam'));
+    document.querySelectorAll('.exam-head > div')[1]?.replaceChildren(calcText('note'));
+    document.querySelectorAll('.exam-head > div')[2]?.replaceChildren(calcText('coef'));
+    setText('.option-field label', calcText('option'));
+    setText('.brevet-notes p:first-child', calcText('optionNote'));
+    setText('.brevet-notes p:last-child', calcText('capNote'));
+    setLabelText('.continuous-card .block-average', calcText('average12'));
+    setLabelText('.retained-average span', calcText('retained'));
+    setLabelText('.exam-card .retained-average', calcText('finalAverage'));
+    setText('.science-note', calcText('scienceNote'));
+    setText('#printSummary h1', translate('brevet.title', 'Simulateur Brevet'));
+    setText('#printSummary h2:first-of-type', `1. ${translate('brevet.continuous_title', 'Contrôle continu')}`);
+    setText('#printSummary h2:nth-of-type(2)', `2. ${translate('brevet.exams_title', 'Épreuves finales')}`);
+    setText('#printSummary .print-result p', calcText('simulation'));
+    const printSubjects=['fr','math','history','emc','lv1','lv2','arts','music','svt','physics','tech','eps','option'];
+    document.querySelectorAll('#printSummary .print-summary-section:first-of-type tbody tr td:first-child').forEach((node,index)=>{if(printSubjects[index])node.textContent=calcText(printSubjects[index]);});
+    const printExams=['fr','math','history','emc','science','oral'];
+    document.querySelectorAll('#printSummary .print-summary-section:nth-of-type(2) tbody tr td:first-child').forEach((node,index)=>{if(printExams[index])node.textContent=calcText(printExams[index]);});
+    setLabelText('.mention-box', calcText('mention'));
+    const gaugeLabels=[['.gauge-label-10 span','admitted'],['.gauge-label-12 span','fair'],['.gauge-label-14 span','good'],['.gauge-label-16 span','veryGood'],['.gauge-label-18 span','congrats']];
+    gaugeLabels.forEach(([selector,key])=>setText(selector,calcText(key)));
+    setLabelText('.legend-admitted','10 '+calcText('admitted')); setLabelText('.legend-fair','12 '+calcText('fair')); setLabelText('.legend-good','14 '+calcText('good')); setLabelText('.legend-very-good','16 '+calcText('veryGood')); setLabelText('.legend-congrats','18 '+calcText('congrats'));
+    setText('.print-summary-header p', calcText('printSummary')); setText('.print-disclaimer',calcText('disclaimer'));
+  };
   const mentionThresholds = [
     { score: 10, label: 'être admis' },
     { score: 12, label: 'obtenir la mention Assez bien' },
@@ -143,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   window.addEventListener('beforeprint', calculate);
   const refreshCalculatorLanguage = () => {
+    refreshCalculatorStaticText();
     calculate();
     const total = [...document.querySelectorAll('.continuous-input')]
       .reduce((sum, input) => sum + getValue(input.id), 0);
