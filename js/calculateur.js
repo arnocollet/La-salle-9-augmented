@@ -34,9 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const roundToTenth = value => Math.round((value + Number.EPSILON) * 10) / 10;
   const formatAverage = value => roundToTenth(value).toFixed(1).replace('.', ',');
-  const translate = (key, fallback, params) => window.i18n
-    ? window.i18n.t(key, params)
-    : fallback;
+  const interpolate = (text, params = {}) => Object.keys(params).reduce(
+    (result, key) => result.replace(new RegExp(`{\\s*${key}\\s*}`, 'g'), params[key]),
+    text
+  );
+  const translate = (key, fallback, params = {}) => interpolate(
+    window.i18n ? window.i18n.t(key, params) : fallback,
+    params
+  );
   const CALC_TEXT = {
     fr: {fr:'Français',math:'Mathématiques',history:'Histoire-géographie',emc:'EMC',lv1:'Langue vivante 1',lv2:'Langue vivante 2',arts:'Arts plastiques',music:'Éducation musicale',svt:'SVT',physics:'Physique-chimie',tech:'Technologie',eps:'EPS',science:'Sciences',oral:'Oral',option:'Option facultative',subject:'Matière',exam:'Épreuve',note:'Note /20',coef:'Coef.',optionNote:'Seuls les points au-dessus de 10/20 à l’option facultative sont ajoutés au total des 12 matières, puis ce total est divisé par 12.',capNote:'La moyenne de contrôle continu retenue ne peut pas dépasser 20/20.',average12:'Moyenne des 12 matières',retained:'Note de contrôle continu retenue',finalAverage:'Moyenne des épreuves finales',scienceNote:'Sciences : 2 disciplines sont évaluées parmi physique-chimie, SVT et technologie.',mention:'Mention',printSummary:'Récapitulatif de la simulation',edited:'Édité le',simulation:'Résultat de la simulation',disclaimer:'Simulation indicative réalisée avec La Salle 9.',admitted:'Admis',fair:'Assez bien',good:'Bien',veryGood:'Très bien',congrats:'Félicitations'},
     en: {fr:'French',math:'Mathematics',history:'History and geography',emc:'Civics',lv1:'Modern language 1',lv2:'Modern language 2',arts:'Visual arts',music:'Music',svt:'Life sciences',physics:'Physics and chemistry',tech:'Technology',eps:'Physical education',science:'Science',oral:'Oral exam',option:'Optional subject',subject:'Subject',exam:'Exam',note:'Score /20',coef:'Coeff.',optionNote:'Only points above 10/20 in the optional subject are added to the total for the 12 subjects, then divided by 12.',capNote:'The retained continuous-assessment average cannot exceed 20/20.',average12:'Average across 12 subjects',retained:'Retained continuous-assessment score',finalAverage:'Final-exam average',scienceNote:'Science: 2 subjects are assessed among physics and chemistry, life sciences, and technology.',mention:'Honors',printSummary:'Simulation summary',edited:'Edited on',simulation:'Simulation result',disclaimer:'Indicative simulation made with La Salle 9.',admitted:'Passed',fair:'Honors',good:'High honors',veryGood:'Highest honors',congrats:'Congratulations'},

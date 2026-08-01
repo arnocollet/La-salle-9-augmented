@@ -983,10 +983,6 @@
 
 @media (max-width: 520px) {
   .gauge-labels {
-    height: 1.9rem;
-  }
-
-  .gauge-label span {
     display: none;
   }
 
