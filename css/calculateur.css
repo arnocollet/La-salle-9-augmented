@@ -389,6 +389,35 @@
   transition: width var(--transition-normal);
 }
 
+.gauge-thresholds {
+  display: none;
+}
+
+.gauge-threshold {
+  position: absolute;
+  top: 50%;
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  color: #0f2940;
+  background: #fff;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.gauge-threshold-10 { left: 50%; color: #b45309; }
+.gauge-threshold-12 { left: 60%; color: #3f8f68; }
+.gauge-threshold-14 { left: 70%; color: #27857c; }
+.gauge-threshold-16 { left: 80%; color: #4167b1; }
+.gauge-threshold-18 { left: 90%; color: #9a6428; }
+
 .gauge-marker {
   position: absolute;
   top: -0.38rem;
@@ -994,6 +1023,12 @@
 
   .gauge-labels {
     display: none;
+  }
+
+  .gauge-thresholds {
+    position: absolute;
+    inset: 0;
+    display: block;
   }
 
   .gauge-mobile-legend {
