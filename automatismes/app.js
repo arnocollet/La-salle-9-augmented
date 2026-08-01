@@ -1034,14 +1034,83 @@ let printableSheets=[],printableLevel="";
 let selectedChoiceNotions=new Set();
 
 const AUTO_DYNAMIC_TEXT={
-  fr:{level:"Niveau",question:"Question",days:"jour",daysPlural:"jours",choiceNone:"Aucun exercice sélectionné",choiceSelected:"type d’exercice sélectionné",choiceSelectedPlural:"types d’exercices sélectionnés",excellent:"Excellent travail !",good:"Bonne routine. Continue régulièrement.",review:"Certaines notions sont à revoir.",noHistory:"Aucune routine terminée pour le moment.",worksheet:"exercices par fiche",correct:"Réponse correcte",incorrect:"Réponse incorrecte"},
-  en:{level:"Level",question:"Question",days:"day",daysPlural:"days",choiceNone:"No exercise selected",choiceSelected:"exercise type selected",choiceSelectedPlural:"exercise types selected",excellent:"Excellent work!",good:"Good routine. Keep practising regularly.",review:"Some topics need more practice.",noHistory:"No routine completed yet.",worksheet:"exercises per sheet",correct:"Correct answer",incorrect:"Incorrect answer"},
-  es:{level:"Nivel",question:"Pregunta",days:"día",daysPlural:"días",choiceNone:"Ningún ejercicio seleccionado",choiceSelected:"tipo de ejercicio seleccionado",choiceSelectedPlural:"tipos de ejercicios seleccionados",excellent:"¡Excelente trabajo!",good:"Buena rutina. Sigue practicando con regularidad.",review:"Hay que repasar algunos contenidos.",noHistory:"Todavía no has terminado ninguna rutina.",worksheet:"ejercicios por ficha",correct:"Respuesta correcta",incorrect:"Respuesta incorrecta"},
-  de:{level:"Stufe",question:"Frage",days:"Tag",daysPlural:"Tage",choiceNone:"Keine Übung ausgewählt",choiceSelected:"Übungstyp ausgewählt",choiceSelectedPlural:"Übungstypen ausgewählt",excellent:"Ausgezeichnete Arbeit!",good:"Gute Übungsrunde. Übe regelmäßig weiter.",review:"Einige Themen sollten wiederholt werden.",noHistory:"Noch keine Übungsrunde abgeschlossen.",worksheet:"Aufgaben pro Blatt",correct:"Richtige Antwort",incorrect:"Falsche Antwort"}
+  fr:{level:"Niveau",question:"Question",days:"jour",daysPlural:"jours",available:"Disponible",currentStreak:"Série actuelle",mastered:"maîtrisées",inProgress:"en cours",toReview:"à revoir",choiceNone:"Aucun exercice sélectionné",choiceSelected:"type d’exercice sélectionné",choiceSelectedPlural:"types d’exercices sélectionnés",excellent:"Excellent travail !",good:"Bonne routine. Continue régulièrement.",review:"Certaines notions sont à revoir.",noHistory:"Aucune routine terminée pour le moment.",worksheet:"exercices par fiche",correct:"Réponse correcte",incorrect:"Réponse incorrecte"},
+  en:{level:"Level",question:"Question",days:"day",daysPlural:"days",available:"Available",currentStreak:"Current streak",mastered:"mastered",inProgress:"in progress",toReview:"to review",choiceNone:"No exercise selected",choiceSelected:"exercise type selected",choiceSelectedPlural:"exercise types selected",excellent:"Excellent work!",good:"Good routine. Keep practising regularly.",review:"Some topics need more practice.",noHistory:"No routine completed yet.",worksheet:"exercises per sheet",correct:"Correct answer",incorrect:"Incorrect answer"},
+  es:{level:"Nivel",question:"Pregunta",days:"día",daysPlural:"días",available:"Disponible",currentStreak:"Racha actual",mastered:"dominadas",inProgress:"en curso",toReview:"por repasar",choiceNone:"Ningún ejercicio seleccionado",choiceSelected:"tipo de ejercicio seleccionado",choiceSelectedPlural:"tipos de ejercicios seleccionados",excellent:"¡Excelente trabajo!",good:"Buena rutina. Sigue practicando con regularidad.",review:"Hay que repasar algunos contenidos.",noHistory:"Todavía no has terminado ninguna rutina.",worksheet:"ejercicios por ficha",correct:"Respuesta correcta",incorrect:"Respuesta incorrecta"},
+  de:{level:"Stufe",question:"Frage",days:"Tag",daysPlural:"Tage",available:"Verfügbar",currentStreak:"Aktuelle Serie",mastered:"gemeistert",inProgress:"in Arbeit",toReview:"zu wiederholen",choiceNone:"Keine Übung ausgewählt",choiceSelected:"Übungstyp ausgewählt",choiceSelectedPlural:"Übungstypen ausgewählt",excellent:"Ausgezeichnete Arbeit!",good:"Gute Übungsrunde. Übe regelmäßig weiter.",review:"Einige Themen sollten wiederholt werden.",noHistory:"Noch keine Übungsrunde abgeschlossen.",worksheet:"Aufgaben pro Blatt",correct:"Richtige Antwort",incorrect:"Falsche Antwort"}
 };
 function autoT(key){
   const lang=window.i18n?.getLanguage?.()||"fr";
   return AUTO_DYNAMIC_TEXT[lang]?.[key]||AUTO_DYNAMIC_TEXT.fr[key]||key;
+}
+const AUTO_MODAL_TEXT={
+  fr:{reviewAria:"Routine Mes difficultés",why:"Pourquoi ces exercices ?",work:"Ce que tu vas travailler",startRoutine:"Commencer la routine",choiceTitle:"🎯 Exercices au choix",choiceDesc:"Sélectionne les types d’exercices à inclure dans ta routine.",close:"Fermer",resultTitle:"Routine terminée",score:"Ton score :",summary:"Synthèse de l’entraînement",yourAnswer:"Ta réponse",correction:"Correction",returnHome:"Retour à l’accueil",checkAll:"Tout cocher / décocher",reviewReason:"Le site privilégie les notions les moins réussies.",exercise:"exercice",exercises:"exercices",worksheetsTitle:"Créer des fiches",progressTitle:"Suivi de progression",referenceTitle:"Référentiel des automatismes",clearData:"🗑️ Effacer mes données",newExercises:"↻ Nouveaux exercices",downloadWorksheets:"Créer les fiches PDF",correctAnswers:"bonne réponse",correctAnswersPlural:"bonnes réponses",outOf:"sur",acquiring:"cette notion est encore en cours d’acquisition.",consolidate:"cet exercice permettra de consolider cet acquis."},
+  en:{reviewAria:"My difficulties routine",why:"Why these exercises?",work:"What you will practise",startRoutine:"Start routine",choiceTitle:"🎯 Choose exercises",choiceDesc:"Select the types of exercises to include in your routine.",close:"Close",resultTitle:"Routine completed",score:"Your score:",summary:"Practice summary",yourAnswer:"Your answer",correction:"Correction",returnHome:"Back to home",checkAll:"Select / deselect all",reviewReason:"The site prioritises the topics where you need the most practice.",exercise:"exercise",exercises:"exercises",worksheetsTitle:"Create worksheets",progressTitle:"Progress tracking",referenceTitle:"Mental-math reference",clearData:"🗑️ Clear my data",newExercises:"↻ New exercises",downloadWorksheets:"Create PDF worksheets",correctAnswers:"correct answer",correctAnswersPlural:"correct answers",outOf:"out of",acquiring:"this topic is still being acquired.",consolidate:"this exercise will consolidate this skill."},
+  es:{reviewAria:"Rutina Mis dificultades",why:"¿Por qué estos ejercicios?",work:"Lo que vas a practicar",startRoutine:"Comenzar la rutina",choiceTitle:"🎯 Ejercicios a elegir",choiceDesc:"Selecciona los tipos de ejercicios que quieres incluir en tu rutina.",close:"Cerrar",resultTitle:"Rutina terminada",score:"Tu puntuación:",summary:"Resumen del entrenamiento",yourAnswer:"Tu respuesta",correction:"Corrección",returnHome:"Volver al inicio",checkAll:"Seleccionar / deseleccionar todo",reviewReason:"El sitio da prioridad a los contenidos que más necesitas practicar.",exercise:"ejercicio",exercises:"ejercicios",worksheetsTitle:"Crear fichas",progressTitle:"Seguimiento del progreso",referenceTitle:"Referencial de automatismos",clearData:"🗑️ Borrar mis datos",newExercises:"↻ Nuevos ejercicios",downloadWorksheets:"Crear fichas PDF",correctAnswers:"respuesta correcta",correctAnswersPlural:"respuestas correctas",outOf:"de",acquiring:"este contenido todavía está en proceso de aprendizaje.",consolidate:"este ejercicio consolidará este aprendizaje."},
+  de:{reviewAria:"Übungsrunde Meine Schwierigkeiten",why:"Warum diese Übungen?",work:"Das wirst du üben",startRoutine:"Übungsrunde starten",choiceTitle:"🎯 Übungen auswählen",choiceDesc:"Wähle die Aufgabentypen für deine Übungsrunde aus.",close:"Schließen",resultTitle:"Übungsrunde beendet",score:"Dein Ergebnis:",summary:"Übungsübersicht",yourAnswer:"Deine Antwort",correction:"Lösung",returnHome:"Zurück zur Startseite",checkAll:"Alle auswählen / abwählen",reviewReason:"Die Website bevorzugt Themen, die du noch üben musst.",exercise:"Aufgabe",exercises:"Aufgaben",worksheetsTitle:"Arbeitsblätter erstellen",progressTitle:"Fortschrittsübersicht",referenceTitle:"Übersicht zum Kopfrechnen",clearData:"🗑️ Meine Daten löschen",newExercises:"↻ Neue Aufgaben",downloadWorksheets:"PDF-Arbeitsblätter erstellen",correctAnswers:"richtige Antwort",correctAnswersPlural:"richtige Antworten",outOf:"von",acquiring:"dieses Thema wird noch eingeübt.",consolidate:"diese Übung festigt diese Fähigkeit."}
+};
+function modalT(key){
+  const lang=window.i18n?.getLanguage?.()||"fr";
+  return AUTO_MODAL_TEXT[lang]?.[key]||AUTO_MODAL_TEXT.fr[key]||key;
+}
+const AUTO_CATEGORY_TEXT={
+  numbers:{fr:"Nombres et calculs",en:"Numbers and calculation",es:"Números y cálculo",de:"Zahlen und Rechnen"},
+  algebra:{fr:"Calcul littéral et fonctions",en:"Algebra and functions",es:"Álgebra y funciones",de:"Algebra und Funktionen"},
+  geometry:{fr:"Espace, géométrie et grandeurs",en:"Space, geometry and measures",es:"Espacio, geometría y magnitudes",de:"Raum, Geometrie und Größen"},
+  statistics:{fr:"Probabilités et statistiques",en:"Probability and statistics",es:"Probabilidad y estadística",de:"Wahrscheinlichkeit und Statistik"},
+  scratch:{fr:"Algorithmique Scratch",en:"Scratch algorithms",es:"Algoritmia Scratch",de:"Scratch-Algorithmen"}
+};
+function categoryT(id,fallback){
+  const lang=window.i18n?.getLanguage?.()||"fr";
+  return AUTO_CATEGORY_TEXT[id]?.[lang]||fallback;
+}
+const GENERATED_TEXT_TRANSLATIONS={
+  en:[
+    ["Observe le programme Scratch.","Observe the Scratch program."],["De combien de pas le lutin avance-t-il au total ?","How many steps does the sprite move in total?"],["Pendant combien de secondes le lutin attend-il au total ?","For how many seconds does the sprite wait in total?"],["Quelle est la valeur finale de la variable","What is the final value of the variable"],["Quel est le résultat de","What is the result of"],["Quelle est la mesure de","What is the measure of"],["Quelle est la mesure du troisième ?","What is the measure of the third angle?"],["Quelle est l’image de","What is the image of"],["Quel est l’antécédent de","What is the preimage of"],["Donne un antécédent de","Give a preimage of"],["Calcule mentalement","Calculate mentally"],["Calcule et simplifie","Calculate and simplify"],["Calcule","Calculate"],["Complète","Complete"],["Convertis","Convert"],["Écris","Write"],["Donne","Give"],["Compare avec < ou >","Compare using < or >"],["Résous","Solve"],["Détermine","Determine"],["Combien de","How many"],["Quel nombre","Which number"],["Quel rectangle","Which rectangle"],["Quelle figure","Which figure"],["Quel triangle","Which triangle"],["Quel parallélogramme","Which parallelogram"],["Comment s’appelle","What is the name of"],["Dans un triangle","In a triangle"],["Dans une division euclidienne","In the Euclidean division"],["Dans un tableau","In a table"],["Un événement","An event"],["Une urne contient","An urn contains"],["Une valeur de","A value of"],["Une fonction","A function"],["La fonction","The function"],["On définit","We define"],["On sait que","We know that"],["Observe","Observe"],["Quelle est","What is"],["est-il divisible","is it divisible"],["à droite","to the right"],["à gauche","to the left"],["bonne réponse","correct answer"],["Réponse attendue","Expected answer"],["La virgule se décale","The decimal point shifts"],["On compare","We compare"],["On conserve","We keep"],["On effectue le calcul","We perform the calculation"],["On peut","We can"],["Il s’agit","It is"],["C’est","It is"],["Le nombre","The number"],["la réponse saisie","the entered answer"],["le lutin","the sprite"],["le quotient et le reste","the quotient and remainder"],["le volume","the volume"],["l’aire","the area"],["le périmètre","the perimeter"]
+  ],
+  es:[
+    ["Observe le programme Scratch.","Observa el programa Scratch."],["Calcule mentalement","Calcula mentalmente"],["Calcule et simplifie","Calcula y simplifica"],["Calcule","Calcula"],["Complète","Completa"],["Convertis","Convierte"],["Écris","Escribe"],["Donne","Da"],["Compare avec < ou >","Compara usando < o >"],["Résous","Resuelve"],["Détermine","Determina"],["Combien de","¿Cuántos"],["Quel nombre","¿Qué número"],["Quelle est","¿Cuál es"],["Quelle est la mesure de","¿Cuál es la medida de"],["Quel est l’antécédent de","¿Cuál es la preimagen de"],["Donne un antécédent de","Da una preimagen de"],["à droite","a la derecha"],["à gauche","a la izquierda"],["Dans un triangle","En un triángulo"],["Dans un tableau","En una tabla"],["Une urne contient","Una urna contiene"],["On sait que","Sabemos que"],["Réponse attendue","Respuesta esperada"],["bonne réponse","respuesta correcta"],["Le nombre","El número"],["le lutin","el personaje"]
+  ],
+  de:[
+    ["Observe le programme Scratch.","Beobachte das Scratch-Programm."],["Calcule mentalement","Rechne im Kopf"],["Calcule et simplifie","Berechne und vereinfache"],["Calcule","Berechne"],["Complète","Ergänze"],["Convertis","Wandle um"],["Écris","Schreibe"],["Donne","Gib an"],["Compare avec < ou >","Vergleiche mit < oder >"],["Résous","Löse"],["Détermine","Bestimme"],["Combien de","Wie viele"],["Quel nombre","Welche Zahl"],["Quelle est","Was ist"],["Quelle est la mesure de","Wie groß ist"],["Quel est l’antécédent de","Was ist das Urbild von"],["Donne un antécédent de","Gib ein Urbild von"],["à droite","rechts"],["à gauche","links"],["Dans un triangle","In einem Dreieck"],["Dans un tableau","In einer Tabelle"],["Une urne contient","Eine Urne enthält"],["On sait que","Wir wissen, dass"],["Réponse attendue","Erwartete Antwort"],["bonne réponse","richtige Antwort"],["Le nombre","Die Zahl"],["le lutin","die Figur"]
+  ]
+};
+function translateGeneratedText(value){
+  const lang=window.i18n?.getLanguage?.()||"fr";
+  if(lang==="fr"||!value)return value;
+  return (GENERATED_TEXT_TRANSLATIONS[lang]||[]).reduce((text,[source,target])=>text.split(source).join(target),value);
+}
+function setLastText(selector,text){
+  const node=document.querySelector(selector);
+  if(!node)return;
+  const textNode=[...node.childNodes].reverse().find(child=>child.nodeType===Node.TEXT_NODE);
+  if(textNode)textNode.textContent=` ${text}`; else node.textContent=text;
+}
+function refreshAutomationModals(){
+  const set=(selector,key)=>{const node=document.querySelector(selector);if(node)node.textContent=modalT(key)};
+  const attr=(selector,name,key)=>{const node=document.querySelector(selector);if(node)node.setAttribute(name,modalT(key))};
+  attr("#reviewModal","aria-label","reviewAria");
+  set("#reviewModal .review-plan-explanation strong","why");
+  set("#reviewModal h3","work");
+  set("#startPreparedReview","startRoutine");
+  attr("#closeReviewModal","aria-label","close");
+  set("#choiceModalTitle","choiceTitle");
+  set("#choiceModal .choice-modal-heading p","choiceDesc");
+  set("#startChoice","startRoutine");
+  attr("#closeChoiceModal","aria-label","close");
+  set("#resultTitle","resultTitle");
+  set("#resultModal .result-box > p","score");
+  set("#resultModal .result-review-title","summary");
+  set("#resultModal th:nth-child(2)","yourAnswer");
+  set("#resultModal th:nth-child(3)","correction");
+  set("#returnHome","returnHome");
+  document.querySelectorAll(".choice-check-all").forEach(node=>node.textContent=modalT("checkAll"));
+  set("#worksheets .section-title h2","worksheetsTitle");
+  set("#progress .section-title h2","progressTitle");
+  set("#notions .section-title h2","referenceTitle");
+  set("#clearLocalData","clearData");
+  set("#refreshWorksheet","newExercises");
+  set("#downloadWorksheets","downloadWorksheets");
 }
 
 function levelState(){return state.levels[currentLevel]}
@@ -1146,11 +1215,11 @@ function makeChoiceMenu(){
     }).join("");
     return `<section class="choice-group" data-choice-group="${category.id}">
       <button class="choice-group-toggle" type="button" aria-expanded="false" aria-controls="${panelId}">
-        <span><span aria-hidden="true">${category.icon}</span> ${category.label}</span>
+        <span><span aria-hidden="true">${category.icon}</span> ${categoryT(category.id,category.label)}</span>
         <span class="choice-arrow" aria-hidden="true">▼</span>
       </button>
       <div class="choice-panel" id="${panelId}" hidden>
-        <button class="choice-check-all" type="button" data-choice-category="${category.id}">Tout cocher / décocher</button>
+        <button class="choice-check-all" type="button" data-choice-category="${category.id}">${modalT("checkAll")}</button>
         <div class="choice-options">${choices}</div>
       </div>
     </section>`;
@@ -1321,13 +1390,16 @@ function openReviewPlan(){
     (previousLevelExercises
       ?` et <b>${previousLevelExercises} de révision${previousLevelExercises>1?"s":""}.</b>`
       :".");
+  document.getElementById("reviewMethodReason").innerHTML=
+    `• ${modalT("reviewReason")}<br>`+
+    `• ${currentLevelExercises} ${currentLevelExercises===1?modalT("exercise"):modalT("exercises")} ${modalT("outOf")} ${currentQuiz.length}`;
   document.getElementById("reviewPlanList").innerHTML=currentQuiz.map((exercise,exerciseIndex)=>`
     <article class="review-plan-item">
       <span class="review-plan-number">${exerciseIndex+1}</span>
       <div>
-        <span class="review-plan-theme">${escapeXml(exercise.theme)}</span>
-        <h4>${escapeXml(exercise.notion)}</h4>
-        <p>${escapeXml(reviewReason(exercise))}</p>
+        <span class="review-plan-theme">${escapeXml(translateGeneratedText(exercise.theme))}</span>
+        <h4>${escapeXml(translateGeneratedText(exercise.notion))}</h4>
+        <p>${escapeXml(translateGeneratedText(reviewReason(exercise)))}</p>
       </div>
     </article>
   `).join("");
@@ -1577,8 +1649,8 @@ function renderQuestion(){
   document.getElementById("questionLevel").textContent=`Niveau ${currentLevel}`;
   document.getElementById("questionCounter").textContent=`Question ${index+1}/${currentQuiz.length}`;
   document.getElementById("progressBar").style.width=`${index/currentQuiz.length*100}%`;
-  document.getElementById("questionTheme").textContent=x.theme;
-  document.getElementById("questionText").innerHTML=mathPreviewMarkup(x.text);
+  document.getElementById("questionTheme").textContent=translateGeneratedText(x.theme);
+  document.getElementById("questionText").innerHTML=mathPreviewMarkup(translateGeneratedText(x.text));
   renderQuestionVisual(x);
   const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices);
   answerInput.value="";
@@ -1778,10 +1850,10 @@ function validate(){
   showReachedPointsMilestone(previousPoints,state.points);
   const fb=document.getElementById("feedback");
   fb.className=`feedback ${isCorrect?"good":"bad"}`;
-  const explanationMarkup=mathPreviewMarkup(x.explanation);
+  const explanationMarkup=mathPreviewMarkup(translateGeneratedText(x.explanation));
   fb.innerHTML=isCorrect
-    ?`✅ Bonne réponse. ${explanationMarkup}`
-    :`❌ Réponse attendue : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${explanationMarkup}`;
+    ?`✅ ${modalT("correctAnswers")}. ${explanationMarkup}`
+    :`❌ ${modalT("correction")} : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${explanationMarkup}`;
   document.getElementById("validateAnswer").classList.add("hidden");
   scheduleNextQuestion();
 }
@@ -1796,7 +1868,7 @@ function renderQuizReview(){
     const statusLabel=result.isCorrect?"Réponse correcte":"Réponse incorrecte";
     const correctionAnswer=result.isCorrect?result.userAnswer:result.expectedAnswer;
     return `<tr class="${result.isCorrect?"review-correct":"review-incorrect"}">
-      <td><span class="review-question-number">${questionIndex+1}.</span> ${mathPreviewMarkup(result.question)}</td>
+      <td><span class="review-question-number">${questionIndex+1}.</span> ${mathPreviewMarkup(translateGeneratedText(result.question))}</td>
       <td><span class="review-student-answer"><span class="review-status" role="img" aria-label="${statusLabel}">${statusIcon}</span><span>${mathPreviewMarkup(result.userAnswer)}</span></span></td>
       <td><span class="review-expected-answer">${mathPreviewMarkup(correctionAnswer)}</span></td>
     </tr>`;
@@ -1839,16 +1911,25 @@ function renderProgress(){
   document.getElementById("statQuestions").textContent=s.questions;
   document.getElementById("statSuccess").textContent=(s.questions?Math.round(s.correct/s.questions*100):0)+"%";
   document.getElementById("statStreak").textContent=streak();
-  document.getElementById("themeProgress").innerHTML=availableThemes().map(t=>{let z=s.byTheme[t]||{q:0,c:0},p=z.q?Math.round(z.c/z.q*100):0;return `<div class="progress-row"><span>${THEMES[t]} ${t}</span><div class="bar"><i style="width:${p}%"></i></div><b>${p}%</b></div>`}).join("");
+  document.getElementById("themeProgress").innerHTML=availableThemes().map(t=>{let z=s.byTheme[t]||{q:0,c:0},p=z.q?Math.round(z.c/z.q*100):0;return `<div class="progress-row"><span>${translateGeneratedText(THEMES[t])} ${translateGeneratedText(t)}</span><div class="bar"><i style="width:${p}%"></i></div><b>${p}%</b></div>`}).join("");
   document.getElementById("history").innerHTML=s.history.length?s.history.map(h=>`<div class="history-item"><span>${new Date(h.date).toLocaleDateString("fr-FR")} — ${h.level||currentLevel}</span><strong>${h.score}/5</strong></div>`).join(""):"<p class='muted'>Aucune routine terminée pour le moment.</p>";
 }
 function renderNotions(){
   document.getElementById("notionsList").innerHTML=Object.entries(NOTIONS[currentLevel]).map(([t,list])=>{
     const color=DOMAIN_COLORS[t]||"#4f46e5";
-    return `<div class="notion-group" style="--domain-color:${color}"><h3>${THEMES[t]} ${t}</h3><ol>${list.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
+    return `<div class="notion-group" style="--domain-color:${color}"><h3>${translateGeneratedText(THEMES[t])} ${translateGeneratedText(t)}</h3><ol>${list.map(x=>`<li>${translateGeneratedText(x)}</li>`).join("")}</ol></div>`;
   }).join("");
 }
 function refreshLocalizedDynamicUI(){
+  refreshAutomationModals();
+  document.querySelectorAll(".level-btn small").forEach(node=>node.textContent=autoT("available"));
+  const streakTitle=document.querySelector(".streak-summary strong");
+  if(streakTitle)streakTitle.textContent=autoT("currentStreak");
+  const legendLabels=["mastered","inProgress","toReview"];
+  document.querySelectorAll(".legend > span").forEach((node,index)=>{
+    const label=node.lastChild;
+    if(label&&legendLabels[index])label.textContent=` ${autoT(legendLabels[index])}`;
+  });
   const dayCount=streak();
   const streakNode=document.getElementById("sidebarStreak");
   if(streakNode)streakNode.textContent=`${dayCount} ${dayCount>1?autoT("daysPlural"):autoT("days")}`;

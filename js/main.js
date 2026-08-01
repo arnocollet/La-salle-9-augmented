@@ -138,7 +138,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!id || !pdfUrl || !pdfEmbedUrl || scratchIds.length === 0) return null;
 
-    const t = (key, fallback) => (window.i18n ? window.i18n.t(key) : fallback);
+    const t = (key, fallback) => (window.i18n ? window.i18n.t(key, fallback) : fallback);
+    const activityTranslationKeys = {
+      'act-3e-diviseurs': 'activity.3e_divisors', 'act-3e-images': 'activity.3e_images',
+      'act-3e-temperatures': 'activity.3e_temperatures', 'act-3e-moyennes': 'activity.3e_averages',
+      'act-4e-pythagore': 'activity.4e_pythagoras', 'act-4e-angles': 'activity.4e_currency',
+      'act-4e-moyenne': 'activity.4e_statistics', 'act-4e-litteral': 'activity.4e_algebra',
+      'act-5e-priorites': 'activity.5e_operations', 'act-5e-fractions': 'activity.5e_fractions',
+      'act-5e-relatifs': 'activity.5e_signed_numbers', 'act-5e-chocolat': 'activity.5e_cake'
+    };
+    const titleKey = activityTranslationKeys[id];
+    const localizedTitle = titleKey ? t(titleKey, title) : title;
 
     article.className = 'card-assignment';
     article.id = `custom-${id}`;
@@ -147,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="assignment-header">
         <div class="assignment-title-area">
           <span class="assignment-emoji">${emoji}</span>
-          <h2 class="assignment-title">${title}</h2>
+          <h2 class="assignment-title"${titleKey ? ` data-i18n="${titleKey}"` : ''}>${localizedTitle}</h2>
         </div>
         <div class="assignment-badges">
           <span class="badge badge-consignes" data-i18n="grade.badge_consignes">
