@@ -39,20 +39,21 @@
 
     <section class="division-workspace container" aria-labelledby="exercise-title">
       <div class="division-settings card">
-        <div class="settings-heading"><span class="step-badge">1</span><div><h2 id="exercise-title">Choisir une division</h2><p>Génère une opération ou saisis tes propres nombres.</p></div></div>
+        <div class="settings-heading"><span class="settings-bullet">•</span><div><h2 id="exercise-title">Choisis le nombre de chiffres de la division qui sera tirée au hasard :</h2></div></div>
         <div class="settings-grid">
           <label>Chiffres du dividende<select id="dividendDigits"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select></label>
           <label>Chiffres du diviseur<select id="divisorDigits"><option value="1" selected>1</option><option value="2">2</option></select></label>
         </div>
-        <div class="custom-division"><span>Ou choisis la division :</span><input id="customDividend" inputmode="numeric" maxlength="6" aria-label="Dividende personnalisé"><span>:</span><input id="customDivisor" inputmode="numeric" maxlength="3" aria-label="Diviseur personnalisé"><span>= ?</span></div>
-        <button class="button button-primary" id="newDivision" type="button">Nouvelle division</button>
+        <div class="custom-division"><span>Ou choisis la division à poser :</span><input id="customDividend" inputmode="numeric" maxlength="6" aria-label="Dividende personnalisé"><span>:</span><input id="customDivisor" inputmode="numeric" maxlength="3" aria-label="Diviseur personnalisé"><span>= ?</span></div>
+        <div class="division-options"><label><input type="checkbox" id="skipSubtraction"> Ne pas réaliser la soustraction</label><label><input type="checkbox" id="assistMode"> Retirer le mode assistance</label><button class="button button-green" id="newDivision" type="button">Valider</button></div>
       </div>
 
       <div class="division-exercise card">
         <div class="exercise-topline"><div><span class="step-badge">2</span><span class="exercise-kicker">Division à poser</span><strong id="operationLabel"></strong></div><span class="exercise-number" id="exerciseNumber"></span></div>
-        <div class="instruction"><span class="instruction-icon">?</span><p><strong>Consigne :</strong> complète le quotient, les produits et les restes de chaque étape. Tu peux t’aider de la division posée.</p></div>
+        <div class="instruction"><span class="instruction-icon">?</span><p><strong>Consigne :</strong> effectue la division des deux nombres proposés. Complète les cases de la division posée, puis corrige ton travail.</p></div>
         <div class="division-display" id="divisionDisplay"></div>
         <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+        <div class="number-pad" aria-label="Clavier numérique"><button type="button">0</button><button type="button">1</button><button type="button">2</button><button type="button">3</button><button type="button">4</button><button type="button">5</button><button type="button">6</button><button type="button">7</button><button type="button">8</button><button type="button">9</button><button type="button" data-key="clear">C</button><button type="button" data-key="next">Suivant</button></div>
         <div class="exercise-actions"><button class="button button-primary" id="correctDivision" type="button">✓ Corriger</button><button class="button button-secondary" id="resetDivision" type="button">↻ Recommencer</button><button class="button button-quiet" id="anotherDivision" type="button">🎲 Autre opération</button></div>
       </div>
     </section>

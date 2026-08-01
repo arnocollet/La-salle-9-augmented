@@ -35,5 +35,12 @@
   };
   const newDivision=()=>{const customDividend=Number.parseInt($('#customDividend').value,10),customDivisor=Number.parseInt($('#customDivisor').value,10);current=customDividend>0&&customDivisor>1?{dividend:customDividend,divisor:customDivisor}:makeDivision(Number($('#dividendDigits').value),Number($('#divisorDigits').value));exerciseIndex++;render();};
   $('#newDivision').addEventListener('click',newDivision);$('#anotherDivision').addEventListener('click',newDivision);$('#resetDivision').addEventListener('click',render);$('#correctDivision').addEventListener('click',correct);
+  document.querySelectorAll('.number-pad button').forEach(button=>button.addEventListener('click',()=>{
+    const active=document.activeElement;
+    if(!active?.matches('.division-step input'))return;
+    if(button.dataset.key==='clear'){active.value='';return;}
+    if(button.dataset.key==='next'){const inputs=[...document.querySelectorAll('.division-step input')],next=inputs[inputs.indexOf(active)+1];next?.focus();return;}
+    if(active.value.length<active.maxLength)active.value+=button.textContent.trim();
+  }));
   newDivision();
 })();
