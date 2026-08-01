@@ -51,6 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcText = key => CALC_TEXT[window.i18n?.getLanguage?.() || 'fr']?.[key] || CALC_TEXT.fr[key] || key;
   const setText = (selector, value) => { const node = document.querySelector(selector); if (node) node.textContent = value; };
   const setLabelText = (selector, value) => { const node=document.querySelector(selector); if(!node)return; const textNode=[...node.childNodes].find(child=>child.nodeType===Node.TEXT_NODE); if(textNode)textNode.textContent=`${value} `; else node.insertBefore(document.createTextNode(`${value} `),node.firstChild); };
+  const setLegendText = (selector, value) => {
+    const node = document.querySelector(selector);
+    if (!node) return;
+    const textNode = [...node.childNodes].find(child => child.nodeType === Node.TEXT_NODE);
+    if (textNode) textNode.textContent = ` ${value}`;
+    else node.appendChild(document.createTextNode(` ${value}`));
+  };
   const refreshCalculatorStaticText = () => {
     const labels = [['cc-fr','fr'],['cc-math','math'],['cc-hg','history'],['cc-emc','emc'],['cc-lv1','lv1'],['cc-lv2','lv2'],['cc-arts','arts'],['cc-music','music'],['cc-svt','svt'],['cc-physics','physics'],['cc-tech','tech'],['cc-eps','eps'],['option','option'],['fr','fr'],['math','math'],['hg','history'],['emc','emc'],['sci','science'],['oral','oral']];
     labels.forEach(([id,key]) => { const label=document.querySelector(`label[for="${id}"]`); if(label) label.textContent=calcText(key); });
@@ -77,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setLabelText('.mention-box', calcText('mention'));
     const gaugeLabels=[['.gauge-label-10 span','admitted'],['.gauge-label-12 span','fair'],['.gauge-label-14 span','good'],['.gauge-label-16 span','veryGood'],['.gauge-label-18 span','congrats']];
     gaugeLabels.forEach(([selector,key])=>setText(selector,calcText(key)));
-    setLabelText('.legend-admitted','10 '+calcText('admitted')); setLabelText('.legend-fair','12 '+calcText('fair')); setLabelText('.legend-good','14 '+calcText('good')); setLabelText('.legend-very-good','16 '+calcText('veryGood')); setLabelText('.legend-congrats','18 '+calcText('congrats'));
+    setLegendText('.legend-admitted', calcText('admitted')); setLegendText('.legend-fair', calcText('fair')); setLegendText('.legend-good', calcText('good')); setLegendText('.legend-very-good', calcText('veryGood')); setLegendText('.legend-congrats', calcText('congrats'));
     setText('.print-summary-header p', calcText('printSummary')); setText('.print-disclaimer',calcText('disclaimer'));
   };
   const mentionThresholds = [
