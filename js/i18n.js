@@ -75,11 +75,13 @@
   };
 
   const t = (key, params = {}) => {
+    const fallback = typeof params === 'string' ? params : key;
+    const values = typeof params === 'string' ? {} : params;
     const dict = (window.translations && window.translations[currentLang]) || (window.translations && window.translations[DEFAULT_LANG]) || {};
-    let text = dict[key] || (window.translations && window.translations[DEFAULT_LANG] && window.translations[DEFAULT_LANG][key]) || key;
+    let text = dict[key] || (window.translations && window.translations[DEFAULT_LANG] && window.translations[DEFAULT_LANG][key]) || fallback;
 
-    Object.keys(params).forEach(p => {
-      text = text.replace(new RegExp(`{\\s*${p}\\s*}`, 'g'), params[p]);
+    Object.keys(values).forEach(p => {
+      text = text.replace(new RegExp(`{\\s*${p}\\s*}`, 'g'), values[p]);
     });
     return text;
   };
@@ -126,6 +128,13 @@
       const key = el.getAttribute('data-i18n-title');
       const translated = t(key);
       if (translated) el.title = translated;
+    });
+
+    // Other common HTML attributes (notably SEO metadata).
+    document.querySelectorAll('[data-i18n-content]').forEach(el => {
+      const key = el.getAttribute('data-i18n-content');
+      const translated = t(key);
+      if (translated) el.setAttribute('content', translated);
     });
 
     updateLocalizedLinks();

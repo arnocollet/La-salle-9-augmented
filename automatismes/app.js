@@ -1033,6 +1033,17 @@ let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTime
 let printableSheets=[],printableLevel="";
 let selectedChoiceNotions=new Set();
 
+const AUTO_DYNAMIC_TEXT={
+  fr:{level:"Niveau",question:"Question",days:"jour",daysPlural:"jours",choiceNone:"Aucun exercice sélectionné",choiceSelected:"type d’exercice sélectionné",choiceSelectedPlural:"types d’exercices sélectionnés",excellent:"Excellent travail !",good:"Bonne routine. Continue régulièrement.",review:"Certaines notions sont à revoir.",noHistory:"Aucune routine terminée pour le moment.",worksheet:"exercices par fiche",correct:"Réponse correcte",incorrect:"Réponse incorrecte"},
+  en:{level:"Level",question:"Question",days:"day",daysPlural:"days",choiceNone:"No exercise selected",choiceSelected:"exercise type selected",choiceSelectedPlural:"exercise types selected",excellent:"Excellent work!",good:"Good routine. Keep practising regularly.",review:"Some topics need more practice.",noHistory:"No routine completed yet.",worksheet:"exercises per sheet",correct:"Correct answer",incorrect:"Incorrect answer"},
+  es:{level:"Nivel",question:"Pregunta",days:"día",daysPlural:"días",choiceNone:"Ningún ejercicio seleccionado",choiceSelected:"tipo de ejercicio seleccionado",choiceSelectedPlural:"tipos de ejercicios seleccionados",excellent:"¡Excelente trabajo!",good:"Buena rutina. Sigue practicando con regularidad.",review:"Hay que repasar algunos contenidos.",noHistory:"Todavía no has terminado ninguna rutina.",worksheet:"ejercicios por ficha",correct:"Respuesta correcta",incorrect:"Respuesta incorrecta"},
+  de:{level:"Stufe",question:"Frage",days:"Tag",daysPlural:"Tage",choiceNone:"Keine Übung ausgewählt",choiceSelected:"Übungstyp ausgewählt",choiceSelectedPlural:"Übungstypen ausgewählt",excellent:"Ausgezeichnete Arbeit!",good:"Gute Übungsrunde. Übe regelmäßig weiter.",review:"Einige Themen sollten wiederholt werden.",noHistory:"Noch keine Übungsrunde abgeschlossen.",worksheet:"Aufgaben pro Blatt",correct:"Richtige Antwort",incorrect:"Falsche Antwort"}
+};
+function autoT(key){
+  const lang=window.i18n?.getLanguage?.()||"fr";
+  return AUTO_DYNAMIC_TEXT[lang]?.[key]||AUTO_DYNAMIC_TEXT.fr[key]||key;
+}
+
 function levelState(){return state.levels[currentLevel]}
 function pointsMilestoneMessage(points){
   const specialMessages={
@@ -1837,8 +1848,28 @@ function renderNotions(){
     return `<div class="notion-group" style="--domain-color:${color}"><h3>${THEMES[t]} ${t}</h3><ol>${list.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
   }).join("");
 }
+function refreshLocalizedDynamicUI(){
+  const dayCount=streak();
+  const streakNode=document.getElementById("sidebarStreak");
+  if(streakNode)streakNode.textContent=`${dayCount} ${dayCount>1?autoT("daysPlural"):autoT("days")}`;
+  const worksheetCountNode=document.getElementById("worksheetExerciseCount");
+  if(worksheetCountNode)worksheetCountNode.textContent=`${worksheetExerciseCount()} ${autoT("worksheet")}`;
+  const choiceStatus=document.getElementById("choiceStatus");
+  if(choiceStatus){const count=selectedChoiceNotions.size;choiceStatus.textContent=count?`${count} ${count>1?autoT("choiceSelectedPlural"):autoT("choiceSelected")}`:autoT("choiceNone")}
+  if(currentQuiz.length){
+    const levelNode=document.getElementById("questionLevel");
+    const counterNode=document.getElementById("questionCounter");
+    if(levelNode)levelNode.textContent=`${autoT("level")} ${currentLevel}`;
+    if(counterNode)counterNode.textContent=`${autoT("question")} ${index+1}/${currentQuiz.length}`;
+  }
+  const history=document.getElementById("history");
+  if(history&&!levelState().history.length)history.innerHTML=`<p class='muted'>${autoT("noHistory")}</p>`;
+}
+
 selectLevel(currentLevel);
+refreshLocalizedDynamicUI();
 
 window.addEventListener('langchange', () => {
   if (window.i18n) window.i18n.translateDOM();
+  refreshLocalizedDynamicUI();
 });

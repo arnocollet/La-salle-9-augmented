@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const roundToTenth = value => Math.round((value + Number.EPSILON) * 10) / 10;
   const formatAverage = value => roundToTenth(value).toFixed(1).replace('.', ',');
+  const translate = (key, fallback, params) => window.i18n
+    ? window.i18n.t(key, params)
+    : fallback;
   const mentionThresholds = [
     { score: 10, label: 'être admis' },
     { score: 12, label: 'obtenir la mention Assez bien' },
@@ -139,7 +142,36 @@ document.addEventListener('DOMContentLoaded', () => {
     window.print();
   });
   window.addEventListener('beforeprint', calculate);
-  window.addEventListener('langchange', calculate);
+  const refreshCalculatorLanguage = () => {
+    calculate();
+    const total = [...document.querySelectorAll('.continuous-input')]
+      .reduce((sum, input) => sum + getValue(input.id), 0);
+    const bonus = Math.max(0, getValue('option') - 10);
+    const details = document.getElementById('continuousDetails');
+    if (details) details.textContent = translate('brevet.continuous_details', '({total} + {bonus}) ÷ 12', {
+      total: formatNumber(total), bonus: formatNumber(bonus)
+    });
+    const finalScore = roundToTenth(
+      (Math.min(20, total / 12 + bonus / 12) * 0.4) +
+      ((getValue('fr') * 2 + getValue('math') * 2 + getValue('hg') * 1.5 + getValue('emc') * 0.5 + getValue('sci') * 2 + getValue('oral') * 2) / 10) * 0.6
+    );
+    const next = [
+      [10, 'brevet.mention_admis'], [12, 'brevet.mention_ab'],
+      [14, 'brevet.mention_b'], [16, 'brevet.mention_tb'], [18, 'brevet.felicitations']
+    ].find(([score]) => finalScore < score);
+    const nextMention = document.getElementById('nextMention');
+    if (nextMention && next) {
+      const missing = roundToTenth(next[0] - finalScore);
+      const unit = missing === 1 ? translate('brevet.point', 'point') : translate('brevet.points', 'points');
+      nextMention.textContent = translate('brevet.next_score', 'Encore {points} {unit} pour {mention}', {
+        points: formatNumber(missing, Number.isInteger(missing) ? 0 : 1),
+        unit,
+        mention: translate(next[1], 'la mention suivante')
+      });
+    }
+  };
 
-  calculate();
+  window.addEventListener('langchange', refreshCalculatorLanguage);
+
+  refreshCalculatorLanguage();
 });

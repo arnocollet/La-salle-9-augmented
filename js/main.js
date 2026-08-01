@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const setLoading = isLoading => {
       loader.classList.toggle('is-hidden', !isLoading);
       loader.querySelector('.loader-text').textContent = isLoading
-        ? 'Chargement du contenu...'
+        ? (window.i18n ? window.i18n.t('grade.loader') : 'Chargement du contenu...')
         : '';
     };
 
@@ -304,10 +304,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           : ' Programme Scratch';
         if (openLink) {
           openLink.href = `https://scratch.mit.edu/projects/${firstProject}/`;
-          openLink.title = 'Ouvrir dans Scratch';
+          openLink.title = window.i18n ? window.i18n.t('grade.open_scratch') : 'Ouvrir dans Scratch';
           openLink.hidden = true;
         }
-        if (openLinkTextNode) openLinkTextNode.textContent = ' Ouvrir dans Scratch';
+        if (openLinkTextNode) openLinkTextNode.textContent = ` ${window.i18n ? window.i18n.t('grade.open_scratch') : 'Ouvrir dans Scratch'}`;
         if (downloadLink) downloadLink.hidden = true;
       } else {
         iframe.title = `Consignes — ${assignment.querySelector('.assignment-title')?.textContent.trim()}`;
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (filenameTextNode) filenameTextNode.textContent = ` ${pdfFilename}`;
         if (openLink) {
           openLink.href = pdfOpenUrl;
-          openLink.title = 'Agrandir';
+          openLink.title = window.i18n ? window.i18n.t('grade.btn_expand') : 'Agrandir';
           openLink.hidden = false;
         }
         if (openLinkTextNode) openLinkTextNode.textContent = ` ${pdfOpenLabel}`;
