@@ -34,9 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const roundToTenth = value => Math.round((value + Number.EPSILON) * 10) / 10;
   const formatAverage = value => roundToTenth(value).toFixed(1).replace('.', ',');
-  const translate = (key, fallback, params) => window.i18n
-    ? window.i18n.t(key, params)
-    : fallback;
+  const interpolate = (text, params = {}) => Object.keys(params).reduce(
+    (result, key) => result.replace(new RegExp(`{\\s*${key}\\s*}`, 'g'), params[key]),
+    text
+  );
+  const translate = (key, fallback, params = {}) => interpolate(
+    window.i18n ? window.i18n.t(key, params) : fallback,
+    params
+  );
   const CALC_TEXT = {
     fr: {fr:'Français',math:'Mathématiques',history:'Histoire-géographie',emc:'EMC',lv1:'Langue vivante 1',lv2:'Langue vivante 2',arts:'Arts plastiques',music:'Éducation musicale',svt:'SVT',physics:'Physique-chimie',tech:'Technologie',eps:'EPS',science:'Sciences',oral:'Oral',option:'Option facultative',subject:'Matière',exam:'Épreuve',note:'Note /20',coef:'Coef.',optionNote:'Seuls les points au-dessus de 10/20 à l’option facultative sont ajoutés au total des 12 matières, puis ce total est divisé par 12.',capNote:'La moyenne de contrôle continu retenue ne peut pas dépasser 20/20.',average12:'Moyenne des 12 matières',retained:'Note de contrôle continu retenue',finalAverage:'Moyenne des épreuves finales',scienceNote:'Sciences : 2 disciplines sont évaluées parmi physique-chimie, SVT et technologie.',mention:'Mention',printSummary:'Récapitulatif de la simulation',edited:'Édité le',simulation:'Résultat de la simulation',disclaimer:'Simulation indicative réalisée avec La Salle 9.',admitted:'Admis',fair:'Assez bien',good:'Bien',veryGood:'Très bien',congrats:'Félicitations'},
     en: {fr:'French',math:'Mathematics',history:'History and geography',emc:'Civics',lv1:'Modern language 1',lv2:'Modern language 2',arts:'Visual arts',music:'Music',svt:'Life sciences',physics:'Physics and chemistry',tech:'Technology',eps:'Physical education',science:'Science',oral:'Oral exam',option:'Optional subject',subject:'Subject',exam:'Exam',note:'Score /20',coef:'Coeff.',optionNote:'Only points above 10/20 in the optional subject are added to the total for the 12 subjects, then divided by 12.',capNote:'The retained continuous-assessment average cannot exceed 20/20.',average12:'Average across 12 subjects',retained:'Retained continuous-assessment score',finalAverage:'Final-exam average',scienceNote:'Science: 2 subjects are assessed among physics and chemistry, life sciences, and technology.',mention:'Honors',printSummary:'Simulation summary',edited:'Edited on',simulation:'Simulation result',disclaimer:'Indicative simulation made with La Salle 9.',admitted:'Passed',fair:'Honors',good:'High honors',veryGood:'Highest honors',congrats:'Congratulations'},
@@ -46,6 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcText = key => CALC_TEXT[window.i18n?.getLanguage?.() || 'fr']?.[key] || CALC_TEXT.fr[key] || key;
   const setText = (selector, value) => { const node = document.querySelector(selector); if (node) node.textContent = value; };
   const setLabelText = (selector, value) => { const node=document.querySelector(selector); if(!node)return; const textNode=[...node.childNodes].find(child=>child.nodeType===Node.TEXT_NODE); if(textNode)textNode.textContent=`${value} `; else node.insertBefore(document.createTextNode(`${value} `),node.firstChild); };
+  const setLegendText = (selector, value) => {
+    const node = document.querySelector(selector);
+    if (!node) return;
+    const textNode = [...node.childNodes].find(child => child.nodeType === Node.TEXT_NODE);
+    if (textNode) textNode.textContent = ` ${value}`;
+    else node.appendChild(document.createTextNode(` ${value}`));
+  };
   const refreshCalculatorStaticText = () => {
     const labels = [['cc-fr','fr'],['cc-math','math'],['cc-hg','history'],['cc-emc','emc'],['cc-lv1','lv1'],['cc-lv2','lv2'],['cc-arts','arts'],['cc-music','music'],['cc-svt','svt'],['cc-physics','physics'],['cc-tech','tech'],['cc-eps','eps'],['option','option'],['fr','fr'],['math','math'],['hg','history'],['emc','emc'],['sci','science'],['oral','oral']];
     labels.forEach(([id,key]) => { const label=document.querySelector(`label[for="${id}"]`); if(label) label.textContent=calcText(key); });
@@ -72,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setLabelText('.mention-box', calcText('mention'));
     const gaugeLabels=[['.gauge-label-10 span','admitted'],['.gauge-label-12 span','fair'],['.gauge-label-14 span','good'],['.gauge-label-16 span','veryGood'],['.gauge-label-18 span','congrats']];
     gaugeLabels.forEach(([selector,key])=>setText(selector,calcText(key)));
-    setLabelText('.legend-admitted','10 '+calcText('admitted')); setLabelText('.legend-fair','12 '+calcText('fair')); setLabelText('.legend-good','14 '+calcText('good')); setLabelText('.legend-very-good','16 '+calcText('veryGood')); setLabelText('.legend-congrats','18 '+calcText('congrats'));
+    setLegendText('.legend-admitted', calcText('admitted')); setLegendText('.legend-fair', calcText('fair')); setLegendText('.legend-good', calcText('good')); setLegendText('.legend-very-good', calcText('veryGood')); setLegendText('.legend-congrats', calcText('congrats'));
     setText('.print-summary-header p', calcText('printSummary')); setText('.print-disclaimer',calcText('disclaimer'));
   };
   const mentionThresholds = [

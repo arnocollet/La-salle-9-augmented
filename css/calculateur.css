@@ -981,12 +981,18 @@
   }
 }
 
-@media (max-width: 520px) {
-  .gauge-labels {
-    height: 1.9rem;
+@media (max-width: 768px) {
+  .result-body {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .gauge-label span {
+  .result-status {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: center;
+  }
+
+  .gauge-labels {
     display: none;
   }
 
@@ -1008,7 +1014,8 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    white-space: nowrap;
+    min-width: 0;
+    white-space: normal;
   }
 
   .gauge-mobile-legend span::before {
@@ -1022,6 +1029,15 @@
 
   .gauge-mobile-legend strong {
     color: #000;
+    flex: 0 0 auto;
+  }
+
+  .next-mention {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.3;
+    text-align: center;
   }
 
   .legend-admitted,
