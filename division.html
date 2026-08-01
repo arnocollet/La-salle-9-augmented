@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="S'entraîner à poser et effectuer une division.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <title>Poser une division - La Salle 9</title>
+  <link rel="stylesheet" href="css/style.css?v=34">
+  <link rel="stylesheet" href="css/division.css?v=1">
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo" aria-label="La Salle 9 - Accueil"><img class="logo-image" src="assets/logo-providence.png" alt=""></a>
+      <nav aria-label="Navigation principale"><ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Accueil</a></li>
+        <li><a href="scratch.html" class="nav-link">Scratch</a></li>
+        <li><a href="automatismes/index.html" class="nav-link">Automatismes</a></li>
+        <li><a href="division.html" class="nav-link active" aria-current="page">Division</a></li>
+        <li><a href="calculateur-brevet.html" class="nav-link">Simulateur Brevet</a></li>
+      </ul></nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-btn" type="button" aria-label="Changer le thème">
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <button class="menu-toggle" id="menu-btn" type="button" aria-label="Menu principal" aria-expanded="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="division-page">
+    <section class="division-hero container">
+      <span class="eyebrow">Technique opératoire</span>
+      <h1>Poser une division</h1>
+      <p>Entraîne-toi à organiser les étapes d’une division posée, puis vérifie chaque soustraction intermédiaire.</p>
+    </section>
+
+    <section class="division-workspace container" aria-labelledby="exercise-title">
+      <div class="division-settings card">
+        <div class="settings-heading"><span class="step-badge">1</span><div><h2 id="exercise-title">Choisir une division</h2><p>Génère une opération ou saisis tes propres nombres.</p></div></div>
+        <div class="settings-grid">
+          <label>Chiffres du dividende<select id="dividendDigits"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select></label>
+          <label>Chiffres du diviseur<select id="divisorDigits"><option value="1" selected>1</option><option value="2">2</option></select></label>
+        </div>
+        <div class="custom-division"><span>Ou choisis la division :</span><input id="customDividend" inputmode="numeric" maxlength="6" aria-label="Dividende personnalisé"><span>:</span><input id="customDivisor" inputmode="numeric" maxlength="3" aria-label="Diviseur personnalisé"><span>= ?</span></div>
+        <button class="button button-primary" id="newDivision" type="button">Nouvelle division</button>
+      </div>
+
+      <div class="division-exercise card">
+        <div class="exercise-topline"><div><span class="step-badge">2</span><span class="exercise-kicker">Division à poser</span><strong id="operationLabel"></strong></div><span class="exercise-number" id="exerciseNumber"></span></div>
+        <div class="instruction"><span class="instruction-icon">?</span><p><strong>Consigne :</strong> complète le quotient, les produits et les restes de chaque étape. Tu peux t’aider de la division posée.</p></div>
+        <div class="division-display" id="divisionDisplay"></div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+        <div class="exercise-actions"><button class="button button-primary" id="correctDivision" type="button">✓ Corriger</button><button class="button button-secondary" id="resetDivision" type="button">↻ Recommencer</button><button class="button button-quiet" id="anotherDivision" type="button">🎲 Autre opération</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="container footer-content"><div class="footer-nav"><a href="index.html" class="footer-nav-link">Accueil</a><a href="scratch.html" class="footer-nav-link">Scratch</a><a href="automatismes/index.html" class="footer-nav-link">Automatismes</a><a href="division.html" class="footer-nav-link">Division</a><a href="calculateur-brevet.html" class="footer-nav-link">Simulateur Brevet</a></div><div class="copyright"><span>Arnaud COLLET - Réalisé avec Codex</span><span class="divider">|</span><span>08/2026</span></div></div></footer>
+  <script src="js/main.js?v=3"></script>
+  <script src="js/division.js?v=1"></script>
+</body>
+</html>
