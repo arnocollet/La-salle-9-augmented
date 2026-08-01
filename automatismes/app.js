@@ -1060,6 +1060,16 @@ const AUTO_CATEGORY_TEXT={
   statistics:{fr:"Probabilités et statistiques",en:"Probability and statistics",es:"Probabilidad y estadística",de:"Wahrscheinlichkeit und Statistik"},
   scratch:{fr:"Algorithmique Scratch",en:"Scratch algorithms",es:"Algoritmia Scratch",de:"Scratch-Algorithmen"}
 };
+const AUTO_TOOL_TEXT={
+  fr:{worksheets:"Créer des fiches d’entraînement",worksheetDesc:"Chaque fiche reprend la routine aléatoire avec",selected:"exercices du niveau sélectionné.",sheetCount:"Nombre de fiches",remove:"Retirer une fiche",add:"Ajouter une fiche",answers:"Ajouter le corrigé à la fin du PDF",dyslexic:"Version dyslexique",level:"Niveau",content:"Contenu",download:"Créer et télécharger le PDF",preview:"Aperçu de la fiche 1",previewAria:"Aperçu exact de la première fiche PDF",previewNote:"L’aperçu affiche la première page de la fiche 1. Le PDF contient toutes les fiches demandées.",sessions:"routines terminées",questions:"questions répondues",success:"de réussite",days:"jours consécutifs",byTheme:"Résultats par thème",latest:"Dernières routines",data:"Mes données",dataDesc:"La progression, les points et l’historique sont enregistrés uniquement dans ce navigateur.",reference:"Référentiel des automatismes de",answer:"Réponse",sheet:"FICHE N°",noData:"Effacer définitivement vos points, votre progression et votre historique sur tous les niveaux dans ce navigateur ?"},
+  en:{worksheets:"Create practice worksheets",worksheetDesc:"Each worksheet uses the random routine with",selected:"exercises from the selected level.",sheetCount:"Number of worksheets",remove:"Remove one worksheet",add:"Add one worksheet",answers:"Add answer key at the end of the PDF",dyslexic:"Dyslexia-friendly version",level:"Level",content:"Content",download:"Create and download PDF",preview:"Preview of worksheet 1",previewAria:"Exact preview of the first PDF worksheet",previewNote:"The preview shows the first page of worksheet 1. The PDF contains all requested worksheets.",sessions:"completed routines",questions:"questions answered",success:"success rate",days:"consecutive days",byTheme:"Results by topic",latest:"Latest routines",data:"My data",dataDesc:"Progress, points and history are stored only in this browser.",reference:"Mental-math reference for",answer:"Answer",sheet:"WORKSHEET No.",noData:"Permanently delete your points, progress and history for all levels from this browser?"},
+  es:{worksheets:"Crear fichas de práctica",worksheetDesc:"Cada ficha utiliza la rutina aleatoria con",selected:"ejercicios del nivel seleccionado.",sheetCount:"Número de fichas",remove:"Quitar una ficha",add:"Añadir una ficha",answers:"Añadir las soluciones al final del PDF",dyslexic:"Versión para dislexia",level:"Nivel",content:"Contenido",download:"Crear y descargar el PDF",preview:"Vista previa de la ficha 1",previewAria:"Vista previa exacta de la primera ficha PDF",previewNote:"La vista previa muestra la primera página de la ficha 1. El PDF contiene todas las fichas solicitadas.",sessions:"rutinas terminadas",questions:"preguntas respondidas",success:"tasa de aciertos",days:"días consecutivos",byTheme:"Resultados por tema",latest:"Últimas rutinas",data:"Mis datos",dataDesc:"El progreso, los puntos y el historial solo se guardan en este navegador.",reference:"Referencial de automatismos de",answer:"Respuesta",sheet:"FICHA N.º",noData:"¿Borrar definitivamente tus puntos, tu progreso y tu historial de todos los niveles de este navegador?"},
+  de:{worksheets:"Übungsblätter erstellen",worksheetDesc:"Jedes Blatt verwendet die Zufallsrunde mit",selected:"Aufgaben der ausgewählten Stufe.",sheetCount:"Anzahl der Blätter",remove:"Ein Blatt entfernen",add:"Ein Blatt hinzufügen",answers:"Lösungen am Ende der PDF hinzufügen",dyslexic:"Legastheniefreundliche Version",level:"Stufe",content:"Inhalt",download:"PDF erstellen und herunterladen",preview:"Vorschau von Blatt 1",previewAria:"Exakte Vorschau des ersten PDF-Arbeitsblatts",previewNote:"Die Vorschau zeigt die erste Seite von Blatt 1. Das PDF enthält alle angeforderten Blätter.",sessions:"abgeschlossene Übungsrunden",questions:"beantwortete Fragen",success:"Erfolgsquote",days:"aufeinanderfolgende Tage",byTheme:"Ergebnisse nach Thema",latest:"Letzte Übungsrunden",data:"Meine Daten",dataDesc:"Fortschritt, Punkte und Verlauf werden nur in diesem Browser gespeichert.",reference:"Kopfrechen-Übersicht für",answer:"Antwort",sheet:"BLATT NR.",noData:"Punkte, Fortschritt und Verlauf für alle Stufen dauerhaft aus diesem Browser löschen?"}
+};
+function toolT(key){
+  const lang=window.i18n?.getLanguage?.()||"fr";
+  return AUTO_TOOL_TEXT[lang]?.[key]||AUTO_TOOL_TEXT.fr[key]||key;
+}
 function categoryT(id,fallback){
   const lang=window.i18n?.getLanguage?.()||"fr";
   return AUTO_CATEGORY_TEXT[id]?.[lang]||fallback;
@@ -1111,6 +1121,27 @@ function refreshAutomationModals(){
   set("#clearLocalData","clearData");
   set("#refreshWorksheet","newExercises");
   set("#downloadWorksheets","downloadWorksheets");
+  const text=(selector,key)=>{const node=document.querySelector(selector);if(node)node.textContent=toolT(key)};
+  const aria=(selector,key)=>{const node=document.querySelector(selector);if(node)node.setAttribute("aria-label",toolT(key))};
+  text("#worksheets .worksheet-settings .section-title h2","worksheets");
+  const worksheetDesc=document.querySelector("#worksheets .worksheet-settings > p.muted");
+  if(worksheetDesc)worksheetDesc.innerHTML=`${toolT("worksheetDesc")} <span id="worksheetDescriptionCount">${worksheetExerciseCount()}</span> ${toolT("selected")}`;
+  text("label[for='worksheetCount']","sheetCount");
+  aria("#decreaseWorksheetCount","remove"); aria("#increaseWorksheetCount","add");
+  setLastText("#includeAnswers + span",toolT("answers")); setLastText("#dyslexicVersion + span",toolT("dyslexic"));
+  const summary=document.querySelectorAll("#worksheets .worksheet-summary > span");
+  if(summary[0])summary[0].textContent=toolT("level"); if(summary[1])summary[1].textContent=toolT("content");
+  text("#downloadWorksheets","download"); text("#worksheets .preview-heading h2","preview");
+  aria("#worksheetPreview","previewAria"); text("#worksheets .preview-note","previewNote");
+  const statLabels=document.querySelectorAll("#progress .stats-grid > div > span");
+  ["sessions","questions","success","days"].forEach((key,index)=>{if(statLabels[index])statLabels[index].textContent=toolT(key)});
+  const progressHeadings=document.querySelectorAll("#progress .section-title h2");
+  ["progressTitle","byTheme","latest","data"].forEach((key,index)=>{if(progressHeadings[index])progressHeadings[index].textContent=index===0?modalT("progressTitle"):toolT(key)});
+  text("#progress .data-settings p.muted","dataDesc");
+  const clearButton=document.querySelector("#clearLocalData"); if(clearButton)clearButton.textContent=modalT("clearData");
+  const reference=document.querySelector("#notions .section-title h2");
+  if(reference)reference.innerHTML=`${toolT("reference")} <span id="notionsLevelLabel">${currentLevel}</span>`;
+  document.querySelectorAll("[data-return-home]").forEach(node=>node.textContent=`← ${modalT("returnHome")}`);
 }
 
 function levelState(){return state.levels[currentLevel]}
@@ -1540,7 +1571,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     context.font=isCorrection
       ?(dense?`19px ${fontFamily}`:`${dyslexic?25:23}px ${fontFamily}`)
       :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
-    const questionBottom=drawLines(context,exercise.text,x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
+    const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(isCorrection){
       context.fillStyle="#167333";context.font=dense?`700 19px ${fontFamily}`:`700 ${dyslexic?26:25}px ${fontFamily}`;
       context.fillText(`Réponse : ${exercise.answer}`,x+32,Math.min(y+226,Math.max(y+180,questionBottom+8)));
