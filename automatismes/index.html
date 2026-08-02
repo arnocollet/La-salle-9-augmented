@@ -70,11 +70,19 @@
           <h2 data-i18n="auto.choose_level">Je choisis mon niveau</h2>
         </div>
         <div class="level-progress-layout">
-          <div class="levels">
-            <button class="level-btn" data-level="6e">6e</button>
-            <button class="level-btn selected" data-level="5e">5e</button>
-            <button class="level-btn" data-level="4e">4e</button>
-            <button class="level-btn" data-level="3e">3e</button>
+          <div class="level-choice-panel">
+            <div class="levels">
+              <button class="level-btn" data-level="6e">6e</button>
+              <button class="level-btn selected" data-level="5e">5e</button>
+              <button class="level-btn" data-level="4e">4e</button>
+              <button class="level-btn" data-level="3e">3e</button>
+            </div>
+            <aside id="pointsRewardBanner" class="points-reward-banner" role="status" aria-live="polite">
+              <span class="points-reward-icon" aria-hidden="true">⭐</span>
+              <div class="points-reward-window">
+                <div id="pointsRewardTrack" class="points-reward-track"></div>
+              </div>
+            </aside>
           </div>
 
           <section class="progress-summary" aria-labelledby="progress-summary-title">

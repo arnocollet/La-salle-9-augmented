@@ -1205,6 +1205,19 @@ function showReachedPointsMilestone(previousPoints,currentPoints){
   clearTimeout(pointsMilestoneTimer);
   pointsMilestoneTimer=setTimeout(closePointsMilestone,6500);
 }
+function renderPointsRewardBanner(){
+  const track=document.getElementById("pointsRewardTrack");
+  if(!track)return;
+  const points=Number(state.points)||0;
+  const nextMilestone=Math.floor(points/500+1)*500;
+  const missingPoints=nextMilestone-points;
+  const currentMessage=points>=500
+    ?`Palier atteint : ${(Math.floor(points/500)*500).toLocaleString("fr-FR")} points. ${pointsMilestoneMessage(Math.floor(points/500)*500)}`
+    :"Chaque bonne réponse te rapproche du prochain palier !";
+  const nextMessage=`Encore ${missingPoints.toLocaleString("fr-FR")} point${missingPoints>1?"s":""} avant le palier de ${nextMilestone.toLocaleString("fr-FR")} points.`;
+  const message=`${currentMessage} • ${nextMessage}`;
+  track.innerHTML=`<span>${message}</span><span aria-hidden="true">${message}</span>`;
+}
 function cancelScheduledNextQuestion(){
   if(nextQuestionTimer===null)return;
   clearTimeout(nextQuestionTimer);
@@ -1956,6 +1969,7 @@ function streak(){
 function save(){localStorage.setItem("mathsAutoCycle4",JSON.stringify(state));renderAll()}
 function renderAll(){
   document.getElementById("points").textContent=state.points;
+  renderPointsRewardBanner();
   document.getElementById("sidebarStreak").textContent=`${streak()} jour${streak()>1?"s":""}`;
   const rates=Object.values(levelState().byNotion).filter(x=>x.q).map(x=>x.c/x.q);
   const mastered=rates.filter(r=>r>=.8).length,inProg=rates.filter(r=>r>=.5&&r<.8).length,review=rates.filter(r=>r<.5).length;
