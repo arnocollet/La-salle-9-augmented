@@ -156,6 +156,9 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
   .result-box .primary{margin-top:9px;padding:9px 14px;font-size:.82rem}
 }
 @media(prefers-reduced-motion:reduce){.points-milestone{animation:none}}
+.level-choice-panel{display:flex;flex-direction:column}
+.points-reward-banner{align-self:center;width:100%;margin-top:auto;margin-bottom:auto}
+
 .portal-return {
   display: inline-flex;
   align-items: center;
