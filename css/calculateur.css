@@ -133,6 +133,13 @@
   content: 'Coef.';
 }
 
+.continuous-head > div:nth-child(2),
+.continuous-head::after,
+.exam-head > div:nth-child(2),
+.exam-head > div:nth-child(3) {
+  text-align: center;
+}
+
 .continuous-head {
   padding: 0 0.6rem 0.5rem;
   color: var(--text-secondary);
@@ -485,6 +492,14 @@
   border-radius: 0.7rem;
   font-size: 0.78rem;
   font-weight: 750;
+}
+
+.next-mention-points {
+  color: #dc2626;
+}
+
+[data-theme="dark"] .next-mention-points {
+  color: #f87171;
 }
 
 .next-mention.maximum {

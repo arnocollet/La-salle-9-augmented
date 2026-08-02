@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextThreshold) {
       const missingPoints = roundToTenth(nextThreshold.score - roundedFinalScore);
       const minimumDecimals = Number.isInteger(missingPoints) ? 0 : 1;
-      nextMention.textContent = `Encore ${formatNumber(missingPoints, minimumDecimals)} ${missingPoints === 1 ? 'point' : 'points'} pour ${nextThreshold.label}`;
+      nextMention.innerHTML = `Encore <strong class="next-mention-points">${formatNumber(missingPoints, minimumDecimals)} ${missingPoints === 1 ? 'point' : 'points'}</strong> pour ${nextThreshold.label}`;
       nextMention.classList.remove('maximum');
     } else {
       nextMention.textContent = window.i18n ? window.i18n.t('brevet.max_reached', 'Niveau maximal atteint : félicitations du jury !') : 'Niveau maximal atteint : félicitations du jury !';
