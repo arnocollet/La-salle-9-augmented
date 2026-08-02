@@ -12,3 +12,7 @@ Quand l’utilisateur demande de publier, publier directement les modifications 
 Ne jamais créer de pull request, même en brouillon, sauf si l’utilisateur le demande explicitement.
 
 Ne pas publier automatiquement après une modification si l’utilisateur n’a pas demandé de publier.
+
+# Langue du projet
+
+Le projet est désormais maintenu uniquement en français. Ne pas ajouter, corriger ou mettre à jour les traductions anglaise, espagnole ou allemande, sauf demande explicite de l’utilisateur.
