@@ -1214,7 +1214,7 @@ function renderPointsRewardBanner(){
   const nextMilestone=Math.floor(points/500+1)*500;
   const missingPoints=nextMilestone-points;
   const currentMessage=points>=500
-    ?`Palier atteint : ${(Math.floor(points/500)*500).toLocaleString("fr-FR")} points. ${pointsMilestoneMessage(Math.floor(points/500)*500)}`
+    ?`<span class="points-reward-reached">Palier atteint : ${(Math.floor(points/500)*500).toLocaleString("fr-FR")} points.</span> ${pointsMilestoneMessage(Math.floor(points/500)*500)}`
     :"Chaque bonne réponse te rapproche du prochain palier !";
   const nextMessage=`Encore ${missingPoints.toLocaleString("fr-FR")} point${missingPoints>1?"s":""} avant le palier de ${nextMilestone.toLocaleString("fr-FR")} points.`;
   const message=`${currentMessage} • ${nextMessage}`;
