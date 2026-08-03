@@ -154,7 +154,9 @@ const NOTIONS = {
 };
 
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function fmt(n){return String(Math.round(n*1000)/1000).replace(".",",")}
+// Conserve les décimales utiles après un décalage de virgule (par exemple
+// 20,3 ÷ 1 000 = 0,0203) sans afficher les imprécisions du calcul flottant.
+function fmt(n){return String(Number(n.toFixed(12))).replace(".",",")}
 function displayNumber(n){return fmt(n).replace("-","−")}
 function parenthesizedIfNegative(n){return n<0?`(${displayNumber(n)})`:displayNumber(n)}
 function q(text,answer,explanation,alts=[],meta={}){return {text,answer:String(answer),explanation,alts:alts.map(String),...meta}}
