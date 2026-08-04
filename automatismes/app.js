@@ -611,9 +611,20 @@ function transformationSvg(exercise){
   const answer=exercise.answer;
   if(answer==="une droite")return geometrySvg("Symétrie axiale définie par une droite",`<path class="geo-line" d="M55 145 L90 75 L125 145 Z M195 145 L230 75 L265 145 Z"/><line class="geo-accent geo-dash" x1="160" y1="25" x2="160" y2="180"/><path class="geo-accent geo-dash" d="M125 105 H195"/>`);
   if(answer==="un point")return geometrySvg("Demi-tour défini par un point",`<path class="geo-line" d="M55 75 L95 45 L125 95 Z M195 115 L225 165 L265 135 Z"/><circle class="geo-point" cx="160" cy="105" r="5"/><text class="geo-accent-label" x="173" y="110">O</text><path class="geo-accent geo-dash" d="M110 80 L210 130"/>`);
-  return geometrySvg("Translation définie par un vecteur",`<rect class="geo-line" x="50" y="90" width="70" height="55"/><rect class="geo-line" x="205" y="45" width="70" height="55"/><defs><marker id="vector-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs><line class="geo-accent" x1="115" y1="82" x2="205" y2="55" marker-end="url(#vector-arrow)"/><text class="geo-accent-label" x="158" y="55">u⃗</text>`);
+  return geometrySvg("Translation définie par un vecteur",`<rect class="geo-line" x="50" y="90" width="70" height="55"/><rect class="geo-line" x="205" y="45" width="70" height="55"/><defs><marker id="vector-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker><marker id="vector-label-arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path class="geo-fill" d="M0,0 L5,2.5 L0,5 Z"/></marker></defs><line class="geo-accent" x1="115" y1="82" x2="205" y2="55" marker-end="url(#vector-arrow)"/><text class="geo-accent-label" x="158" y="55">u</text><line class="geo-accent" x1="151" y1="45" x2="165" y2="45" marker-end="url(#vector-label-arrow)"/>`);
 }
 function transformationExerciseSvg(exercise){
+  if(exercise.numberedTransform){
+    const data=exercise.numberedTransform,cell=38,x0=45,y0=18,columns=data.columns||4,rows=data.rows||4;
+    const cells=Array.from({length:columns*rows},(_,index)=>{const row=Math.floor(index/columns),column=index%columns,number=index+1,offset=data.kind==="translation"&&row%2?14:0;return `<rect class="${number===data.source?"geo-accent geo-surface":"geo-line"}" x="${x0+column*cell+offset}" y="${y0+row*cell}" width="${cell}" height="${cell}"/><text class="geo-small-label" x="${x0+column*cell+offset+cell/2}" y="${y0+row*cell+cell/2}">${number}</text>`}).join("");
+    if(data.kind==="translation"){
+      const center=(number)=>{const row=Math.floor((number-1)/3),column=(number-1)%3;return [x0+column*cell+cell/2+(row%2?14:0),y0+row*cell+cell/2]};
+      const [fromX,fromY]=center(data.from),[toX,toY]=center(data.to);
+      return geometrySvg("Cases numérotées et translation",`${cells}<line class="geo-accent geo-dash" x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"/><circle class="geo-point" cx="${fromX}" cy="${fromY}" r="3"/><circle class="geo-point" cx="${toX}" cy="${toY}" r="3"/>`);
+    }
+    const axis=data.kind==="centrale"?`<circle class="geo-point" cx="${x0+columns*cell/2}" cy="${y0+rows*cell/2}" r="4"/><text class="geo-accent-label" x="${x0+columns*cell/2+15}" y="${y0+rows*cell/2}">O</text>`:data.axis==="horizontal"?`<line class="geo-accent geo-dash" x1="${x0-10}" y1="${y0+rows*cell/2}" x2="${x0+columns*cell+10}" y2="${y0+rows*cell/2}"/>`:data.axis==="diagonal"?`<line class="geo-accent geo-dash" x1="${x0-8}" y1="${y0-8}" x2="${x0+columns*cell+8}" y2="${y0+rows*cell+8}"/>`:`<line class="geo-accent geo-dash" x1="${x0+columns*cell/2}" y1="${y0-8}" x2="${x0+columns*cell/2}" y2="${y0+rows*cell+8}"/>`;
+    return geometrySvg("Cases numérotées et axe de symétrie",`${cells}${axis}`);
+  }
   if(exercise.grid){
     const {columns,rows,source}=exercise.grid,cell=34,x0=25,y0=12;
     const cells=Array.from({length:columns*rows},(_,index)=>{const row=Math.floor(index/columns),column=index%columns,number=index+1;return `<rect class="${number===source?"geo-accent geo-surface":"geo-line"}" x="${x0+column*cell}" y="${y0+row*cell}" width="${cell}" height="${cell}"/><text class="geo-small-label" x="${x0+column*cell+cell/2}" y="${y0+row*cell+cell/2}">${number}</text>`}).join("");
@@ -730,6 +741,19 @@ function renderQuestionVisual(exercise){
   host.innerHTML=geometryQuestionSvg(exercise);
 }
 
+function numberedTransformationQuestion(type){
+  if(type==="translation"){
+    const source=[3,6,9][rand(0,2)],answer=source-1;
+    return q(`La case n°${source} est colorée. Quelle est son image par la translation qui transforme la case n°8 en case n°7 ?`,answer,`Le déplacement de la case n°8 vers la case n°7 fait reculer d’une colonne : la case n°${source} devient la case n°${answer}.`,[],{transformType:"translation",numberedTransform:{kind:"translation",columns:3,rows:3,source,from:8,to:7}});
+  }
+  const source=rand(1,16),row=Math.floor((source-1)/4),column=(source-1)%4;
+  if(type==="centrale"){
+    const answer=(3-row)*4+(3-column)+1;
+    return q(`La case n°${source} est colorée. Quelle est son image par le demi-tour de centre O ?`,answer,`Le demi-tour échange les lignes et les colonnes par rapport au centre O : la case n°${source} devient la case n°${answer}.`,[],{transformType:"centrale",numberedTransform:{kind:"centrale",source}});
+  }
+  const axis=Math.random()<.5?"horizontal":"diagonal",answer=axis==="horizontal"?(3-row)*4+column+1:column*4+row+1;
+  return q(`La case n°${source} est colorée. Quelle est son image par la symétrie d’axe ${axis==="horizontal"?"horizontal":"(d)"} ?`,answer,`La symétrie par rapport à cet axe échange les cases placées à la même distance de l’axe : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",numberedTransform:{kind:"axiale",axis,source}});
+}
 const G5 = [
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Construire un sym\u00e9trique",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=row*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par la symétrie axiale d’axe vertical ?`,answer,`L’axe échange les colonnes symétriques : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",grid:{columns:6,rows:4,source}})}},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale et demi-tour",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=(3-row)*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par un demi-tour de centre O ?`,answer,`Un demi-tour échange la ligne et la colonne par rapport au centre : la case n°${source} devient la case n°${answer}.`,[],{transformType:"centrale",grid:{columns:6,rows:4,source}})}},
@@ -793,9 +817,7 @@ const G4 = [
     const source=rand(1,8),angle=[45,90,135,180,225,270,315][rand(0,6)],direction=Math.random()<.5?"horaire":"antihoraire",steps=angle/45,answer=((source-1+(direction==="horaire"?steps:-steps)+800)%8)+1;
     return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle ${angle}° dans le sens ${direction} ?`,answer,`La rotation de ${angle}° correspond à ${steps} secteur${steps>1?"s":""} : en sens ${direction}, le secteur ${source} devient le secteur ${answer}.`,[],{transformType:"rotation",rotationSource:source,rotationAngle:angle,rotationDirection:direction});
   }
-  const transformations={axiale:["symétrie axiale","Une symétrie axiale est définie par un axe."],centrale:["symétrie centrale","Une symétrie centrale est définie par un centre."],translation:["translation","Une translation déplace tous les points selon un même vecteur."]};
-  const [answer,explanation]=transformations[type];
-  return q("Quelle transformation permet de passer de la figure de gauche à la figure de droite ?",answer,explanation,[],{transformType:type});
+  return numberedTransformationQuestion(type);
 }},
 {theme:"Nombres et calculs",notion:"Sommes et différences de nombres relatifs",make:()=>{let a=rand(-12,12),b=rand(-12,12),op=Math.random()<.5?"+":"−",ans=op==="+"?a+b:a-b;return q(`Calcule : ${a} ${op} (${b})`,ans,`On effectue le calcul sur les nombres relatifs : ${ans}.`)}},
 {theme:"Nombres et calculs",notion:"Opposé d’un nombre et somme d’opposés",make:()=>{let a=rand(-20,20);if(a===0)a=7;return q(`Quel est l’opposé de ${a} ?`,-a,`Deux nombres opposés ont une somme nulle.`)}},
@@ -842,17 +864,12 @@ const G4 = [
 const G3 = [
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale, demi-tour et translation",make:()=>{
   const type=["axiale","centrale","translation","rotation"][rand(0,3)];
-  if(type==="translation"){
-    const x=rand(-5,5),y=rand(-5,5),dx=rand(-4,4),dy=rand(-4,4);
-    return q(`Le point A(${x} ; ${y}) est transformé par la translation de vecteur (${dx} ; ${dy}). Quelles sont les coordonnées de son image ?`,`${x+dx} ; ${y+dy}`,`On ajoute les coordonnées du vecteur : (${x}+${dx} ; ${y}+${dy}) = (${x+dx} ; ${y+dy}).`,[],{transformType:"translation"});
-  }
+  if(type==="translation")return numberedTransformationQuestion(type);
   if(type==="rotation"){
     const source=rand(1,8),angle=[45,90,135,180,225,270,315][rand(0,6)],direction=Math.random()<.5?"horaire":"antihoraire",steps=angle/45,answer=((source-1+(direction==="horaire"?steps:-steps)+800)%8)+1;
     return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle ${angle}° dans le sens ${direction} ?`,answer,`La rotation de ${angle}° correspond à ${steps} secteur${steps>1?"s":""} : en sens ${direction}, le secteur ${source} devient le secteur ${answer}.`,[],{transformType:"rotation",rotationSource:source,rotationAngle:angle,rotationDirection:direction});
   }
-  const answer=type==="axiale"?"symétrie axiale":"symétrie centrale";
-  const explanation=type==="axiale"?"Une symétrie axiale est définie par un axe.":"Une symétrie centrale est définie par un centre.";
-  return q("Quelle transformation permet de passer de la figure de gauche à la figure de droite ?",answer,explanation,[],{transformType:type});
+  return numberedTransformationQuestion(type);
 }},
 {theme:"Nombres et calculs",notion:"Opérations sur les fractions",make:()=>{let d1=[2,3,4,5,6][rand(0,4)],d2=[2,3,4,5,6][rand(0,4)],a=rand(1,d1-1),b=rand(1,d2-1),op=["+","−","×","÷"][rand(0,3)],n,d;if(op==="+"){n=a*d2+b*d1;d=d1*d2}else if(op==="−"){n=a*d2-b*d1;d=d1*d2}else if(op==="×"){n=a*b;d=d1*d2}else{n=a*d2;d=d1*b}return q(`Calcule et simplifie : ${a}/${d1} ${op} ${b}/${d2}`,simp(n,d),`On applique la règle de calcul adaptée puis on simplifie.`)}},
 {theme:"Nombres et calculs",notion:"Puissance comme multiplication itérée",make:()=>{let a=[2,3,4,5][rand(0,3)],e=rand(2,5);return q(`Écris ${a} × ${Array(e-1).fill(a).join(" × ")} sous forme d’une puissance.`,`${a}^${e}`,`Le facteur ${a} apparaît ${e} fois.`)}},
