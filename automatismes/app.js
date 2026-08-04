@@ -623,7 +623,12 @@ function transformationExerciseSvg(exercise){
   }
   if(exercise.transformType==="axiale")return geometrySvg("Symétrie axiale",`<path class="geo-line geo-surface" d="M48 145 L82 70 L116 145 Z"/><path class="geo-accent geo-surface" d="M204 145 L238 70 L272 145 Z"/><line class="geo-accent geo-dash" x1="160" y1="20" x2="160" y2="185"/><text class="geo-accent-label" x="160" y="200">axe (d)</text>`);
   if(exercise.transformType==="centrale")return geometrySvg("Symétrie centrale",`<path class="geo-line geo-surface" d="M48 70 L95 45 L122 95 Z"/><path class="geo-accent geo-surface" d="M198 140 L225 165 L272 140 Z"/><circle class="geo-point" cx="160" cy="105" r="5"/><text class="geo-accent-label" x="174" y="110">O</text><line class="geo-accent geo-dash" x1="106" y1="70" x2="214" y2="140"/>`);
-  if(exercise.transformType==="rotation")return geometrySvg("Rotation",`<circle class="geo-line" cx="160" cy="105" r="72"/><circle class="geo-point" cx="160" cy="105" r="5"/><path class="geo-line" d="M160 105 L160 33 M160 105 L232 105 M160 105 L160 177 M160 105 L88 105"/><path class="geo-accent geo-surface" d="M160 33 L211 54 L160 105 Z"/><path class="geo-accent" d="M160 23 A82 82 0 0 1 242 105"/><text class="geo-accent-label" x="204" y="27">90°</text><text class="geo-accent-label" x="174" y="119">O</text>`);
+  if(exercise.transformType==="rotation"){
+    const centerX=160,centerY=105,radius=72,source=exercise.rotationSource||1;
+    const point=(angle,r=radius)=>[centerX+r*Math.cos(angle*Math.PI/180),centerY+r*Math.sin(angle*Math.PI/180)];
+    const sectors=Array.from({length:8},(_,index)=>{const start=-112.5+index*45,end=start+45,[x1,y1]=point(start),[x2,y2]=point(end),[lx,ly]=point(start+22.5,55);return `<path class="${index+1===source?"geo-accent geo-surface":"geo-line"}" d="M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z"/><text class="geo-small-label" x="${lx}" y="${ly}">${index+1}</text>`}).join("");
+    return geometrySvg("Disque partagé en huit secteurs numérotés",`${sectors}<circle class="geo-point" cx="${centerX}" cy="${centerY}" r="4"/><text class="geo-accent-label" x="${centerX+14}" y="${centerY+15}">O</text>`);
+  }
   return transformationSvg(exercise);
 }
 function geometryQuestionSvg(exercise){
@@ -782,7 +787,7 @@ const G5 = [
 ];
 
 const G4 = [
-{theme:"Espace et g\u00e9om\u00e9trie",notion:"Images de figures par transformation",make:()=>{let source=rand(1,8),answer=((source+1)%8)+1;return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle 90° dans le sens horaire ?`,answer,`Un quart de tour dans le sens horaire avance de deux secteurs : ${source} devient ${answer}.`,[],{transformType:"rotation"})}},
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Images de figures par transformation",make:()=>{let source=rand(1,8),answer=((source+1)%8)+1;return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle 90° dans le sens horaire ?`,answer,`Un quart de tour dans le sens horaire avance de deux secteurs : ${source} devient ${answer}.`,[],{transformType:"rotation",rotationSource:source})}},
 {theme:"Nombres et calculs",notion:"Sommes et différences de nombres relatifs",make:()=>{let a=rand(-12,12),b=rand(-12,12),op=Math.random()<.5?"+":"−",ans=op==="+"?a+b:a-b;return q(`Calcule : ${a} ${op} (${b})`,ans,`On effectue le calcul sur les nombres relatifs : ${ans}.`)}},
 {theme:"Nombres et calculs",notion:"Opposé d’un nombre et somme d’opposés",make:()=>{let a=rand(-20,20);if(a===0)a=7;return q(`Quel est l’opposé de ${a} ?`,-a,`Deux nombres opposés ont une somme nulle.`)}},
 {theme:"Nombres et calculs",notion:"Multiplier et diviser par 10, 100, 1 000",make:()=>{let n=rand(12,999)/10,p=[10,100,1000][rand(0,2)],op=Math.random()<.5?"×":"÷",ans=op==="×"?n*p:n/p;return q(`Calcule : ${fmt(n)} ${op} ${p}`,fmt(ans),`La virgule se décale de ${String(p).length-1} rang(s).`)}},
