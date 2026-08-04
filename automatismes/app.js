@@ -862,7 +862,7 @@ const G4 = [
 
 
 const G3 = [
-{theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale, demi-tour et translation",make:()=>{
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Images de figures par transformations",make:()=>{
   const type=["axiale","centrale","translation","rotation"][rand(0,3)];
   if(type==="translation")return numberedTransformationQuestion(type);
   if(type==="rotation"){
