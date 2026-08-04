@@ -613,6 +613,19 @@ function transformationSvg(exercise){
   if(answer==="un point")return geometrySvg("Demi-tour défini par un point",`<path class="geo-line" d="M55 75 L95 45 L125 95 Z M195 115 L225 165 L265 135 Z"/><circle class="geo-point" cx="160" cy="105" r="5"/><text class="geo-accent-label" x="173" y="110">O</text><path class="geo-accent geo-dash" d="M110 80 L210 130"/>`);
   return geometrySvg("Translation définie par un vecteur",`<rect class="geo-line" x="50" y="90" width="70" height="55"/><rect class="geo-line" x="205" y="45" width="70" height="55"/><defs><marker id="vector-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path class="geo-fill" d="M0,0 L7,3.5 L0,7 Z"/></marker></defs><line class="geo-accent" x1="115" y1="82" x2="205" y2="55" marker-end="url(#vector-arrow)"/><text class="geo-accent-label" x="158" y="55">u⃗</text>`);
 }
+function transformationExerciseSvg(exercise){
+  if(exercise.grid){
+    const {columns,rows,source}=exercise.grid,cell=34,x0=25,y0=12;
+    const cells=Array.from({length:columns*rows},(_,index)=>{const row=Math.floor(index/columns),column=index%columns,number=index+1;return `<rect class="${number===source?"geo-accent geo-surface":"geo-line"}" x="${x0+column*cell}" y="${y0+row*cell}" width="${cell}" height="${cell}"/><text class="geo-small-label" x="${x0+column*cell+cell/2}" y="${y0+row*cell+cell/2}">${number}</text>`}).join("");
+    const axisX=x0+columns*cell/2,axisY=y0+rows*cell/2;
+    const marker=exercise.transformType==="centrale"?`<circle class="geo-point" cx="${axisX}" cy="${axisY}" r="4"/><text class="geo-accent-label" x="${axisX+15}" y="${axisY}">O</text>`:`<line class="geo-accent geo-dash" x1="${axisX}" y1="${y0-5}" x2="${axisX}" y2="${y0+rows*cell+5}"/><text class="geo-accent-label" x="${axisX}" y="${y0+rows*cell+17}">axe (d)</text>`;
+    return geometrySvg("Quadrillage et transformation",`${cells}${marker}`);
+  }
+  if(exercise.transformType==="axiale")return geometrySvg("Symétrie axiale",`<path class="geo-line geo-surface" d="M48 145 L82 70 L116 145 Z"/><path class="geo-accent geo-surface" d="M204 145 L238 70 L272 145 Z"/><line class="geo-accent geo-dash" x1="160" y1="20" x2="160" y2="185"/><text class="geo-accent-label" x="160" y="200">axe (d)</text>`);
+  if(exercise.transformType==="centrale")return geometrySvg("Symétrie centrale",`<path class="geo-line geo-surface" d="M48 70 L95 45 L122 95 Z"/><path class="geo-accent geo-surface" d="M198 140 L225 165 L272 140 Z"/><circle class="geo-point" cx="160" cy="105" r="5"/><text class="geo-accent-label" x="174" y="110">O</text><line class="geo-accent geo-dash" x1="106" y1="70" x2="214" y2="140"/>`);
+  if(exercise.transformType==="rotation")return geometrySvg("Rotation",`<circle class="geo-line" cx="160" cy="105" r="72"/><circle class="geo-point" cx="160" cy="105" r="5"/><path class="geo-line" d="M160 105 L160 33 M160 105 L232 105 M160 105 L160 177 M160 105 L88 105"/><path class="geo-accent geo-surface" d="M160 33 L211 54 L160 105 Z"/><path class="geo-accent" d="M160 23 A82 82 0 0 1 242 105"/><text class="geo-accent-label" x="204" y="27">90°</text><text class="geo-accent-label" x="174" y="119">O</text>`);
+  return transformationSvg(exercise);
+}
 function geometryQuestionSvg(exercise){
   const notion=exercise.notion;
   if(notion.includes("abscisse")||notion.includes("nombre relatif"))return numberLineSvg(exercise);
@@ -629,6 +642,7 @@ function geometryQuestionSvg(exercise){
   if(notion==="Égalité de Pythagore"||notion==="Triangle rectangle et cercle circonscrit"||notion==="Droite des milieux")return triangleSvg(exercise);
   if(notion==="Théorème de Thalès")return thalesSvg(exercise);
   if(notion==="Rapports trigonométriques")return trigonometrySvg(exercise);
+  if(exercise.transformType)return transformationExerciseSvg(exercise);
   return "";
 }
 function figureChoiceShapeSvg(shape){
@@ -712,6 +726,8 @@ function renderQuestionVisual(exercise){
 }
 
 const G5 = [
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Construire un sym\u00e9trique",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=row*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par la symétrie axiale d’axe vertical ?`,answer,`L’axe échange les colonnes symétriques : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",grid:{columns:6,rows:4,source}})}},
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale et demi-tour",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=(3-row)*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par un demi-tour de centre O ?`,answer,`Un demi-tour échange la ligne et la colonne par rapport au centre : la case n°${source} devient la case n°${answer}.`,[],{transformType:"centrale",grid:{columns:6,rows:4,source}})}},
 {theme:"Nombres et calculs", notion:"Critères de divisibilité par 2, 5 et 10", make:()=>{let n=rand(12,999);return q(`Le nombre ${n} est-il divisible par 2, 5 ou 10 ? Donne toutes les réponses possibles.`, divis(n), `On observe le chiffre des unités : ${n%10}.`)}},
 {theme:"Nombres et calculs", notion:"Quotient et reste d’une division euclidienne", make:()=>{let b=rand(3,9),quo=rand(2,15),r=rand(0,b-1),a=b*quo+r;return q(`Dans la division euclidienne de ${a} par ${b}, donne le quotient et le reste.`,`${quo};${r}`,`${a} = ${b} × ${quo} + ${r}.`,["q="+quo+" r="+r,quo+","+r])}},
 {theme:"Nombres et calculs", notion:"Factorisation avec les tables", make:()=>{let a=rand(2,9),b=rand(2,9),n=a*b;return q(`Complète : ${n} = ${a} × …`,b,`${n} = ${a} × ${b}.`)}},
@@ -766,6 +782,7 @@ const G5 = [
 ];
 
 const G4 = [
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Images de figures par transformation",make:()=>{let source=rand(1,8),answer=((source+1)%8)+1;return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle 90° dans le sens horaire ?`,answer,`Un quart de tour dans le sens horaire avance de deux secteurs : ${source} devient ${answer}.`,[],{transformType:"rotation"})}},
 {theme:"Nombres et calculs",notion:"Sommes et différences de nombres relatifs",make:()=>{let a=rand(-12,12),b=rand(-12,12),op=Math.random()<.5?"+":"−",ans=op==="+"?a+b:a-b;return q(`Calcule : ${a} ${op} (${b})`,ans,`On effectue le calcul sur les nombres relatifs : ${ans}.`)}},
 {theme:"Nombres et calculs",notion:"Opposé d’un nombre et somme d’opposés",make:()=>{let a=rand(-20,20);if(a===0)a=7;return q(`Quel est l’opposé de ${a} ?`,-a,`Deux nombres opposés ont une somme nulle.`)}},
 {theme:"Nombres et calculs",notion:"Multiplier et diviser par 10, 100, 1 000",make:()=>{let n=rand(12,999)/10,p=[10,100,1000][rand(0,2)],op=Math.random()<.5?"×":"÷",ans=op==="×"?n*p:n/p;return q(`Calcule : ${fmt(n)} ${op} ${p}`,fmt(ans),`La virgule se décale de ${String(p).length-1} rang(s).`)}},
@@ -809,6 +826,7 @@ const G4 = [
 
 
 const G3 = [
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale, demi-tour et translation",make:()=>{let x=rand(-5,5),y=rand(-5,5),dx=rand(-4,4),dy=rand(-4,4);return q(`Le point A(${x} ; ${y}) est transformé par la translation de vecteur (${dx} ; ${dy}). Quelles sont les coordonnées de son image ?`,`${x+dx} ; ${y+dy}`,`On ajoute les coordonnées du vecteur : (${x}+${dx} ; ${y}+${dy}) = (${x+dx} ; ${y+dy}).`,[],{transformType:"translation"})}},
 {theme:"Nombres et calculs",notion:"Opérations sur les fractions",make:()=>{let d1=[2,3,4,5,6][rand(0,4)],d2=[2,3,4,5,6][rand(0,4)],a=rand(1,d1-1),b=rand(1,d2-1),op=["+","−","×","÷"][rand(0,3)],n,d;if(op==="+"){n=a*d2+b*d1;d=d1*d2}else if(op==="−"){n=a*d2-b*d1;d=d1*d2}else if(op==="×"){n=a*b;d=d1*d2}else{n=a*d2;d=d1*b}return q(`Calcule et simplifie : ${a}/${d1} ${op} ${b}/${d2}`,simp(n,d),`On applique la règle de calcul adaptée puis on simplifie.`)}},
 {theme:"Nombres et calculs",notion:"Puissance comme multiplication itérée",make:()=>{let a=[2,3,4,5][rand(0,3)],e=rand(2,5);return q(`Écris ${a} × ${Array(e-1).fill(a).join(" × ")} sous forme d’une puissance.`,`${a}^${e}`,`Le facteur ${a} apparaît ${e} fois.`)}},
 {theme:"Nombres et calculs",notion:"Multiplication de puissances d’un même nombre",make:()=>{let a=[2,3,5][rand(0,2)],m=rand(1,5),n=rand(1,5);return q(`Simplifie : ${a}^${m} × ${a}^${n}`,`${a}^${m+n}`,`On additionne les exposants : ${m}+${n}=${m+n}.`)}},
@@ -915,6 +933,7 @@ function divis2359(n){
 
 
 const G6 = [
+{theme:"G\u00e9om\u00e9trie plane et espace",notion:"Sym\u00e9trie axiale sur quadrillage",make:()=>{let source=rand(1,12),row=Math.floor((source-1)/4),column=(source-1)%4,answer=row*4+(3-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par la symétrie axiale d’axe vertical ?`,answer,`Les cases à la même hauteur sont échangées deux à deux : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",grid:{columns:4,rows:3,source}})}},
 {theme:"Nombres entiers et décimaux",notion:"Restituer automatiquement des résultats usuels",make:()=>{let a=[10,100,1000][rand(0,2)],b=[10,100,1000][rand(0,2)];return q(`Calcule : 1/${a} × ${b}`,fmt(b/a),`On utilise les relations entre dixièmes, centièmes et millièmes.`)}},
 {theme:"Nombres entiers et décimaux",notion:"Équivalences d’écritures décimales",make:()=>{let n=rand(1,999);let d=[10,100,1000][rand(0,2)];return q(`Donne l’écriture décimale de ${n}/${d}.`,fmt(n/d),`${n} ÷ ${d} = ${fmt(n/d)}.`)}},
 {theme:"Nombres entiers et décimaux",notion:"Fractions décimales et écritures décimales",make:()=>{let v=rand(1,999)/100;return q(`Écris ${fmt(v)} sous forme d’une fraction décimale.`,`${Math.round(v*100)}/100`,`${fmt(v)} = ${Math.round(v*100)}/100.`)}},
