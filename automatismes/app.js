@@ -787,7 +787,16 @@ const G5 = [
 ];
 
 const G4 = [
-{theme:"Espace et g\u00e9om\u00e9trie",notion:"Images de figures par transformation",make:()=>{const source=rand(1,8),angle=[45,90,135,180,225,270,315][rand(0,6)],direction=Math.random()<.5?"horaire":"antihoraire",steps=angle/45,answer=((source-1+(direction==="horaire"?steps:-steps)+800)%8)+1;return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle ${angle}° dans le sens ${direction} ?`,answer,`La rotation de ${angle}° correspond à ${steps} secteur${steps>1?"s":""} : en sens ${direction}, le secteur ${source} devient le secteur ${answer}.`,[],{transformType:"rotation",rotationSource:source,rotationAngle:angle,rotationDirection:direction})}},
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Images de figures par transformation",make:()=>{
+  const type=["rotation","axiale","centrale","translation"][rand(0,3)];
+  if(type==="rotation"){
+    const source=rand(1,8),angle=[45,90,135,180,225,270,315][rand(0,6)],direction=Math.random()<.5?"horaire":"antihoraire",steps=angle/45,answer=((source-1+(direction==="horaire"?steps:-steps)+800)%8)+1;
+    return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle ${angle}° dans le sens ${direction} ?`,answer,`La rotation de ${angle}° correspond à ${steps} secteur${steps>1?"s":""} : en sens ${direction}, le secteur ${source} devient le secteur ${answer}.`,[],{transformType:"rotation",rotationSource:source,rotationAngle:angle,rotationDirection:direction});
+  }
+  const transformations={axiale:["symétrie axiale","Une symétrie axiale est définie par un axe."],centrale:["symétrie centrale","Une symétrie centrale est définie par un centre."],translation:["translation","Une translation déplace tous les points selon un même vecteur."]};
+  const [answer,explanation]=transformations[type];
+  return q("Quelle transformation permet de passer de la figure de gauche à la figure de droite ?",answer,explanation,[],{transformType:type});
+}},
 {theme:"Nombres et calculs",notion:"Sommes et différences de nombres relatifs",make:()=>{let a=rand(-12,12),b=rand(-12,12),op=Math.random()<.5?"+":"−",ans=op==="+"?a+b:a-b;return q(`Calcule : ${a} ${op} (${b})`,ans,`On effectue le calcul sur les nombres relatifs : ${ans}.`)}},
 {theme:"Nombres et calculs",notion:"Opposé d’un nombre et somme d’opposés",make:()=>{let a=rand(-20,20);if(a===0)a=7;return q(`Quel est l’opposé de ${a} ?`,-a,`Deux nombres opposés ont une somme nulle.`)}},
 {theme:"Nombres et calculs",notion:"Multiplier et diviser par 10, 100, 1 000",make:()=>{let n=rand(12,999)/10,p=[10,100,1000][rand(0,2)],op=Math.random()<.5?"×":"÷",ans=op==="×"?n*p:n/p;return q(`Calcule : ${fmt(n)} ${op} ${p}`,fmt(ans),`La virgule se décale de ${String(p).length-1} rang(s).`)}},
@@ -831,7 +840,20 @@ const G4 = [
 
 
 const G3 = [
-{theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale, demi-tour et translation",make:()=>{let x=rand(-5,5),y=rand(-5,5),dx=rand(-4,4),dy=rand(-4,4);return q(`Le point A(${x} ; ${y}) est transformé par la translation de vecteur (${dx} ; ${dy}). Quelles sont les coordonnées de son image ?`,`${x+dx} ; ${y+dy}`,`On ajoute les coordonnées du vecteur : (${x}+${dx} ; ${y}+${dy}) = (${x+dx} ; ${y+dy}).`,[],{transformType:"translation"})}},
+{theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale, demi-tour et translation",make:()=>{
+  const type=["axiale","centrale","translation","rotation"][rand(0,3)];
+  if(type==="translation"){
+    const x=rand(-5,5),y=rand(-5,5),dx=rand(-4,4),dy=rand(-4,4);
+    return q(`Le point A(${x} ; ${y}) est transformé par la translation de vecteur (${dx} ; ${dy}). Quelles sont les coordonnées de son image ?`,`${x+dx} ; ${y+dy}`,`On ajoute les coordonnées du vecteur : (${x}+${dx} ; ${y}+${dy}) = (${x+dx} ; ${y+dy}).`,[],{transformType:"translation"});
+  }
+  if(type==="rotation"){
+    const source=rand(1,8),angle=[45,90,135,180,225,270,315][rand(0,6)],direction=Math.random()<.5?"horaire":"antihoraire",steps=angle/45,answer=((source-1+(direction==="horaire"?steps:-steps)+800)%8)+1;
+    return q(`Le secteur ${source} est coloré. Quelle est son image par la rotation de centre O et d’angle ${angle}° dans le sens ${direction} ?`,answer,`La rotation de ${angle}° correspond à ${steps} secteur${steps>1?"s":""} : en sens ${direction}, le secteur ${source} devient le secteur ${answer}.`,[],{transformType:"rotation",rotationSource:source,rotationAngle:angle,rotationDirection:direction});
+  }
+  const answer=type==="axiale"?"symétrie axiale":"symétrie centrale";
+  const explanation=type==="axiale"?"Une symétrie axiale est définie par un axe.":"Une symétrie centrale est définie par un centre.";
+  return q("Quelle transformation permet de passer de la figure de gauche à la figure de droite ?",answer,explanation,[],{transformType:type});
+}},
 {theme:"Nombres et calculs",notion:"Opérations sur les fractions",make:()=>{let d1=[2,3,4,5,6][rand(0,4)],d2=[2,3,4,5,6][rand(0,4)],a=rand(1,d1-1),b=rand(1,d2-1),op=["+","−","×","÷"][rand(0,3)],n,d;if(op==="+"){n=a*d2+b*d1;d=d1*d2}else if(op==="−"){n=a*d2-b*d1;d=d1*d2}else if(op==="×"){n=a*b;d=d1*d2}else{n=a*d2;d=d1*b}return q(`Calcule et simplifie : ${a}/${d1} ${op} ${b}/${d2}`,simp(n,d),`On applique la règle de calcul adaptée puis on simplifie.`)}},
 {theme:"Nombres et calculs",notion:"Puissance comme multiplication itérée",make:()=>{let a=[2,3,4,5][rand(0,3)],e=rand(2,5);return q(`Écris ${a} × ${Array(e-1).fill(a).join(" × ")} sous forme d’une puissance.`,`${a}^${e}`,`Le facteur ${a} apparaît ${e} fois.`)}},
 {theme:"Nombres et calculs",notion:"Multiplication de puissances d’un même nombre",make:()=>{let a=[2,3,5][rand(0,2)],m=rand(1,5),n=rand(1,5);return q(`Simplifie : ${a}^${m} × ${a}^${n}`,`${a}^${m+n}`,`On additionne les exposants : ${m}+${n}=${m+n}.`)}},
