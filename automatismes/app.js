@@ -1804,7 +1804,9 @@ function renderQuestion(){
   renderQuestionVisual(x);
   const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices);
   answerInput.value="";
-  answerInput.classList.toggle("hidden",flashcardMode||hasFigureChoices);
+  answerInput.disabled=false;
+  answerInput.classList.toggle("hidden",hasFigureChoices&&!flashcardMode);
+  answerInput.placeholder=flashcardMode?"Écris ta réponse (facultatif)":"Écris ta réponse";
   document.querySelector(".math-keypad").classList.toggle("hidden",flashcardMode||hasFigureChoices);
   updateMathPreview();
   document.getElementById("feedback").className="feedback hidden";
@@ -1819,9 +1821,11 @@ function renderQuestion(){
 function revealFlashcard(){
   if(!flashcardMode||answered)return;
   const x=currentQuiz[index],fb=document.getElementById("feedback");
+  const userAnswer=document.getElementById("answerInput").value.trim();
   answered=true;
   fb.className="feedback good";
-  fb.innerHTML=`✅ Réponse : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${mathPreviewMarkup(translateGeneratedText(x.explanation))}`;
+  fb.innerHTML=`${userAnswer?`Ta réponse : <strong>${mathPreviewMarkup(userAnswer)}</strong><br>`:""}✅ Réponse : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${mathPreviewMarkup(translateGeneratedText(x.explanation))}`;
+  document.getElementById("answerInput").disabled=true;
   document.getElementById("showFlashcardAnswer").classList.add("hidden");
   document.getElementById("finishFlashcard").classList.remove("hidden");
 }
