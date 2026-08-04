@@ -616,11 +616,11 @@ function transformationSvg(exercise){
 function transformationExerciseSvg(exercise){
   if(exercise.numberedTransform){
     const data=exercise.numberedTransform,cell=38,x0=45,y0=18,columns=data.columns||4,rows=data.rows||4;
-    const cells=Array.from({length:columns*rows},(_,index)=>{const row=Math.floor(index/columns),column=index%columns,number=index+1,offset=data.kind==="translation"&&row%2?14:0;return `<rect class="${number===data.source?"geo-accent geo-surface":"geo-line"}" x="${x0+column*cell+offset}" y="${y0+row*cell}" width="${cell}" height="${cell}"/><text class="geo-small-label" x="${x0+column*cell+offset+cell/2}" y="${y0+row*cell+cell/2}">${number}</text>`}).join("");
+    const cells=Array.from({length:columns*rows},(_,index)=>{const row=Math.floor(index/columns),column=index%columns,number=index+1,offset=data.kind==="translation"&&row%2?14:0,x=x0+column*cell+offset,y=y0+row*cell,shape=data.layout==="parallelogram"?`<path class="${number===data.source?"geo-accent geo-surface":"geo-line"}" d="M ${x+9} ${y} H ${x+cell+9} L ${x+cell} ${y+cell} H ${x} Z"/>`:data.layout==="triangle"?((row+column)%2?`<path class="${number===data.source?"geo-accent geo-surface":"geo-line"}" d="M ${x} ${y} L ${x+cell} ${y} L ${x+cell/2} ${y+cell} Z"/>`:`<path class="${number===data.source?"geo-accent geo-surface":"geo-line"}" d="M ${x+cell/2} ${y} L ${x+cell} ${y+cell} L ${x} ${y+cell} Z"/>`):`<rect class="${number===data.source?"geo-accent geo-surface":"geo-line"}" x="${x}" y="${y}" width="${cell}" height="${cell}"/>`;return `${shape}<text class="geo-small-label" x="${x+cell/2+(data.layout==="parallelogram"?4:0)}" y="${y+cell/2}">${number}</text>`}).join("");
     if(data.kind==="translation"){
       const center=(number)=>{const row=Math.floor((number-1)/3),column=(number-1)%3;return [x0+column*cell+cell/2+(row%2?14:0),y0+row*cell+cell/2]};
       const [fromX,fromY]=center(data.from),[toX,toY]=center(data.to);
-      return geometrySvg("Cases numérotées et translation",`${cells}<line class="geo-accent geo-dash" x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"/><circle class="geo-point" cx="${fromX}" cy="${fromY}" r="3"/><circle class="geo-point" cx="${toX}" cy="${toY}" r="3"/>`);
+      return geometrySvg("Figures numérotées et translation",`${cells}<line class="geo-accent geo-dash" x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}"/><circle class="geo-point" cx="${fromX}" cy="${fromY}" r="3"/><circle class="geo-point" cx="${toX}" cy="${toY}" r="3"/>`);
     }
     const axis=data.kind==="centrale"?`<circle class="geo-point" cx="${x0+columns*cell/2}" cy="${y0+rows*cell/2}" r="4"/><text class="geo-accent-label" x="${x0+columns*cell/2+15}" y="${y0+rows*cell/2}">O</text>`:data.axis==="horizontal"?`<line class="geo-accent geo-dash" x1="${x0-10}" y1="${y0+rows*cell/2}" x2="${x0+columns*cell+10}" y2="${y0+rows*cell/2}"/>`:data.axis==="diagonal"?`<line class="geo-accent geo-dash" x1="${x0-8}" y1="${y0-8}" x2="${x0+columns*cell+8}" y2="${y0+rows*cell+8}"/>`:`<line class="geo-accent geo-dash" x1="${x0+columns*cell/2}" y1="${y0-8}" x2="${x0+columns*cell/2}" y2="${y0+rows*cell+8}"/>`;
     return geometrySvg("Cases numérotées et axe de symétrie",`${cells}${axis}`);
@@ -743,8 +743,8 @@ function renderQuestionVisual(exercise){
 
 function numberedTransformationQuestion(type){
   if(type==="translation"){
-    const source=[3,6,9][rand(0,2)],answer=source-1;
-    return q(`La case n°${source} est colorée. Quelle est son image par la translation qui transforme la case n°8 en case n°7 ?`,answer,`Le déplacement de la case n°8 vers la case n°7 fait reculer d’une colonne : la case n°${source} devient la case n°${answer}.`,[],{transformType:"translation",numberedTransform:{kind:"translation",columns:3,rows:3,source,from:8,to:7}});
+    const variants=[{from:8,to:7,sources:[3,6,9],delta:-1},{from:7,to:8,sources:[1,4,7],delta:1},{from:4,to:1,sources:[7,8,9],delta:-3},{from:1,to:4,sources:[1,2,3],delta:3}],variant=variants[rand(0,variants.length-1)],source=variant.sources[rand(0,variant.sources.length-1)],answer=source+variant.delta,layout=["square","parallelogram","triangle"][rand(0,2)];
+    return q(`La figure n°${source} est colorée. Quelle est son image par la translation qui transforme la figure n°${variant.from} en figure n°${variant.to} ?`,answer,`Le déplacement de la figure n°${variant.from} vers la figure n°${variant.to} est le même pour la figure n°${source} : elle devient la figure n°${answer}.`,[],{transformType:"translation",numberedTransform:{kind:"translation",columns:3,rows:3,source,from:variant.from,to:variant.to,layout}});
   }
   const source=rand(1,16),row=Math.floor((source-1)/4),column=(source-1)%4;
   if(type==="centrale"){
