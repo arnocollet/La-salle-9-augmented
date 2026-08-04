@@ -100,7 +100,7 @@ main{width:100%;padding:30px;max-width:1500px;margin:0 auto}
 .geo-fill,.geo-point{fill:var(--accent)}
 .geo-label,.geo-small-label,.geo-accent-label,.geo-unknown-label{font-family:"Plus Jakarta Sans",Calibri,Arial,sans-serif;text-anchor:middle;dominant-baseline:middle}
 .geo-label{fill:var(--text-primary);font-size:13px;font-weight:700}
-.geo-small-label{fill:var(--text-secondary);font-size:8px}
+.geo-small-label{fill:var(--text-primary);font-size:12px;font-weight:600}
 .geo-y-label{text-anchor:end}
 .geo-accent-label{fill:var(--accent);font-size:12px;font-weight:700}
 .geo-unknown-label{fill:var(--text-primary);font-size:13px;font-weight:800}
