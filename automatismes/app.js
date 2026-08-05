@@ -615,7 +615,7 @@ function transformationSvg(exercise){
 }
 function transformationExerciseSvg(exercise){
   if(exercise.numberedTransform){
-    const data=exercise.numberedTransform,cell=38,x0=45,y0=18,columns=data.columns||4,rows=data.rows||4;
+    const data=exercise.numberedTransform,cell=38,columns=data.columns||4,rows=data.rows||4,x0=(320-(columns*cell+(data.kind==="translation"?23:0)))/2,y0=18;
     const cells=Array.from({length:columns*rows},(_,index)=>{const row=Math.floor(index/columns),column=index%columns,number=index+1,offset=data.kind==="translation"&&row%2?14:0,x=x0+column*cell+offset,y=y0+row*cell,shape=data.layout==="parallelogram"?`<path class="${number===data.source?"geo-accent geo-surface":"geo-line"}" d="M ${x+9} ${y} H ${x+cell+9} L ${x+cell} ${y+cell} H ${x} Z"/>`:data.layout==="triangle"?((row+column)%2?`<path class="${number===data.source?"geo-accent geo-surface":"geo-line"}" d="M ${x} ${y} L ${x+cell} ${y} L ${x+cell/2} ${y+cell} Z"/>`:`<path class="${number===data.source?"geo-accent geo-surface":"geo-line"}" d="M ${x+cell/2} ${y} L ${x+cell} ${y+cell} L ${x} ${y+cell} Z"/>`):`<rect class="${number===data.source?"geo-accent geo-surface":"geo-line"}" x="${x}" y="${y}" width="${cell}" height="${cell}"/>`;return `${shape}<text class="geo-small-label" x="${x+cell/2+(data.layout==="parallelogram"?4:0)}" y="${y+cell/2}">${number}</text>`}).join("");
     if(data.kind==="translation"){
       const center=(number)=>{const row=Math.floor((number-1)/3),column=(number-1)%3;return [x0+column*cell+cell/2+(row%2?14:0),y0+row*cell+cell/2]};
@@ -1992,7 +1992,7 @@ function validate(){
   const explanationMarkup=mathPreviewMarkup(translateGeneratedText(x.explanation));
   fb.innerHTML=isCorrect
     ?`✅ ${modalT("correctAnswers")}. ${explanationMarkup}`
-    :`❌ ${modalT("correction")} : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${explanationMarkup}`;
+    :`❌ ${modalT("correction")} : <strong class="feedback-correction-answer">${mathPreviewMarkup(x.answer)}</strong><br>${explanationMarkup}`;
   document.getElementById("validateAnswer").classList.add("hidden");
   scheduleNextQuestion();
 }

@@ -453,3 +453,4 @@ body{
   .progress-summary .legend span{gap:.4rem}
   .progress-summary .legend i{width:9px;height:9px}
 }
+.feedback-correction-answer{color:var(--green)}
