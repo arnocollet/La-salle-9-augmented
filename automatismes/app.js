@@ -1094,7 +1094,7 @@ if(!state.levels){
 if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
-let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,flashcardMode=false,nextQuestionTimer=null,pointsMilestoneTimer=null;
+let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null,pointsMilestoneTimer=null;
 let printableSheets=[],printableLevel="";
 let selectedChoiceNotions=new Set();
 
@@ -1386,7 +1386,6 @@ function makeChoiceMenu(){
   updateChoiceSelection();
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
-document.getElementById("startFlashcard").onclick=startFlashcard;
 document.getElementById("startReview").onclick=openReviewPlan;
 document.getElementById("openProgress").onclick=()=>showView("progress");
 document.getElementById("openWorksheets").onclick=()=>showView("worksheets");
@@ -1411,9 +1410,7 @@ document.addEventListener("keydown",event=>{
   document.getElementById("choiceModal").classList.add("hidden");
   closeReviewPlan();
 });
-document.getElementById("quitQuiz").onclick=()=>{flashcardMode=false;showView("home")};
-document.getElementById("showFlashcardAnswer").onclick=revealFlashcard;
-document.getElementById("finishFlashcard").onclick=()=>{flashcardMode=false;showView("home");renderAll()};
+document.getElementById("quitQuiz").onclick=()=>showView("home");
 document.getElementById("returnHome").onclick=()=>{document.getElementById("resultModal").classList.add("hidden");showView("home");renderAll()};
 document.getElementById("validateAnswer").onclick=validate;
 document.getElementById("answerInput").addEventListener("keydown",e=>{
@@ -1774,7 +1771,6 @@ async function downloadWorksheetsPdf(){
 }
 
 function startQuiz(mode,theme=null,notions=[]){
-  flashcardMode=false;
   currentQuiz=buildMixedLevelRoutine(5,{mode,theme,notions});
   if(!currentQuiz.length)return;
   beginCurrentQuiz();
@@ -1785,13 +1781,6 @@ function beginCurrentQuiz(){
   document.getElementById("choiceModal").classList.add("hidden");
   document.getElementById("reviewModal").classList.add("hidden");
   showView("training");renderQuestion();
-}
-function startFlashcard(){
-  const pool=GENERATORS[currentLevel].filter(generator=>/transformation|symétr|rotation|translation/i.test(generator.notion));
-  currentQuiz=buildRoutineFromGenerators(pool,1);
-  if(!currentQuiz.length)return;
-  flashcardMode=true;
-  beginCurrentQuiz();
 }
 function renderQuestion(){
   cancelScheduledNextQuestion();
@@ -1804,30 +1793,15 @@ function renderQuestion(){
   renderQuestionVisual(x);
   const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices);
   answerInput.value="";
-  answerInput.disabled=false;
-  answerInput.classList.toggle("hidden",hasFigureChoices&&!flashcardMode);
-  answerInput.placeholder=flashcardMode?"Écris ta réponse (facultatif)":"Écris ta réponse";
-  document.querySelector(".math-keypad").classList.toggle("hidden",flashcardMode||hasFigureChoices);
+  answerInput.classList.toggle("hidden",hasFigureChoices);
+  document.querySelector(".math-keypad").classList.toggle("hidden",hasFigureChoices);
   updateMathPreview();
   document.getElementById("feedback").className="feedback hidden";
-  document.getElementById("validateAnswer").classList.toggle("hidden",flashcardMode);
-  document.getElementById("showFlashcardAnswer").classList.toggle("hidden",!flashcardMode);
-  document.getElementById("finishFlashcard").classList.add("hidden");
+  document.getElementById("validateAnswer").classList.remove("hidden");
   answered=false;
-  setTimeout(()=>flashcardMode?document.getElementById("showFlashcardAnswer").focus():hasFigureChoices
+  setTimeout(()=>hasFigureChoices
     ?document.querySelector(".figure-choice")?.focus()
     :answerInput.focus(),100);
-}
-function revealFlashcard(){
-  if(!flashcardMode||answered)return;
-  const x=currentQuiz[index],fb=document.getElementById("feedback");
-  const userAnswer=document.getElementById("answerInput").value.trim();
-  answered=true;
-  fb.className="feedback good";
-  fb.innerHTML=`${userAnswer?`Ta réponse : <strong>${mathPreviewMarkup(userAnswer)}</strong><br>`:""}✅ Réponse : <strong>${mathPreviewMarkup(x.answer)}</strong><br>${mathPreviewMarkup(translateGeneratedText(x.explanation))}`;
-  document.getElementById("answerInput").disabled=true;
-  document.getElementById("showFlashcardAnswer").classList.add("hidden");
-  document.getElementById("finishFlashcard").classList.remove("hidden");
 }
 function mathPreviewMarkup(value){
   let markup=escapeXml(value.trim());
