@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (portalIllustration) {
     const homepageImages = [
       {
-        src: 'assets/accueil-effort.jpg',
+        src: 'assets/accueil-effort-fille.png',
         alt: 'Les maths, c’est comme le sport : pour progresser, il faut s’entraîner'
       },
       {
-        src: 'assets/accueil-effort-gars.png',
+        src: 'assets/accueil-effort-gars-nouveau.png',
         alt: 'Un garçon s’entraîne : en mathématiques comme dans le sport, chaque effort compte'
       }
     ];
