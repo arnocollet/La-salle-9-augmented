@@ -822,6 +822,7 @@ function renderQuestionVisual(exercise){
     host.innerHTML=renderCubeStackSvg(exercise.cubeStack);
     if(exercise.cubeChoices){
       const choiceHost=document.createElement("div");
+      choiceHost.className="cube-view-choices-host";
       host.appendChild(choiceHost);
       renderCubeViewChoices(exercise,choiceHost);
     }
@@ -1982,7 +1983,7 @@ function renderQuestion(){
   document.getElementById("questionTheme").textContent=translateGeneratedText(x.theme);
   document.getElementById("questionText").innerHTML=mathPreviewMarkup(translateGeneratedText(x.text));
   renderQuestionVisual(x);
-  const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices||x.cubeChoices);
+  const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices||x.cubeChoices||x.cubeStack);
   answerInput.value="";
   answerInput.classList.toggle("hidden",hasFigureChoices);
   document.querySelector(".math-keypad").classList.toggle("hidden",hasFigureChoices);
