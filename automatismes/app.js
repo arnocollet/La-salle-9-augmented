@@ -1126,7 +1126,7 @@ const AUTO_CATEGORY_TEXT={
   scratch:{fr:"Algorithmique Scratch",en:"Scratch algorithms",es:"Algoritmia Scratch",de:"Scratch-Algorithmen"}
 };
 const AUTO_TOOL_TEXT={
-  fr:{worksheets:"Créer des fiches d’entraînement",worksheetDesc:"Chaque fiche reprend la routine aléatoire avec",selected:"exercices du niveau sélectionné.",sheetCount:"Nombre de fiches",remove:"Retirer une fiche",add:"Ajouter une fiche",answers:"Ajouter le corrigé à la fin du PDF",dyslexic:"Version dyslexique",level:"Niveau",content:"Contenu",download:"Créer et télécharger le PDF",preview:"Aperçu de la fiche 1",previewAria:"Aperçu du contenu de la première fiche PDF",previewNote:"L’aperçu affiche le contenu de la fiche 1 au format A4. À l’impression, deux exemplaires sont placés sur chaque feuille A4.",sessions:"routines terminées",questions:"questions répondues",success:"de réussite",days:"jours consécutifs",byTheme:"Résultats par thème",latest:"Dernières routines",data:"Mes données",dataDesc:"La progression, les points et l’historique sont enregistrés uniquement dans ce navigateur.",reference:"Référentiel des automatismes de",answer:"Réponse",sheet:"FICHE N°",noData:"Effacer définitivement vos points, votre progression et votre historique sur tous les niveaux dans ce navigateur ?"},
+  fr:{worksheets:"Créer des fiches d’entraînement",worksheetDesc:"Chaque fiche reprend la routine aléatoire avec",selected:"exercices du niveau sélectionné.",sheetCount:"Nombre de fiches",remove:"Retirer une fiche",add:"Ajouter une fiche",answers:"Ajouter le corrigé à la fin du PDF",dyslexic:"Version dyslexique",level:"Niveau",content:"Contenu",download:"Créer et télécharger le PDF",preview:"Aperçu de la fiche 1",previewAria:"Aperçu du contenu de la première fiche PDF",previewNote:"L’aperçu affiche le contenu de la fiche 1 au format A4. La version standard est imprimée en deux exemplaires par feuille A4 ; la version dyslexique reste en pleine page A4.",sessions:"routines terminées",questions:"questions répondues",success:"de réussite",days:"jours consécutifs",byTheme:"Résultats par thème",latest:"Dernières routines",data:"Mes données",dataDesc:"La progression, les points et l’historique sont enregistrés uniquement dans ce navigateur.",reference:"Référentiel des automatismes de",answer:"Réponse",sheet:"FICHE N°",noData:"Effacer définitivement vos points, votre progression et votre historique sur tous les niveaux dans ce navigateur ?"},
   en:{worksheets:"Create practice worksheets",worksheetDesc:"Each worksheet uses the random routine with",selected:"exercises from the selected level.",sheetCount:"Number of worksheets",remove:"Remove one worksheet",add:"Add one worksheet",answers:"Add answer key at the end of the PDF",dyslexic:"Dyslexia-friendly version",level:"Level",content:"Content",download:"Create and download PDF",preview:"Preview of worksheet 1",previewAria:"Exact preview of the first PDF worksheet",previewNote:"The preview shows the first page of worksheet 1. The PDF contains all requested worksheets.",sessions:"completed routines",questions:"questions answered",success:"success rate",days:"consecutive days",byTheme:"Results by topic",latest:"Latest routines",data:"My data",dataDesc:"Progress, points and history are stored only in this browser.",reference:"Mental-math reference for",answer:"Answer",sheet:"WORKSHEET No.",noData:"Permanently delete your points, progress and history for all levels from this browser?"},
   es:{worksheets:"Crear fichas de práctica",worksheetDesc:"Cada ficha utiliza la rutina aleatoria con",selected:"ejercicios del nivel seleccionado.",sheetCount:"Número de fichas",remove:"Quitar una ficha",add:"Añadir una ficha",answers:"Añadir las soluciones al final del PDF",dyslexic:"Versión para dislexia",level:"Nivel",content:"Contenido",download:"Crear y descargar el PDF",preview:"Vista previa de la ficha 1",previewAria:"Vista previa exacta de la primera ficha PDF",previewNote:"La vista previa muestra la primera página de la ficha 1. El PDF contiene todas las fichas solicitadas.",sessions:"rutinas terminadas",questions:"preguntas respondidas",success:"tasa de aciertos",days:"días consecutivos",byTheme:"Resultados por tema",latest:"Últimas rutinas",data:"Mis datos",dataDesc:"El progreso, los puntos y el historial solo se guardan en este navegador.",reference:"Referencial de automatismos de",answer:"Respuesta",sheet:"FICHA N.º",noData:"¿Borrar definitivamente tus puntos, tu progreso y tu historial de todos los niveles de este navegador?"},
   de:{worksheets:"Übungsblätter erstellen",worksheetDesc:"Jedes Blatt verwendet die Zufallsrunde mit",selected:"Aufgaben der ausgewählten Stufe.",sheetCount:"Anzahl der Blätter",remove:"Ein Blatt entfernen",add:"Ein Blatt hinzufügen",answers:"Lösungen am Ende der PDF hinzufügen",dyslexic:"Legastheniefreundliche Version",level:"Stufe",content:"Inhalt",download:"PDF erstellen und herunterladen",preview:"Vorschau von Blatt 1",previewAria:"Exakte Vorschau des ersten PDF-Arbeitsblatts",previewNote:"Die Vorschau zeigt die erste Seite von Blatt 1. Das PDF enthält alle angeforderten Blätter.",sessions:"abgeschlossene Übungsrunden",questions:"beantwortete Fragen",success:"Erfolgsquote",days:"aufeinanderfolgende Tage",byTheme:"Ergebnisse nach Thema",latest:"Letzte Übungsrunden",data:"Meine Daten",dataDesc:"Fortschritt, Punkte und Verlauf werden nur in diesem Browser gespeichert.",reference:"Kopfrechen-Übersicht für",answer:"Antwort",sheet:"BLATT NR.",noData:"Punkte, Fortschritt und Verlauf für alle Stufen dauerhaft aus diesem Browser löschen?"}
@@ -1706,7 +1706,7 @@ function joinBytes(parts,total){
   parts.forEach(part=>{result.set(part,offset);offset+=part.length});
   return result;
 }
-function makeImagePdf(images){
+function makeImagePdf(images,{twoUp=true}={}){
   const parts=[],offsets=[0];let length=0;
   const add=part=>{parts.push(part);length+=part.length};
   const addText=text=>add(asciiBytes(text));
@@ -1722,11 +1722,15 @@ function makeImagePdf(images){
   images.forEach((image,i)=>{
     const pageId=3+i*3,contentId=pageId+1,imageId=pageId+2;
     beginObject(pageId);
-    // Chaque fiche A4 est placée deux fois sur une feuille A4 paysage,
-    // au format A5, sans modifier le canvas utilisé pour l'aperçu écran.
-    addText(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.89 595.28] /Resources << /XObject << /Im1 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\n`);
+    // La mise en page d’impression est choisie sans modifier le canvas
+    // utilisé pour l’aperçu écran.
+    const pageWidth=twoUp?841.89:595.28;
+    const pageHeight=twoUp?595.28:841.89;
+    addText(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im1 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\n`);
     endObject();
-    const stream="q\n420.945 0 0 595.28 0 0 cm\n/Im1 Do\nQ\nq\n420.945 0 0 595.28 420.945 0 cm\n/Im1 Do\nQ\n";
+    const stream=twoUp
+      ?"q\n420.945 0 0 595.28 0 0 cm\n/Im1 Do\nQ\nq\n420.945 0 0 595.28 420.945 0 cm\n/Im1 Do\nQ\n"
+      :"q\n595.28 0 0 841.89 0 0 cm\n/Im1 Do\nQ\n";
     beginObject(contentId);addText(`<< /Length ${asciiBytes(stream).length} >>\nstream\n${stream}endstream\n`);endObject();
     beginObject(imageId);
     addText(`<< /Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.length} >>\nstream\n`);
@@ -1761,7 +1765,7 @@ async function downloadWorksheetsPdf(){
         }
       }
     }
-    const pdf=makeImagePdf(images),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
+    const pdf=makeImagePdf(images,{twoUp:!dyslexic}),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
     const link=document.createElement("a");
     link.href=url;link.download=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}${dyslexic?"-dyslexique":""}.pdf`;
     document.body.appendChild(link);link.click();link.remove();
