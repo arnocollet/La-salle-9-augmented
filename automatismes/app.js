@@ -651,13 +651,28 @@ function bisectorSvg(exercise){
   Object.entries(data.rays).forEach(([label,angle])=>{points[label]=bisectorPoint(angle)});
   const line=(label,color="var(--text-primary)")=>`<line x1="160" y1="110" x2="${points[label][0]}" y2="${points[label][1]}" stroke="${color}" stroke-width="3"/><text class="geo-label" x="${points[label][0]+(points[label][0]>160?8:-8)}" y="${points[label][1]+(points[label][1]>110?12:-8)}">${label}</text>`;
   const bisectorAngle=data.rays[data.bisector];
-  const arc=(start,end,color)=>{const radius=35,[x1,y1]=bisectorPoint(start,radius),[x2,y2]=bisectorPoint(end,radius),large=Math.abs(end-start)>180?1:0;return `<path d="M ${x1} ${y1} A ${radius} ${radius} 0 ${large} 0 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round"/>`};
+  const sector=(start,end,fill,stroke)=>{const radius=38,[x1,y1]=bisectorPoint(start,radius),[x2,y2]=bisectorPoint(end,radius),large=Math.abs(end-start)>180?1:0;return `<path d="M 160 110 L ${x1} ${y1} A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2} Z" fill="${fill}" fill-opacity=".22" stroke="${stroke}" stroke-width="1.8"/>`};
   const angleLabel=(start,end)=>{const [x,y]=bisectorPoint((start+end)/2,52);return `<text class="geo-accent-label" x="${x}" y="${y}">${Math.abs(start-end)}°</text>`};
   const rays=Object.entries(data.rays).map(([label])=>line(label,label===data.bisector?"var(--accent)":"var(--text-primary)")).join("");
   const [left,right]=data.equalAngles;
-  return geometrySvg("Angles et bissectrice",`${rays}${arc(left,bisectorAngle,"#f59e0b")}${arc(bisectorAngle,right,"#16a34a")}${angleLabel(left,bisectorAngle)}${angleLabel(bisectorAngle,right)}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text><text class="geo-accent-label" x="160" y="204">Les deux angles colorés sont égaux.</text>`,'0 0 320 220');
+  return geometrySvg("Angles et bissectrice",`${rays}${sector(left,bisectorAngle,"#f59e0b","#d97706")}${sector(bisectorAngle,right,"#22c55e","#15803d")}${angleLabel(left,bisectorAngle)}${angleLabel(bisectorAngle,right)}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text><text class="geo-accent-label" x="160" y="204">Les deux angles colorés sont égaux.</text>`,'0 0 320 220');
+}
+function bisectorTruthSvg(exercise){
+  const data=exercise.bisectorTruthData,cx=225,cy=110,radius=70;
+  const point=(angle,distance=74)=>[cx+distance*Math.cos(angle*Math.PI/180),cy+distance*Math.sin(angle*Math.PI/180)];
+  const [bAngle,candidateAngle,eAngle]=data.angles,[bx,by]=point(bAngle),[ex,ey]=point(eAngle),[ax,ay]=point(candidateAngle,43);
+  const sector=(start,end,fill,stroke)=>{const [x1,y1]=point(start,32),[x2,y2]=point(end,32);return `<path d="M ${cx} ${cy} L ${x1} ${y1} A 32 32 0 0 1 ${x2} ${y2} Z" fill="${fill}" fill-opacity=".22" stroke="${stroke}" stroke-width="1.8"/>`};
+  const labels=`<text class="geo-label" x="${bx-4}" y="${by-8}">B</text><text class="geo-label" x="${ex-4}" y="${ey+16}">E</text><text class="geo-label" x="${ax-5}" y="${ay-8}">A</text><text class="geo-label" x="${cx+10}" y="${cy+18}">C</text><text class="geo-label" x="${cx-68}" y="${cy-28}">D</text>`;
+  const circle=`<circle cx="160" cy="110" r="70" fill="none" stroke="var(--text-primary)" stroke-width="2.5"/>`;
+  const lines=`<line x1="${cx}" y1="${cy}" x2="${bx}" y2="${by}" class="geo-line"/><line x1="${cx}" y1="${cy}" x2="${ex}" y2="${ey}" class="geo-line"/><line x1="${cx-70}" y1="${cy}" x2="${cx+55}" y2="${cy}" class="geo-line"/><line x1="${cx}" y1="${cy}" x2="${cx+42}" y2="${cy}" stroke="var(--accent)" stroke-width="3"/>`;
+  const values=`<text class="geo-accent-label" x="${cx-32}" y="${cy-22}">${data.angleValues[0]}°</text><text class="geo-accent-label" x="${cx-32}" y="${cy+30}">${data.angleValues[1]}°</text>`;
+  return geometrySvg("Vrai ou faux : reconnaître une bissectrice",`${circle}${lines}${sector(bAngle,candidateAngle,"#f59e0b","#d97706")}${sector(candidateAngle,eAngle,"#22c55e","#15803d")}${values}${labels}<circle class="geo-point" cx="${cx}" cy="${cy}" r="4"/>`,'0 0 320 220');
 }
 function makeBisectorQuestion(){
+  if(Math.random()<.33){
+    const isTrue=Math.random()<.5,first=[30,35,40][rand(0,2)],second=isTrue?first:first+[5,10][rand(0,1)];
+    return q(`La droite (AC) est-elle la bissectrice de l’angle BCE ?`,isTrue?"vrai":"faux",isTrue?`Les deux angles formés par (AC) mesurent ${first}° : ils sont égaux.`:`Les deux angles formés par (AC) mesurent ${first}° et ${second}° : ils ne sont pas égaux.`,[isTrue?"faux":"vrai"],{bisectorTruthData:{angles:[140,180,220],angleValues:[first,second],isTrue}});
+  }
   const middle=rand(35,65),half=[25,30,35][rand(0,2)],left=middle+half,right=middle-half;
   const rays={A:left,B:middle,C:right,D:rand(135,165),E:rand(5,25)};
   const mode=Math.random()<.5?"angle":"droite";
@@ -680,6 +695,7 @@ function geometryQuestionSvg(exercise){
   if(notion==="Égalité de Pythagore"||notion==="Triangle rectangle et cercle circonscrit"||notion==="Droite des milieux")return triangleSvg(exercise);
   if(notion==="Théorème de Thalès")return thalesSvg(exercise);
   if(notion==="Rapports trigonométriques")return trigonometrySvg(exercise);
+  if(exercise.bisectorTruthData)return bisectorTruthSvg(exercise);
   if(exercise.bisectorData)return bisectorSvg(exercise);
   if(exercise.transformType)return transformationExerciseSvg(exercise);
   return "";
@@ -813,8 +829,10 @@ function renderFigureChoices(exercise,host){
 }
 function renderQuestionVisual(exercise){
   const host=document.getElementById("questionVisual");
+  const cubeChoicesPanel=document.getElementById("cubeChoicesPanel");
   const notion=exercise.notion;
   clearActiveGeometryBoard();
+  if(cubeChoicesPanel){cubeChoicesPanel.innerHTML="";cubeChoicesPanel.classList.add("hidden")}
   if(exercise.textOnly){
     host.innerHTML="";
     return;
@@ -832,10 +850,10 @@ function renderQuestionVisual(exercise){
     }
     host.innerHTML=renderCubeStackSvg(exercise.cubeStack);
     if(exercise.cubeChoices.length){
-      const choiceHost=document.createElement("div");
-      choiceHost.className="cube-view-choices-host";
-      host.appendChild(choiceHost);
-      renderCubeViewChoices(exercise,choiceHost);
+      if(cubeChoicesPanel){
+        cubeChoicesPanel.classList.remove("hidden");
+        renderCubeViewChoices(exercise,cubeChoicesPanel);
+      }
     }
     return;
   }
@@ -1798,6 +1816,10 @@ function drawCubeWorksheetVisual(context,exercise,x,y,width,color){
   const choiceX=x+150,choiceWidth=(width-160)/4;
   exercise.cubeChoices.forEach((choice,index)=>drawCubeViewWorksheet(context,choice,choiceX+index*choiceWidth,y,choiceWidth,78,color));
 }
+function drawCanvasSector(context,cx,cy,radius,startAngle,endAngle,fill,stroke){
+  context.beginPath();context.moveTo(cx,cy);context.arc(cx,cy,radius,startAngle*Math.PI/180,endAngle*Math.PI/180,true);context.closePath();
+  context.fillStyle=fill;context.globalAlpha=.22;context.fill();context.globalAlpha=1;context.strokeStyle=stroke;context.lineWidth=1.5;context.stroke();
+}
 function drawBisectorWorksheetVisual(context,exercise,x,y,width,color){
   const data=exercise.bisectorData,cx=x+width/2,cy=y+47,radius=43,bisectorAngle=data.rays[data.bisector];
   const point=angle=>{const radians=angle*Math.PI/180;return [cx+radius*Math.cos(radians),cy-radius*Math.sin(radians)]};
@@ -1806,9 +1828,23 @@ function drawBisectorWorksheetVisual(context,exercise,x,y,width,color){
     const [px,py]=point(angle);context.strokeStyle=label===data.bisector?color:"#14213d";context.beginPath();context.moveTo(cx,cy);context.lineTo(px,py);context.stroke();
     context.fillStyle=context.strokeStyle;context.font="700 13px Arial";context.textAlign="center";context.fillText(label,px+(px>cx?8:-8),py+(py>cy?13:-7));
   });
-  context.strokeStyle="#f59e0b";context.lineWidth=4;context.beginPath();context.arc(cx,cy,23,-data.equalAngles[0]*Math.PI/180,-bisectorAngle*Math.PI/180,true);context.stroke();
-  context.strokeStyle="#16a34a";context.beginPath();context.arc(cx,cy,23,-bisectorAngle*Math.PI/180,-data.equalAngles[1]*Math.PI/180,true);context.stroke();
+  drawCanvasSector(context,cx,cy,23,-data.equalAngles[0],-bisectorAngle,"#f59e0b","#d97706");
+  drawCanvasSector(context,cx,cy,23,-bisectorAngle,-data.equalAngles[1],"#22c55e","#15803d");
   context.fillStyle="#14213d";context.beginPath();context.arc(cx,cy,3,0,Math.PI*2);context.fill();context.font="700 13px Arial";context.fillText("O",cx-12,cy+14);context.textAlign="left";
+}
+function drawBisectorTruthWorksheetVisual(context,exercise,x,y,width,color){
+  const data=exercise.bisectorTruthData,cx=x+width/2,cy=y+47,radius=39;
+  const point=(angle,distance=radius)=>[cx+distance*Math.cos(angle*Math.PI/180),cy+distance*Math.sin(angle*Math.PI/180)];
+  const [bAngle,candidateAngle,eAngle]=data.angles,[bx,by]=point(bAngle),[ex,ey]=point(eAngle);
+  context.strokeStyle="#14213d";context.lineWidth=2;context.beginPath();context.arc(cx-36,cy,39,0,Math.PI*2);context.stroke();
+  [[bAngle,bx,by],[eAngle,ex,ey]].forEach(([angle,px,py])=>{context.beginPath();context.moveTo(cx,cy);context.lineTo(px,py);context.stroke()});
+  context.beginPath();context.moveTo(cx-40,cy);context.lineTo(cx+42,cy);context.stroke();
+  context.strokeStyle=color;context.lineWidth=2.5;context.beginPath();context.moveTo(cx,cy);context.lineTo(cx+30,cy);context.stroke();
+  drawCanvasSector(context,cx,cy,21,-bAngle,-candidateAngle,"#f59e0b","#d97706");
+  drawCanvasSector(context,cx,cy,21,-candidateAngle,-eAngle,"#22c55e","#15803d");
+  context.fillStyle="#14213d";context.font="700 12px Arial";context.textAlign="center";
+  [["B",bx,by-5],["E",ex,ey+13],["A",cx-24,cy-5],["C",cx+9,cy+13],["D",cx-50,cy-12]].forEach(([label,px,py])=>context.fillText(label,px,py));
+  context.fillStyle=color;context.fillText(`${data.angleValues[0]}°`,cx-22,cy-12);context.fillText(`${data.angleValues[1]}°`,cx-22,cy+24);context.textAlign="left";
 }
 function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
   const {dyslexic=false,pageNumber=1,pageCount=1,startIndex=0}=options;
@@ -1857,6 +1893,17 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(exercise.cubeStack){
       drawCubeWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
+      if(isCorrection){
+        context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;
+        context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229);
+      }else{
+        context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);
+        context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([]);
+      }
+      return;
+    }
+    if(exercise.bisectorTruthData){
+      drawBisectorTruthWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
       if(isCorrection){
         context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;
         context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229);
