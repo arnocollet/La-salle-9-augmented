@@ -655,7 +655,7 @@ function bisectorSvg(exercise){
   const angleLabel=(start,end)=>{const [x,y]=bisectorPoint((start+end)/2,52);return `<text class="geo-accent-label" x="${x}" y="${y}">${Math.abs(start-end)}°</text>`};
   const rays=Object.entries(data.rays).map(([label])=>line(label,label===data.bisector?"var(--accent)":"var(--text-primary)")).join("");
   const [left,right]=data.equalAngles;
-  return geometrySvg("Angles et bissectrice",`${rays}${sector(left,bisectorAngle,"#f59e0b","#d97706")}${sector(bisectorAngle,right,"#22c55e","#15803d")}${angleLabel(left,bisectorAngle)}${angleLabel(bisectorAngle,right)}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text><text class="geo-accent-label" x="160" y="204">Les deux angles colorés sont égaux.</text>`,'0 0 320 220');
+  return geometrySvg("Angles et bissectrice",`${rays}${sector(left,bisectorAngle,"#f59e0b","#d97706")}${sector(bisectorAngle,right,"#22c55e","#15803d")}${angleLabel(left,bisectorAngle)}${angleLabel(bisectorAngle,right)}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text>`,'0 0 320 220');
 }
 function bisectorTruthSvg(exercise){
   const data=exercise.bisectorTruthData,circleCx=160,circleCy=110,circleRadius=70,cx=230,cy=110;
@@ -768,6 +768,25 @@ function renderCubeStackSvg(stack){
   }
   return geometrySvg("Empilement de cubes en perspective",`${body}<text x="160" y="218" class="geo-small-label">Observer la vue demandée</text>`,'0 0 320 230');
 }
+function renderCubeStackCanvas(stack){
+  const canvas=document.createElement("canvas");
+  canvas.className="geometry-svg cube-stack-canvas";
+  canvas.width=360;canvas.height=250;canvas.setAttribute("role","img");canvas.setAttribute("aria-label","Empilement de cubes en perspective");
+  const context=canvas.getContext("2d"),cubeSize=30,originX=180,originY=170;
+  const drawCube=(x,y,z)=>{
+    const isoX=(x-z)*cubeSize*Math.cos(Math.PI/6),isoY=(x+z)*cubeSize*Math.sin(Math.PI/6)-y*cubeSize;
+    const ox=originX+isoX,oy=originY+isoY,h=cubeSize,w=cubeSize*Math.cos(Math.PI/6),s=cubeSize*Math.sin(Math.PI/6);
+    const polygon=(points,fill)=>{context.beginPath();context.moveTo(points[0][0],points[0][1]);points.slice(1).forEach(point=>context.lineTo(point[0],point[1]));context.closePath();context.fillStyle=fill;context.fill();context.strokeStyle="#31527a";context.lineWidth=1.3;context.stroke()};
+    polygon([[ox,oy-h],[ox+w,oy-h+s],[ox,oy-h+2*s],[ox-w,oy-h+s]],"#dbeafe");
+    polygon([[ox-w,oy-h+s],[ox,oy-h+2*s],[ox,oy+2*s],[ox-w,oy+s]],"#a9c7f5");
+    polygon([[ox,oy-h+2*s],[ox+w,oy-h+s],[ox+w,oy+s],[ox,oy+2*s]],"#82a9e4");
+  };
+  const cubes=[];
+  stack.forEach((row,z)=>row.forEach((height,x)=>{for(let y=0;y<height;y++)cubes.push({x:x-1,y,z})}));
+  cubes.sort((a,b)=>(a.x+a.z-a.y)-(b.x+b.z-b.y));
+  cubes.forEach(cube=>drawCube(cube.x,cube.y,cube.z));
+  return canvas;
+}
 function renderCubeViewChoices(exercise,host){
   host.innerHTML=`<div class="figure-choice-grid cube-view-choice-grid" role="group" aria-label="Choisis une vue">${exercise.cubeChoices.map((choice,index)=>`
     <button class="figure-choice cube-view-choice" type="button" data-cube-answer="${choice.letter}" aria-label="Vue ${choice.letter}" aria-pressed="false">
@@ -850,7 +869,8 @@ function renderQuestionVisual(exercise){
       exercise.cubeChoices=viewData.choices;
       exercise.answer=viewData.answer;
     }
-    host.innerHTML=renderCubeStackSvg(exercise.cubeStack);
+    host.innerHTML="";
+    host.appendChild(renderCubeStackCanvas(exercise.cubeStack));
     if(exercise.cubeChoices.length){
       if(cubeChoicesPanel){
         cubeChoicesPanel.classList.remove("hidden");
