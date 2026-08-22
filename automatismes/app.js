@@ -650,10 +650,12 @@ function bisectorSvg(exercise){
   const data=exercise.bisectorData,points={};
   Object.entries(data.rays).forEach(([label,angle])=>{points[label]=bisectorPoint(angle)});
   const line=(label,color="var(--text-primary)")=>`<line x1="160" y1="110" x2="${points[label][0]}" y2="${points[label][1]}" stroke="${color}" stroke-width="3"/><text class="geo-label" x="${points[label][0]+(points[label][0]>160?8:-8)}" y="${points[label][1]+(points[label][1]>110?12:-8)}">${label}</text>`;
-  const arc=(start,end,color)=>{const radius=35,[x1,y1]=bisectorPoint(start,radius),[x2,y2]=bisectorPoint(end,radius),large=Math.abs(end-start)>180?1:0;return `<path d="M ${x1} ${y1} A ${radius} ${radius} 0 ${large} 0 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round"/>`};
+  const bisectorAngle=data.rays[data.bisector];
+  const arc=(start,end,color)=>{const radius=35,[x1,y1]=bisectorPoint(start,radius),[x2,y2]=bisectorPoint(end,radius),large=Math.abs(end-start)>180?1:0;return `<path d="M ${x1} ${y1} A ${radius} ${radius} 0 ${large} 0 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round"/>`};
+  const angleLabel=(start,end)=>{const [x,y]=bisectorPoint((start+end)/2,52);return `<text class="geo-accent-label" x="${x}" y="${y}">${Math.abs(start-end)}°</text>`};
   const rays=Object.entries(data.rays).map(([label])=>line(label,label===data.bisector?"var(--accent)":"var(--text-primary)")).join("");
   const [left,right]=data.equalAngles;
-  return geometrySvg("Angles et bissectrice",`${rays}${arc(left,data.bisector,"#f59e0b")}${arc(data.bisector,right,"#16a34a")}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text><text class="geo-accent-label" x="160" y="204">Les deux angles colorés sont égaux.</text>`,'0 0 320 220');
+  return geometrySvg("Angles et bissectrice",`${rays}${arc(left,bisectorAngle,"#f59e0b")}${arc(bisectorAngle,right,"#16a34a")}${angleLabel(left,bisectorAngle)}${angleLabel(bisectorAngle,right)}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text><text class="geo-accent-label" x="160" y="204">Les deux angles colorés sont égaux.</text>`,'0 0 320 220');
 }
 function makeBisectorQuestion(){
   const middle=rand(35,65),half=[25,30,35][rand(0,2)],left=middle+half,right=middle-half;
@@ -763,10 +765,7 @@ function renderCubeViewChoices(exercise,host){
     document.getElementById("answerInput").value=button.dataset.cubeAnswer;
   }));
 }
-function makeCubeViewQuestion(){
-  const stack=Array.from({length:3},()=>Array.from({length:3},()=>rand(0,3)));
-  if(stack.flat().every(height=>height===0))stack[1][1]=1;
-  const directions=["dessus","face","droite"],direction=directions[rand(0,directions.length-1)];
+function cubeViewChoicesForStack(stack,direction){
   const correctView={kind:direction,values:cubeStackProjection(stack,direction)},candidates=[correctView];
   const addCandidate=view=>{
     if(!candidates.some(candidate=>cubeViewSignature(candidate)===cubeViewSignature(view)))candidates.push(view);
@@ -787,7 +786,13 @@ function makeCubeViewQuestion(){
   }
   const choices=shuffleQuestions(candidates.slice(0,4)).map((view,index)=>({...view,letter:String.fromCharCode(65+index)}));
   const answer=choices.find(choice=>cubeViewSignature(choice)===cubeViewSignature(correctView)).letter;
-  return q(`Quelle est la vue ${direction} de cet empilement de cubes ?`,answer,`En regardant depuis ${direction}, on ne conserve que les cubes visibles dans cette direction. La bonne représentation est la vue ${answer}.`,[],{cubeStack:stack,cubeChoices:choices});
+  return {choices,answer};
+}
+function makeCubeViewQuestion(){
+  const stack=Array.from({length:3},()=>Array.from({length:3},()=>rand(0,3)));
+  if(stack.flat().every(height=>height===0))stack[1][1]=1;
+  const directions=["dessus","face","droite"],direction=directions[rand(0,directions.length-1)],viewData=cubeViewChoicesForStack(stack,direction);
+  return q(`Quelle est la vue ${direction} de cet empilement de cubes ?`,viewData.answer,`En regardant depuis ${direction}, on ne conserve que les cubes visibles dans cette direction. La bonne représentation est la vue ${viewData.answer}.`,[],{cubeStack:stack,cubeChoices:viewData.choices,cubeDirection:direction});
 }
 function renderFigureChoices(exercise,host){
   host.innerHTML=`<div class="figure-choice-grid" role="group" aria-label="Choisis une figure">${exercise.figureChoices.map((choice,index)=>`
@@ -819,8 +824,14 @@ function renderQuestionVisual(exercise){
     return;
   }
   if(exercise.cubeStack){
+    if(!Array.isArray(exercise.cubeChoices)){
+      const direction=exercise.cubeDirection||((exercise.text.match(/vue (dessus|face|droite)/i)||[])[1]||"face");
+      const viewData=cubeViewChoicesForStack(exercise.cubeStack,direction);
+      exercise.cubeChoices=viewData.choices;
+      exercise.answer=viewData.answer;
+    }
     host.innerHTML=renderCubeStackSvg(exercise.cubeStack);
-    if(exercise.cubeChoices){
+    if(exercise.cubeChoices.length){
       const choiceHost=document.createElement("div");
       choiceHost.className="cube-view-choices-host";
       host.appendChild(choiceHost);
@@ -1788,15 +1799,15 @@ function drawCubeWorksheetVisual(context,exercise,x,y,width,color){
   exercise.cubeChoices.forEach((choice,index)=>drawCubeViewWorksheet(context,choice,choiceX+index*choiceWidth,y,choiceWidth,78,color));
 }
 function drawBisectorWorksheetVisual(context,exercise,x,y,width,color){
-  const data=exercise.bisectorData,cx=x+width/2,cy=y+47,radius=43;
+  const data=exercise.bisectorData,cx=x+width/2,cy=y+47,radius=43,bisectorAngle=data.rays[data.bisector];
   const point=angle=>{const radians=angle*Math.PI/180;return [cx+radius*Math.cos(radians),cy-radius*Math.sin(radians)]};
   context.lineWidth=2;
   Object.entries(data.rays).forEach(([label,angle])=>{
     const [px,py]=point(angle);context.strokeStyle=label===data.bisector?color:"#14213d";context.beginPath();context.moveTo(cx,cy);context.lineTo(px,py);context.stroke();
     context.fillStyle=context.strokeStyle;context.font="700 13px Arial";context.textAlign="center";context.fillText(label,px+(px>cx?8:-8),py+(py>cy?13:-7));
   });
-  context.strokeStyle="#f59e0b";context.lineWidth=3;context.beginPath();context.arc(cx,cy,23,-data.equalAngles[0]*Math.PI/180,-data.bisector*Math.PI/180,true);context.stroke();
-  context.strokeStyle="#16a34a";context.beginPath();context.arc(cx,cy,23,-data.bisector*Math.PI/180,-data.equalAngles[1]*Math.PI/180,true);context.stroke();
+  context.strokeStyle="#f59e0b";context.lineWidth=4;context.beginPath();context.arc(cx,cy,23,-data.equalAngles[0]*Math.PI/180,-bisectorAngle*Math.PI/180,true);context.stroke();
+  context.strokeStyle="#16a34a";context.beginPath();context.arc(cx,cy,23,-bisectorAngle*Math.PI/180,-data.equalAngles[1]*Math.PI/180,true);context.stroke();
   context.fillStyle="#14213d";context.beginPath();context.arc(cx,cy,3,0,Math.PI*2);context.fill();context.font="700 13px Arial";context.fillText("O",cx-12,cy+14);context.textAlign="left";
 }
 function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
