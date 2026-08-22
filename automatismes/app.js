@@ -872,10 +872,10 @@ function renderQuestionVisual(exercise){
     host.innerHTML="";
     host.appendChild(renderCubeStackCanvas(exercise.cubeStack));
     if(exercise.cubeChoices.length){
-      if(cubeChoicesPanel){
-        cubeChoicesPanel.classList.remove("hidden");
-        renderCubeViewChoices(exercise,cubeChoicesPanel);
-      }
+      const choicesHost=cubeChoicesPanel||document.createElement("div");
+      if(!cubeChoicesPanel){choicesHost.id="cubeChoicesPanelFallback";choicesHost.className="cube-choice-panel";host.appendChild(choicesHost)}
+      choicesHost.classList.remove("hidden");choicesHost.style.display="block";
+      renderCubeViewChoices(exercise,choicesHost);
     }
     return;
   }
@@ -2066,7 +2066,9 @@ function renderQuestion(){
   const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices||x.cubeChoices||x.cubeStack);
   answerInput.value="";
   answerInput.classList.toggle("hidden",hasFigureChoices);
-  document.querySelector(".math-keypad").classList.toggle("hidden",hasFigureChoices);
+  answerInput.style.display=hasFigureChoices?"none":"";
+  const mathKeypad=document.querySelector(".math-keypad");
+  mathKeypad.classList.toggle("hidden",hasFigureChoices);mathKeypad.style.display=hasFigureChoices?"none":"";
   updateMathPreview();
   document.getElementById("feedback").className="feedback hidden";
   document.getElementById("validateAnswer").classList.remove("hidden");
