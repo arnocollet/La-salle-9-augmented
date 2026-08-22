@@ -687,6 +687,87 @@ function optionalSolidChoiceQuestion(description,answer,solidChoices){
   const correctLetter=String.fromCharCode(65+figureChoices.indexOf(answer));
   return q(question,answer,`La figure ${correctLetter} représente ${feminine?"une":"un"} ${answer}.`,[correctLetter],{figureChoices});
 }
+function cubeStackProjection(stack,direction){
+  const rows=stack.length,columns=stack[0].length;
+  if(direction==="dessus")return stack.map(row=>row.map(height=>height>0?1:0));
+  if(direction==="face")return [Array.from({length:columns},(_,x)=>Math.max(...stack.map(row=>row[x])))];
+  return [Array.from({length:rows},(_,y)=>Math.max(...stack[y]))];
+}
+function cubeViewSignature(view){return `${view.kind}:${view.values.flat().join(",")}`}
+function cubeViewSvg(view){
+  const matrix=view.values,rows=matrix.length,columns=matrix[0].length,maxHeight=Math.max(...matrix.flat(),1);
+  const cell=27,left=(150-columns*cell)/2,top=(105-rows*cell)/2;
+  let body=`<rect x="${left-5}" y="${top-5}" width="${columns*cell+10}" height="${rows*cell+10}" rx="8" class="cube-view-bg"/>`;
+  for(let row=0;row<rows;row++)for(let column=0;column<columns;column++){
+    const value=matrix[row][column];
+    if(view.kind==="dessus"){
+      body+=`<rect x="${left+column*cell}" y="${top+row*cell}" width="${cell-2}" height="${cell-2}" class="cube-view-cell"/>`;
+      if(value)body+=`<circle cx="${left+column*cell+cell/2-1}" cy="${top+row*cell+cell/2-1}" r="5" class="cube-view-dot"/>`;
+    }else{
+      for(let height=0;height<value;height++)body+=`<rect x="${left+column*cell}" y="${top+(maxHeight-height-1)*cell}" width="${cell-2}" height="${cell-2}" class="cube-view-cell"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 150 105" aria-hidden="true" focusable="false"><g>${body}</g></svg>`;
+}
+function renderCubeStackSvg(stack){
+  const unitX=25,unitY=12,unitZ=25,originX=160,originY=178;
+  const colors=["var(--accent-light)","color-mix(in srgb,var(--accent) 22%,var(--bg-secondary))","color-mix(in srgb,var(--accent) 42%,var(--bg-secondary))"];
+  const cube=(x,y,z)=>{
+    const px=originX+(x-y)*unitX,py=originY+(x+y)*unitY-z*unitZ;
+    const top=`${px},${py} ${px+unitX},${py-unitY} ${px+unitX*2},${py} ${px+unitX},${py+unitY}`;
+    const left=`${px},${py} ${px+unitX},${py+unitY} ${px+unitX},${py+unitY+unitZ} ${px},${py+unitZ}`;
+    const right=`${px+unitX},${py+unitY} ${px+unitX*2},${py} ${px+unitX*2},${py+unitZ} ${px+unitX},${py+unitY+unitZ}`;
+    return `<polygon points="${top}" fill="${colors[0]}"/><polygon points="${left}" fill="${colors[1]}"/><polygon points="${right}" fill="${colors[2]}"/>`;
+  };
+  let body="";
+  for(let z=0;z<3;z++)for(let diagonal=0;diagonal<5;diagonal++)for(let y=0;y<3;y++){
+    const x=diagonal-y;
+    if(x<0||x>2||z>=stack[y][x])continue;
+    body+=cube(x,y,z);
+  }
+  return geometrySvg("Empilement de cubes en perspective",`${body}<text x="160" y="218" class="geo-small-label">Observer la vue demandée</text>`,'0 0 320 230');
+}
+function renderCubeViewChoices(exercise,host){
+  host.innerHTML=`<div class="figure-choice-grid cube-view-choice-grid" role="group" aria-label="Choisis une vue">${exercise.cubeChoices.map((choice,index)=>`
+    <button class="figure-choice cube-view-choice" type="button" data-cube-answer="${choice.letter}" aria-label="Vue ${choice.letter}" aria-pressed="false">
+      <strong aria-hidden="true">${choice.letter}</strong>${cubeViewSvg(choice.view)}
+    </button>`).join("")}</div>`;
+  host.querySelectorAll(".cube-view-choice").forEach(button=>button.addEventListener("click",()=>{
+    if(answered)return;
+    host.querySelectorAll(".cube-view-choice").forEach(choice=>{
+      const selected=choice===button;
+      choice.classList.toggle("selected",selected);
+      choice.setAttribute("aria-pressed",String(selected));
+    });
+    document.getElementById("answerInput").value=button.dataset.cubeAnswer;
+  }));
+}
+function makeCubeViewQuestion(){
+  const stack=Array.from({length:3},()=>Array.from({length:3},()=>rand(0,3)));
+  if(stack.flat().every(height=>height===0))stack[1][1]=1;
+  const directions=["dessus","face","droite"],direction=directions[rand(0,directions.length-1)];
+  const correctView={kind:direction,values:cubeStackProjection(stack,direction)},candidates=[correctView];
+  const addCandidate=view=>{
+    if(!candidates.some(candidate=>cubeViewSignature(candidate)===cubeViewSignature(view)))candidates.push(view);
+  };
+  if(direction==="dessus"){
+    addCandidate({kind:direction,values:correctView.values.map(row=>[...row].reverse())});
+    addCandidate({kind:direction,values:[...correctView.values].reverse()});
+    addCandidate({kind:direction,values:correctView.values.map(row=>row.map(value=>value?0:1))});
+  }else{
+    const values=correctView.values[0];
+    addCandidate({kind:direction,values:[[...values].reverse()]});
+    addCandidate({kind:direction,values:[values.map((value,index)=>values[(index+1)%values.length])]});
+    addCandidate({kind:direction,values:[values.map(value=>value===0?1:value===3?2:value+1)]});
+  }
+  while(candidates.length<4){
+    const values=correctView.values.map(row=>row.map(value=>direction==="dessus"?(Math.random()<.5?0:1):rand(0,3)));
+    addCandidate({kind:direction,values});
+  }
+  const choices=shuffleQuestions(candidates.slice(0,4)).map((view,index)=>({...view,letter:String.fromCharCode(65+index)}));
+  const answer=choices.find(choice=>cubeViewSignature(choice)===cubeViewSignature(correctView)).letter;
+  return q(`Quelle est la vue ${direction} de cet empilement de cubes ?`,answer,`En regardant depuis ${direction}, on ne conserve que les cubes visibles dans cette direction. La bonne représentation est la vue ${answer}.`,[],{cubeStack:stack,cubeChoices:choices});
+}
 function renderFigureChoices(exercise,host){
   host.innerHTML=`<div class="figure-choice-grid" role="group" aria-label="Choisis une figure">${exercise.figureChoices.map((choice,index)=>`
     <button class="figure-choice" type="button" data-figure-answer="${escapeXml(choice)}" aria-label="Figure ${String.fromCharCode(65+index)}" aria-pressed="false">
@@ -714,6 +795,15 @@ function renderQuestionVisual(exercise){
   }
   if(exercise.figureChoices){
     renderFigureChoices(exercise,host);
+    return;
+  }
+  if(exercise.cubeStack){
+    host.innerHTML=renderCubeStackSvg(exercise.cubeStack);
+    if(exercise.cubeChoices){
+      const choiceHost=document.createElement("div");
+      host.appendChild(choiceHost);
+      renderCubeViewChoices(exercise,choiceHost);
+    }
     return;
   }
   if(exercise.scratchBlocks){
@@ -755,6 +845,7 @@ function numberedTransformationQuestion(type){
   return q(`La case n°${source} est colorée. Quelle est son image par la symétrie d’axe ${axis==="horizontal"?"horizontal":"(d)"} ?`,answer,`La symétrie par rapport à cet axe échange les cases placées à la même distance de l’axe : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",numberedTransform:{kind:"axiale",axis,source}});
 }
 const G5 = [
+{theme:"Espace et géométrie",notion:"Vues d’empilements de cubes",make:makeCubeViewQuestion},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Construire un sym\u00e9trique",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=row*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par la symétrie axiale d’axe vertical ?`,answer,`L’axe échange les colonnes symétriques : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",grid:{columns:6,rows:4,source}})}},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale et demi-tour",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=(3-row)*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par un demi-tour de centre O ?`,answer,`Un demi-tour échange la ligne et la colonne par rapport au centre : la case n°${source} devient la case n°${answer}.`,[],{transformType:"centrale",grid:{columns:6,rows:4,source}})}},
 {theme:"Nombres et calculs", notion:"Critères de divisibilité par 2, 5 et 10", make:()=>{let n=rand(12,999);return q(`Le nombre ${n} est-il divisible par 2, 5 ou 10 ? Donne toutes les réponses possibles.`, divis(n), `On observe le chiffre des unités : ${n%10}.`)}},
@@ -1635,6 +1726,44 @@ function renderWorksheetPages(sheet,sheetNumber,isCorrection,dyslexic=false){
     );
   });
 }
+function drawCanvasPolygon(context,points,fill,stroke="#8b98aa"){
+  context.beginPath();context.moveTo(points[0][0],points[0][1]);
+  points.slice(1).forEach(point=>context.lineTo(point[0],point[1]));
+  context.closePath();context.fillStyle=fill;context.fill();context.strokeStyle=stroke;context.lineWidth=1;context.stroke();
+}
+function drawCubeStackWorksheet(context,stack,x,y,scale,color){
+  const unitX=scale,unitY=scale*.48,unitZ=scale,originX=x+scale*3,originY=y+scale*3.2;
+  const cube=(column,row,height)=>{
+    const px=originX+(column-row)*unitX,py=originY+(column+row)*unitY-height*unitZ;
+    drawCanvasPolygon(context,[[px,py],[px+unitX,py-unitY],[px+unitX*2,py],[px+unitX,py+unitY]],"#eef4ff",color);
+    drawCanvasPolygon(context,[[px,py],[px+unitX,py+unitY],[px+unitX,py+unitY+unitZ],[px,py+unitZ]],"#d6e4ff",color);
+    drawCanvasPolygon(context,[[px+unitX,py+unitY],[px+unitX*2,py],[px+unitX*2,py+unitZ],[px+unitX,py+unitY+unitZ]],"#b9d2ff",color);
+  };
+  for(let height=0;height<3;height++)for(let diagonal=0;diagonal<5;diagonal++)for(let row=0;row<3;row++){
+    const column=diagonal-row;
+    if(column>=0&&column<3&&height<stack[row][column])cube(column,row,height);
+  }
+}
+function drawCubeViewWorksheet(context,choice,x,y,width,height,color){
+  const matrix=choice.view.values,rows=matrix.length,columns=matrix[0].length;
+  const cell=Math.min((width-18)/columns,(height-17)/rows),left=x+(width-cell*columns)/2,top=y+15+(height-15-cell*rows)/2;
+  context.fillStyle=color;context.font="700 15px Arial";context.textAlign="center";context.fillText(choice.letter,x+width/2,y+13);
+  for(let row=0;row<rows;row++)for(let column=0;column<columns;column++){
+    const value=matrix[row][column],cellX=left+column*cell,cellY=top+row*cell;
+    context.fillStyle="#f7faff";context.strokeStyle="#8b98aa";context.lineWidth=1;context.strokeRect(cellX,cellY,cell-2,cell-2);
+    if(choice.view.kind==="dessus"&&value){context.fillStyle=color;context.beginPath();context.arc(cellX+cell/2-1,cellY+cell/2-1,Math.max(2,cell*.16),0,Math.PI*2);context.fill()}
+    if(choice.view.kind!=="dessus")for(let level=0;level<value;level++){
+      context.fillStyle=color;context.fillRect(cellX,top+(Math.max(...matrix.flat())-level-1)*cell,cell-2,cell-2);
+      context.strokeStyle="#8b98aa";context.strokeRect(cellX,top+(Math.max(...matrix.flat())-level-1)*cell,cell-2,cell-2);
+    }
+  }
+  context.textAlign="left";
+}
+function drawCubeWorksheetVisual(context,exercise,x,y,width,color){
+  drawCubeStackWorksheet(context,exercise.cubeStack,x+2,y+8,16,color);
+  const choiceX=x+150,choiceWidth=(width-160)/4;
+  exercise.cubeChoices.forEach((choice,index)=>drawCubeViewWorksheet(context,choice,choiceX+index*choiceWidth,y,choiceWidth,78,color));
+}
 function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
   const {dyslexic=false,pageNumber=1,pageCount=1,startIndex=0}=options;
   const canvas=document.createElement("canvas");
@@ -1680,6 +1809,17 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
       ?(dense?`19px ${fontFamily}`:`${dyslexic?25:23}px ${fontFamily}`)
       :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
+    if(exercise.cubeStack){
+      drawCubeWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
+      if(isCorrection){
+        context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;
+        context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229);
+      }else{
+        context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);
+        context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([]);
+      }
+      return;
+    }
     if(isCorrection){
       context.fillStyle="#167333";context.font=dense?`700 19px ${fontFamily}`:`700 ${dyslexic?26:25}px ${fontFamily}`;
       context.fillText(`Réponse : ${exercise.answer}`,x+32,Math.min(y+226,Math.max(y+180,questionBottom+8)));
@@ -1797,7 +1937,7 @@ function renderQuestion(){
   document.getElementById("questionTheme").textContent=translateGeneratedText(x.theme);
   document.getElementById("questionText").innerHTML=mathPreviewMarkup(translateGeneratedText(x.text));
   renderQuestionVisual(x);
-  const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices);
+  const answerInput=document.getElementById("answerInput"),hasFigureChoices=Boolean(x.figureChoices||x.cubeChoices);
   answerInput.value="";
   answerInput.classList.toggle("hidden",hasFigureChoices);
   document.querySelector(".math-keypad").classList.toggle("hidden",hasFigureChoices);
