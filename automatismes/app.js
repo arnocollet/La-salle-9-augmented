@@ -76,7 +76,7 @@ const NOTIONS = {
 "Critères de divisibilité par 2, 5 et 10","Quotient et reste d’une division euclidienne","Factorisation avec les tables","Produits liés aux tables","Multiplier et diviser par 10, 100, 1 000","Addition et soustraction de décimaux","Calculs mêlant entiers et décimaux","Addition à trou","Tables de multiplication","Fractions simples et écritures décimales","Nombre quotient","Repérage sur une droite graduée","Fractions égales","Comparer deux fractions","Nombres mixtes","Addition et soustraction de fractions simples","Prendre une fraction d’un nombre","Prendre 1 %, 10 % ou 50 %","Écritures multiples d’un nombre","Unités d’aire et de volume","Suites de motifs évolutifs"
 ],
 "Espace et géométrie":[
-"Placer un point d’abscisse décimale","Repérer un nombre décimal","Vues d’empilements de cubes","Dénombrer des cubes","Reconnaître un solide en perspective","Patron d’un cube","Symétrie axiale sur quadrillage","Construire un symétrique","Angles usuels","Mesures d’angles","Triangles particuliers","Somme des angles d’un triangle","Médiatrice et cercle circonscrit","Reconnaître des quadrilatères","Parallélogrammes particuliers"
+"Placer un point d’abscisse décimale","Repérer un nombre décimal","Vues d’empilements de cubes","Dénombrer des cubes","Reconnaître un solide en perspective","Patron d’un cube","Symétrie axiale sur quadrillage","Construire un symétrique","Angles usuels","Mesures d’angles","Triangles particuliers","Somme des angles d’un triangle","Médiatrice et cercle circonscrit","Reconnaître des quadrilatères","Parallélogrammes particuliers","Reconnaître une bissectrice"
 ],
 "Données et probabilités":[
 "Échelle de probabilités","Écriture d’une probabilité","Relier une expression de chance à une probabilité"
@@ -642,6 +642,26 @@ function transformationExerciseSvg(exercise){
   }
   return transformationSvg(exercise);
 }
+function bisectorPoint(angle,radius=82){
+  const radians=angle*Math.PI/180;
+  return [160+radius*Math.cos(radians),110-radius*Math.sin(radians)];
+}
+function bisectorSvg(exercise){
+  const data=exercise.bisectorData,points={};
+  Object.entries(data.rays).forEach(([label,angle])=>{points[label]=bisectorPoint(angle)});
+  const line=(label,color="var(--text-primary)")=>`<line x1="160" y1="110" x2="${points[label][0]}" y2="${points[label][1]}" stroke="${color}" stroke-width="3"/><text class="geo-label" x="${points[label][0]+(points[label][0]>160?8:-8)}" y="${points[label][1]+(points[label][1]>110?12:-8)}">${label}</text>`;
+  const arc=(start,end,color)=>{const radius=35,[x1,y1]=bisectorPoint(start,radius),[x2,y2]=bisectorPoint(end,radius),large=Math.abs(end-start)>180?1:0;return `<path d="M ${x1} ${y1} A ${radius} ${radius} 0 ${large} 0 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round"/>`};
+  const rays=Object.entries(data.rays).map(([label])=>line(label,label===data.bisector?"var(--accent)":"var(--text-primary)")).join("");
+  const [left,right]=data.equalAngles;
+  return geometrySvg("Angles et bissectrice",`${rays}${arc(left,data.bisector,"#f59e0b")}${arc(data.bisector,right,"#16a34a")}<circle class="geo-point" cx="160" cy="110" r="4"/><text class="geo-label" x="148" y="126">O</text><text class="geo-accent-label" x="160" y="204">Les deux angles colorés sont égaux.</text>`,'0 0 320 220');
+}
+function makeBisectorQuestion(){
+  const middle=rand(35,65),half=[25,30,35][rand(0,2)],left=middle+half,right=middle-half;
+  const rays={A:left,B:middle,C:right,D:rand(135,165),E:rand(5,25)};
+  const mode=Math.random()<.5?"angle":"droite";
+  if(mode==="angle")return q(`La droite (OB) est la bissectrice de quel angle ?`,`AOC`,`Les angles AOB et BOC ont la même mesure : la droite (OB) partage donc l’angle AOC en deux angles égaux.`,["COA"],{bisectorData:{rays,bisector:"B",equalAngles:[left,right]}});
+  return q(`Quelle droite est la bissectrice de l’angle AOC ?`,`OB`,`La droite (OB) partage l’angle AOC en deux angles égaux.`,["(OB)","BO"],{bisectorData:{rays,bisector:"B",equalAngles:[left,right]}});
+}
 function geometryQuestionSvg(exercise){
   const notion=exercise.notion;
   if(notion.includes("abscisse")||notion.includes("nombre relatif"))return numberLineSvg(exercise);
@@ -658,6 +678,7 @@ function geometryQuestionSvg(exercise){
   if(notion==="Égalité de Pythagore"||notion==="Triangle rectangle et cercle circonscrit"||notion==="Droite des milieux")return triangleSvg(exercise);
   if(notion==="Théorème de Thalès")return thalesSvg(exercise);
   if(notion==="Rapports trigonométriques")return trigonometrySvg(exercise);
+  if(exercise.bisectorData)return bisectorSvg(exercise);
   if(exercise.transformType)return transformationExerciseSvg(exercise);
   return "";
 }
@@ -846,6 +867,7 @@ function numberedTransformationQuestion(type){
 }
 const G5 = [
 {theme:"Espace et géométrie",notion:"Vues d’empilements de cubes",make:makeCubeViewQuestion},
+{theme:"Espace et géométrie",notion:"Reconnaître une bissectrice",make:makeBisectorQuestion},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Construire un sym\u00e9trique",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=row*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par la symétrie axiale d’axe vertical ?`,answer,`L’axe échange les colonnes symétriques : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",grid:{columns:6,rows:4,source}})}},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale et demi-tour",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=(3-row)*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par un demi-tour de centre O ?`,answer,`Un demi-tour échange la ligne et la colonne par rapport au centre : la case n°${source} devient la case n°${answer}.`,[],{transformType:"centrale",grid:{columns:6,rows:4,source}})}},
 {theme:"Nombres et calculs", notion:"Critères de divisibilité par 2, 5 et 10", make:()=>{let n=rand(12,999);return q(`Le nombre ${n} est-il divisible par 2, 5 ou 10 ? Donne toutes les réponses possibles.`, divis(n), `On observe le chiffre des unités : ${n%10}.`)}},
@@ -1764,6 +1786,18 @@ function drawCubeWorksheetVisual(context,exercise,x,y,width,color){
   const choiceX=x+150,choiceWidth=(width-160)/4;
   exercise.cubeChoices.forEach((choice,index)=>drawCubeViewWorksheet(context,choice,choiceX+index*choiceWidth,y,choiceWidth,78,color));
 }
+function drawBisectorWorksheetVisual(context,exercise,x,y,width,color){
+  const data=exercise.bisectorData,cx=x+width/2,cy=y+47,radius=43;
+  const point=angle=>{const radians=angle*Math.PI/180;return [cx+radius*Math.cos(radians),cy-radius*Math.sin(radians)]};
+  context.lineWidth=2;
+  Object.entries(data.rays).forEach(([label,angle])=>{
+    const [px,py]=point(angle);context.strokeStyle=label===data.bisector?color:"#14213d";context.beginPath();context.moveTo(cx,cy);context.lineTo(px,py);context.stroke();
+    context.fillStyle=context.strokeStyle;context.font="700 13px Arial";context.textAlign="center";context.fillText(label,px+(px>cx?8:-8),py+(py>cy?13:-7));
+  });
+  context.strokeStyle="#f59e0b";context.lineWidth=3;context.beginPath();context.arc(cx,cy,23,-data.equalAngles[0]*Math.PI/180,-data.bisector*Math.PI/180,true);context.stroke();
+  context.strokeStyle="#16a34a";context.beginPath();context.arc(cx,cy,23,-data.bisector*Math.PI/180,-data.equalAngles[1]*Math.PI/180,true);context.stroke();
+  context.fillStyle="#14213d";context.beginPath();context.arc(cx,cy,3,0,Math.PI*2);context.fill();context.font="700 13px Arial";context.fillText("O",cx-12,cy+14);context.textAlign="left";
+}
 function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
   const {dyslexic=false,pageNumber=1,pageCount=1,startIndex=0}=options;
   const canvas=document.createElement("canvas");
@@ -1811,6 +1845,17 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(exercise.cubeStack){
       drawCubeWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
+      if(isCorrection){
+        context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;
+        context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229);
+      }else{
+        context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);
+        context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([]);
+      }
+      return;
+    }
+    if(exercise.bisectorData){
+      drawBisectorWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
       if(isCorrection){
         context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;
         context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229);
