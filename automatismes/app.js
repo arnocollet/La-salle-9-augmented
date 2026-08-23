@@ -76,7 +76,7 @@ const NOTIONS = {
 "Critères de divisibilité par 2, 5 et 10","Quotient et reste d’une division euclidienne","Factorisation avec les tables","Produits liés aux tables","Multiplier et diviser par 10, 100, 1 000","Addition et soustraction de décimaux","Calculs mêlant entiers et décimaux","Addition à trou","Tables de multiplication","Fractions simples et écritures décimales","Nombre quotient","Repérage sur une droite graduée","Fractions égales","Comparer deux fractions","Nombres mixtes","Addition et soustraction de fractions simples","Prendre une fraction d’un nombre","Prendre 1 %, 10 % ou 50 %","Écritures multiples d’un nombre","Unités d’aire et de volume","Suites de motifs évolutifs"
 ],
 "Espace et géométrie":[
-"Placer un point d’abscisse décimale","Repérer un nombre décimal","Vues d’empilements de cubes","Dénombrer des cubes","Reconnaître un solide en perspective","Patron d’un cube","Symétrie axiale sur quadrillage","Construire un symétrique","Angles usuels","Mesures d’angles","Triangles particuliers","Somme des angles d’un triangle","Médiatrice et cercle circonscrit","Reconnaître des quadrilatères","Parallélogrammes particuliers","Reconnaître une bissectrice"
+"Placer un point d’abscisse décimale","Repérer un nombre décimal","Dénombrer des cubes","Reconnaître un solide en perspective","Patron d’un cube","Symétrie axiale sur quadrillage","Construire un symétrique","Angles usuels","Mesures d’angles","Triangles particuliers","Somme des angles d’un triangle","Médiatrice et cercle circonscrit","Reconnaître des quadrilatères","Parallélogrammes particuliers"
 ],
 "Données et probabilités":[
 "Échelle de probabilités","Écriture d’une probabilité","Relier une expression de chance à une probabilité"
@@ -918,8 +918,6 @@ function numberedTransformationQuestion(type){
   return q(`La case n°${source} est colorée. Quelle est son image par la symétrie d’axe ${axis==="horizontal"?"horizontal":"(d)"} ?`,answer,`La symétrie par rapport à cet axe échange les cases placées à la même distance de l’axe : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",numberedTransform:{kind:"axiale",axis,source}});
 }
 const G5 = [
-{theme:"Espace et géométrie",notion:"Vues d’empilements de cubes",make:makeCubeViewQuestion},
-{theme:"Espace et géométrie",notion:"Reconnaître une bissectrice",make:makeBisectorQuestion},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Construire un sym\u00e9trique",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=row*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par la symétrie axiale d’axe vertical ?`,answer,`L’axe échange les colonnes symétriques : la case n°${source} devient la case n°${answer}.`,[],{transformType:"axiale",grid:{columns:6,rows:4,source}})}},
 {theme:"Espace et g\u00e9om\u00e9trie",notion:"Sym\u00e9trie axiale et demi-tour",make:()=>{let source=rand(1,24),row=Math.floor((source-1)/6),column=(source-1)%6,answer=(3-row)*6+(5-column)+1;return q(`La case n°${source} est colorée. Quelle est son image par un demi-tour de centre O ?`,answer,`Un demi-tour échange la ligne et la colonne par rapport au centre : la case n°${source} devient la case n°${answer}.`,[],{transformType:"centrale",grid:{columns:6,rows:4,source}})}},
 {theme:"Nombres et calculs", notion:"Critères de divisibilité par 2, 5 et 10", make:()=>{let n=rand(12,999);return q(`Le nombre ${n} est-il divisible par 2, 5 ou 10 ? Donne toutes les réponses possibles.`, divis(n), `On observe le chiffre des unités : ${n%10}.`)}},
