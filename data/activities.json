@@ -1,5 +1,23 @@
 [
   {
+    "id": "act-5e-nombre-mystere",
+    "grade": "5e",
+    "title": "Le nombre myst\u00e8re",
+    "emoji": "\ud83c\udfb2",
+    "pdfUrl": "https://drive.google.com/file/d/1S1Pkr0am2TvOsqfoNtb-6RPstyXdPO15/view?usp=drive_link",
+    "pdfName": "Consignes - Le nombre myst\u00e8re.pdf",
+    "pdfEmbedUrl": "https://drive.google.com/file/d/1S1Pkr0am2TvOsqfoNtb-6RPstyXdPO15/preview",
+    "pdfDownloadUrl": "https://drive.google.com/uc?id=1S1Pkr0am2TvOsqfoNtb-6RPstyXdPO15&export=download",
+    "scratchId": "330859811",
+    "scratchIds": [
+      "330859811"
+    ],
+    "active": true,
+    "displayOrder": 1,
+    "createdAt": "2026-01-01T09:59:00.000Z",
+    "updatedAt": "2026-08-25T00:00:00.000Z"
+  },
+  {
     "id": "act-3e-diviseurs",
     "grade": "3e",
     "title": "Liste des diviseurs et nombres premiers",
@@ -13,6 +31,7 @@
       "339277505"
     ],
     "active": true,
+    "displayOrder": 1,
     "createdAt": "2026-01-01T08:00:00.000Z",
     "updatedAt": "2026-07-23T06:21:21.323Z"
   },
@@ -30,6 +49,7 @@
       "282542420"
     ],
     "active": true,
+    "displayOrder": 2,
     "createdAt": "2026-01-01T08:01:00.000Z",
     "updatedAt": "2026-07-22T05:52:05.479Z"
   },
@@ -47,6 +67,7 @@
       "144122707"
     ],
     "active": true,
+    "displayOrder": 3,
     "createdAt": "2026-01-01T08:02:00.000Z",
     "updatedAt": "2026-07-22T06:02:37.844Z"
   },
@@ -65,6 +86,7 @@
       "311035974"
     ],
     "active": true,
+    "displayOrder": 4,
     "createdAt": "2026-01-01T08:03:00.000Z",
     "updatedAt": "2026-07-22T06:16:10.309Z"
   },
@@ -82,6 +104,7 @@
       "287154397"
     ],
     "active": true,
+    "displayOrder": 1,
     "createdAt": "2026-01-01T09:00:00.000Z",
     "updatedAt": "2026-07-22T06:22:10.929Z"
   },
@@ -99,6 +122,7 @@
       "173898198"
     ],
     "active": true,
+    "displayOrder": 2,
     "createdAt": "2026-01-01T09:01:00.000Z",
     "updatedAt": "2026-07-22T06:30:30.946Z"
   },
@@ -117,6 +141,7 @@
       "311035974"
     ],
     "active": false,
+    "displayOrder": 3,
     "createdAt": "2026-01-01T09:02:00.000Z",
     "updatedAt": "2026-07-22T06:06:12.256Z"
   },
@@ -134,6 +159,7 @@
       "1161202414"
     ],
     "active": true,
+    "displayOrder": 4,
     "createdAt": "2026-01-01T09:03:00.000Z",
     "updatedAt": "2026-07-22T06:34:52.890Z"
   },
@@ -151,6 +177,7 @@
       "1074074100"
     ],
     "active": true,
+    "displayOrder": 2,
     "createdAt": "2026-01-01T10:00:00.000Z",
     "updatedAt": "2026-07-23T05:45:22.214Z"
   },
@@ -168,6 +195,7 @@
       "1331680541"
     ],
     "active": true,
+    "displayOrder": 3,
     "createdAt": "2026-01-01T10:01:00.000Z",
     "updatedAt": "2026-07-23T05:57:26.139Z"
   },
@@ -185,6 +213,7 @@
       "174741757"
     ],
     "active": true,
+    "displayOrder": 4,
     "createdAt": "2026-01-01T10:02:00.000Z",
     "updatedAt": "2026-07-23T06:06:00.533Z"
   },
@@ -202,6 +231,7 @@
       "166528869"
     ],
     "active": true,
+    "displayOrder": 5,
     "createdAt": "2026-01-01T10:03:00.000Z",
     "updatedAt": "2026-07-23T06:11:40.469Z"
   },

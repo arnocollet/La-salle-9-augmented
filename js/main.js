@@ -213,18 +213,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const activities = await response.json();
-      activities.forEach(activity => {
-        const legacyCard = document.getElementById(activity.id);
-        if (legacyCard) legacyCard.remove();
-      });
-
-      activities
+      const orderedCards = activities
         .filter(activity => activity.grade === grade && activity.active !== false)
-        .sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''))
-        .forEach(activity => {
-          const card = createActivityCard(activity);
-          if (card) list.appendChild(card);
-        });
+        .sort((a, b) => (Number(a.displayOrder) || Number.MAX_SAFE_INTEGER) - (Number(b.displayOrder) || Number.MAX_SAFE_INTEGER)
+          || (a.createdAt || '').localeCompare(b.createdAt || ''))
+        .map(activity => document.getElementById(activity.id) || createActivityCard(activity))
+        .filter(Boolean);
+      list.replaceChildren(...orderedCards);
     } catch (error) {
       // Local file previews cannot fetch JSON; the original activities still work.
       console.warn('Impossible de charger les activités administrées :', error);

@@ -38,6 +38,7 @@
     publishStatus: document.querySelector('#publish-status'),
     pdfInput: document.querySelector('#pdf-file'),
     pdfUrl: document.querySelector('#pdf-url'),
+    displayOrder: document.querySelector('#display-order'),
     currentPdf: document.querySelector('#current-pdf'),
     dropzone: document.querySelector('#pdf-dropzone'),
     pdfFileName: document.querySelector('#pdf-file-name'),
@@ -191,6 +192,20 @@
 
   const gradeLabel = grade => ({ '3e': '3ème', '4e': '4ème', '5e': '5ème' }[grade] || grade);
 
+  const activityOrder = activity => Number.isInteger(Number(activity.displayOrder)) && Number(activity.displayOrder) > 0
+    ? Number(activity.displayOrder)
+    : Number.MAX_SAFE_INTEGER;
+
+  const reorderGradeActivities = (activities, target, requestedOrder) => {
+    const peers = activities
+      .filter(activity => activity.grade === target.grade && activity.id !== target.id)
+      .sort((a, b) => activityOrder(a) - activityOrder(b)
+        || (a.createdAt || '').localeCompare(b.createdAt || ''));
+    const insertionIndex = Math.max(0, Math.min(Math.round(requestedOrder) - 1, peers.length));
+    peers.splice(insertionIndex, 0, target);
+    peers.forEach((activity, index) => { activity.displayOrder = index + 1; });
+  };
+
   const resetEditor = (clearStatus = false) => {
     state.editingId = null;
     elements.form.reset();
@@ -217,6 +232,7 @@
     elements.form.elements.grade.value = activity.grade;
     elements.form.elements.emoji.value = activity.emoji || '💻';
     elements.form.elements.title.value = activity.title || '';
+    elements.displayOrder.value = activityOrder(activity) === Number.MAX_SAFE_INTEGER ? '' : activityOrder(activity);
     const scratchIds = (Array.isArray(activity.scratchIds) ? activity.scratchIds : [activity.scratchId])
       .map(value => String(value || '').replace(/\D/g, ''))
       .filter(Boolean);
@@ -247,7 +263,9 @@
     elements.empty.hidden = state.activities.length > 0;
 
     [...state.activities]
-      .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+      .sort((a, b) => a.grade.localeCompare(b.grade)
+        || activityOrder(a) - activityOrder(b)
+        || (a.createdAt || '').localeCompare(b.createdAt || ''))
       .forEach(activity => {
         const row = document.createElement('article');
         row.className = `admin-activity${activity.active === false ? ' is-inactive' : ''}`;
@@ -351,6 +369,7 @@
     const grade = formData.get('grade');
     const emoji = formData.get('emoji');
     const title = String(formData.get('title') || '').trim();
+    const requestedOrderValue = String(formData.get('displayOrder') || '').trim();
     const scratchId = getScratchId(String(formData.get('scratchUrl') || '').trim());
     const secondScratchUrl = String(formData.get('scratchUrl2') || '').trim();
     const scratchIds = [...new Set([
@@ -362,6 +381,8 @@
 
     if (!['3e', '4e', '5e'].includes(grade)) throw new Error('Sélectionnez une classe.');
     if (!title) throw new Error('Saisissez le titre de l’activité.');
+    const requestedOrder = requestedOrderValue ? Number(requestedOrderValue) : Number.MAX_SAFE_INTEGER;
+    if (!Number.isInteger(requestedOrder) || requestedOrder < 1) throw new Error('La position doit être un nombre entier positif.');
     const editedActivity = editingId
       ? state.activities.find(activity => activity.id === editingId)
       : null;
@@ -420,6 +441,7 @@
         scratchIds,
         updatedAt: now
       });
+      reorderGradeActivities(activities, target, requestedOrder === Number.MAX_SAFE_INTEGER ? activities.length : requestedOrder);
       await saveActivities(activities, `Modifie l’activité ${title} en ${grade}`, state.dataSha);
       return 'updated';
     }
@@ -435,10 +457,17 @@
       pdfDownloadUrl,
       scratchId: scratchIds[0],
       scratchIds,
+      displayOrder: requestedOrder === Number.MAX_SAFE_INTEGER
+        ? activities.filter(activity => activity.grade === grade).length + 1
+        : requestedOrder,
       active: true,
       createdAt: now,
       updatedAt: now
     });
+
+    reorderGradeActivities(activities, activities[activities.length - 1], requestedOrder === Number.MAX_SAFE_INTEGER
+      ? activities.filter(activity => activity.grade === grade).length
+      : requestedOrder);
 
     await saveActivities(activities, `Ajoute l’activité ${title} en ${grade}`, state.dataSha);
     return 'created';
