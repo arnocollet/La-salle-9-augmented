@@ -204,5 +204,22 @@
     "active": true,
     "createdAt": "2026-01-01T10:03:00.000Z",
     "updatedAt": "2026-07-23T06:11:40.469Z"
+  },
+  {
+    "id": "5e-le-nombre-mystere-1787650555189",
+    "grade": "5e",
+    "title": "Le nombre mystère",
+    "emoji": "🔢",
+    "pdfUrl": "assets/pdfs/le-nombre-mystere-1787650553364.pdf",
+    "pdfName": "Le nombre mystère.pdf",
+    "pdfEmbedUrl": "assets/pdfs/le-nombre-mystere-1787650553364.pdf",
+    "pdfDownloadUrl": "assets/pdfs/le-nombre-mystere-1787650553364.pdf",
+    "scratchId": "330859811",
+    "scratchIds": [
+      "330859811"
+    ],
+    "active": true,
+    "createdAt": "2026-08-25T09:35:55.188Z",
+    "updatedAt": "2026-08-25T09:35:55.188Z"
   }
 ]
