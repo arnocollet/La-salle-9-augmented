@@ -210,16 +210,16 @@
     "grade": "5e",
     "title": "Le nombre mystère",
     "emoji": "🔢",
-    "pdfUrl": "assets/pdfs/le-nombre-mystere-1787651519716.pdf",
-    "pdfName": "Le nombre mystère.pdf",
-    "pdfEmbedUrl": "assets/pdfs/le-nombre-mystere-1787651519716.pdf",
-    "pdfDownloadUrl": "assets/pdfs/le-nombre-mystere-1787651519716.pdf",
+    "pdfUrl": "https://drive.google.com/file/d/1bZT-O_Lw_qw39Dk8sVeHp1Dqfukk4UGp/view?usp=drive_link",
+    "pdfName": "Consignes.pdf",
+    "pdfEmbedUrl": "https://drive.google.com/file/d/1bZT-O_Lw_qw39Dk8sVeHp1Dqfukk4UGp/preview",
+    "pdfDownloadUrl": "https://drive.google.com/uc?id=1bZT-O_Lw_qw39Dk8sVeHp1Dqfukk4UGp&export=download",
     "scratchId": "330859811",
     "scratchIds": [
       "330859811"
     ],
     "active": true,
     "createdAt": "2026-08-25T09:35:55.188Z",
-    "updatedAt": "2026-08-25T09:52:01.222Z"
+    "updatedAt": "2026-08-25T09:56:21.412Z"
   }
 ]
