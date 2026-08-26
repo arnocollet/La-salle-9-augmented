@@ -1611,7 +1611,7 @@ document.getElementById("clearLocalData").onclick=()=>{
 
 function worksheetCount(){
   const input=document.getElementById("worksheetCount");
-  const value=Math.min(20,Math.max(1,parseInt(input.value,10)||1));
+  const value=Math.min(30,Math.max(1,parseInt(input.value,10)||1));
   input.value=value;
   return value;
 }
@@ -1741,9 +1741,34 @@ function makeRandomRoutine(){
   const count=worksheetExerciseCount();
   return buildMixedLevelRoutine(count,{mode:"random",printable:true});
 }
+function materializePrintableGenerator(generator){
+  return {...generator.make(),theme:generator.theme,notion:generator.notion,sourceLevel:generator.sourceLevel};
+}
+function buildCoverageSheets(sheetCount){
+  const exercisesPerSheet=worksheetExerciseCount();
+  const printablePool=prepareGeneratorPool(GENERATORS[currentLevel],{mode:"random",printable:true});
+  const byNotion=new Map();
+  printablePool.forEach(generator=>{
+    if(!byNotion.has(generator.notion))byNotion.set(generator.notion,generator);
+  });
+  const required=[...byNotion.values()].flatMap(generator=>[
+    materializePrintableGenerator(generator),materializePrintableGenerator(generator)
+  ]);
+  const totalSlots=sheetCount*exercisesPerSheet;
+  if(required.length>totalSlots)return null;
+  const allExercises=[...required];
+  while(allExercises.length<totalSlots){
+    allExercises.push(materializePrintableGenerator(printablePool[rand(0,printablePool.length-1)]));
+  }
+  shuffleQuestions(allExercises);
+  return Array.from({length:sheetCount},(_,index)=>allExercises.slice(index*exercisesPerSheet,(index+1)*exercisesPerSheet));
+}
 function preparePrintableSheets(){
   updateWorksheetExerciseCount();
-  printableSheets=Array.from({length:worksheetCount()},makeRandomRoutine);
+  const count=worksheetCount();
+  printableSheets=count===30
+    ?(buildCoverageSheets(count)||Array.from({length:count},makeRandomRoutine))
+    :Array.from({length:count},makeRandomRoutine);
   printableLevel=currentLevel;
   renderWorksheetPreview();
   document.getElementById("pdfStatus").textContent="";
