@@ -1814,7 +1814,7 @@ function drawRoundedBox(context,x,y,width,height,radius,fill,stroke){
   if(stroke){context.strokeStyle=stroke;context.lineWidth=2;context.stroke()}
 }
 function renderWorksheetPages(sheet,sheetNumber,isCorrection,dyslexic=false){
-  const exercisesPerPage=dyslexic?5:sheet.length;
+  const exercisesPerPage=dyslexic||currentLevel==="4e"||currentLevel==="3e"?5:sheet.length;
   const pageCount=Math.ceil(sheet.length/exercisesPerPage);
   return Array.from({length:pageCount},(_,pageIndex)=>{
     const startIndex=pageIndex*exercisesPerPage;
@@ -1986,7 +1986,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     const measuredQuestionWidth=context.measureText(questionText).width;
     const textWidth=hasSideVisual
       ?(exercise.transformType
-        ?Math.floor(contentWidth*(dense?.46:.30))
+        ?Math.floor(contentWidth*(dense?.46:(dyslexic?.42:.30)))
         :Math.min(Math.floor(contentWidth*.42),Math.max(160,Math.ceil(measuredQuestionWidth+10))))
       :contentWidth;
     const questionLineHeight=dense&&exercise.transformType?24:dense?28:dyslexic?39:(isCorrection?31:34);
