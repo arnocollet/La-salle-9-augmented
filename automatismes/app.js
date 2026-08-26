@@ -1912,7 +1912,7 @@ function drawTransformationWorksheetVisual(context,exercise,x,y,width,color,larg
   if(data){
     // La ligne de réponse est réservée sous la figure : la hauteur du
     // quadrillage doit rester suffisamment compacte pour ne jamais la croiser.
-    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(42,(width-30)/columns,(large?130:76)/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
+    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(55,(width-30)/columns,(large?180:76)/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
     const center=n=>{const row=Math.floor((n-1)/columns),column=(n-1)%columns;return [left+column*cell+cell/2,top+row*cell+cell/2]};
     for(let n=1;n<=columns*rows;n++){const [cx,cy]=center(n);context.fillStyle=n===data.source?color:"#f4f7fb";context.strokeStyle=n===data.source?color:"#8795a8";context.fillRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.strokeRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.fillStyle=n===data.source?"#fff":"#52637b";context.font="700 12px Arial";context.textAlign="center";context.fillText(n,cx,cy+4)}
     context.setLineDash([5,4]);context.strokeStyle=color;context.beginPath();
@@ -1986,13 +1986,16 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     const measuredQuestionWidth=context.measureText(questionText).width;
     const textWidth=hasSideVisual
       ?(exercise.transformType
-        ?Math.floor(contentWidth*.38)
+        ?Math.floor(contentWidth*.30)
         :Math.min(Math.floor(contentWidth*.42),Math.max(160,Math.ceil(measuredQuestionWidth+10))))
       :contentWidth;
     const questionBottom=drawLines(context,questionText,x+32,y+111,textWidth,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(exercise.transformType){
       const visualX=x+32+textWidth+sideGap,visualWidth=contentWidth-textWidth-sideGap;
-      drawTransformationWorksheetVisual(context,exercise,visualX,y+116,visualWidth,worksheetColor,!isCorrection);
+      // Les formes utilisent un repère de 320 px : on centre cette zone
+      // dans la colonne disponible pour éviter tout décalage visuel.
+      const drawingWidth=Math.min(visualWidth,320),drawingX=visualX+(visualWidth-drawingWidth)/2;
+      drawTransformationWorksheetVisual(context,exercise,drawingX,y+116,drawingWidth,worksheetColor,!isCorrection);
       if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
       return;
     }
