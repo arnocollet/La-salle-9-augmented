@@ -1997,7 +1997,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
       // Les formes utilisent un repère de 320 px : on centre cette zone
       // dans la colonne disponible pour éviter tout décalage visuel.
       const drawingWidth=Math.min(visualWidth,320),drawingX=visualX+(visualWidth-drawingWidth)/2;
-      drawTransformationWorksheetVisual(context,exercise,drawingX,y+116,drawingWidth,worksheetColor,!isCorrection);
+      drawTransformationWorksheetVisual(context,exercise,drawingX,y+102,drawingWidth,worksheetColor,!isCorrection);
       if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
       return;
     }
