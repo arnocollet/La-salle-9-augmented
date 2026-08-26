@@ -1885,7 +1885,9 @@ function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
 function drawTransformationWorksheetVisual(context,exercise,x,y,width,color){
   const data=exercise.numberedTransform||exercise.grid;context.save();context.lineWidth=2;
   if(data){
-    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,100/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
+    // La ligne de réponse est réservée sous la figure : la hauteur du
+    // quadrillage doit rester suffisamment compacte pour ne jamais la croiser.
+    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,76/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
     const center=n=>{const row=Math.floor((n-1)/columns),column=(n-1)%columns;return [left+column*cell+cell/2,top+row*cell+cell/2]};
     for(let n=1;n<=columns*rows;n++){const [cx,cy]=center(n);context.fillStyle=n===data.source?color:"#f4f7fb";context.strokeStyle=n===data.source?color:"#8795a8";context.fillRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.strokeRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.fillStyle=n===data.source?"#fff":"#52637b";context.font="700 12px Arial";context.textAlign="center";context.fillText(n,cx,cy+4)}
     context.setLineDash([5,4]);context.strokeStyle=color;context.beginPath();
@@ -1956,7 +1958,9 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
       :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(exercise.transformType){
-      drawTransformationWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
+      // La zone située sous l’énoncé est réservée à la figure : ne pas la
+      // repousser selon la hauteur du texte, notamment en version dyslexique.
+      drawTransformationWorksheetVisual(context,exercise,x+32,y+142,boxWidth-64,worksheetColor);
       if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
       else{context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([])}
       return;
