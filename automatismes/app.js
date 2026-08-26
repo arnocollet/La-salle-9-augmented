@@ -1870,7 +1870,7 @@ function drawBisectorTruthWorksheetVisual(context,exercise,x,y,width,color){
   context.fillStyle=color;context.fillText(`${data.angleValues[0]}°`,cx-22,cy-12);context.fillText(`${data.angleValues[1]}°`,cx-22,cy+24);context.textAlign="left";
 }
 function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
-  const blocks=exercise.scratchBlocks||[],blockHeight=16,blockWidth=Math.min(width-8,Math.max(250,width*.72));
+  const blocks=exercise.scratchBlocks||[],blockHeight=16,blockWidth=Math.min(width-8,Math.max(220,width*.52));
   const blockColors={event:"#ffbf00",motion:"#4c97ff",control:"#ffab19",variables:"#ff8c1a",looks:"#9966ff",sensing:"#5cb1d6"};
   context.save();context.font="700 12px Arial";context.textBaseline="middle";
   blocks.slice(0,5).forEach((block,index)=>{
@@ -1883,17 +1883,22 @@ function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
   });context.restore();
 }
 function drawTransformationWorksheetVisual(context,exercise,x,y,width,color){
-  const data=exercise.numberedTransform;context.save();context.lineWidth=2;
+  const data=exercise.numberedTransform||exercise.grid;context.save();context.lineWidth=2;
   if(data){
-    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,68/rows),left=x+(width-cell*columns)/2,top=y+2;
+    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,100/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
     const center=n=>{const row=Math.floor((n-1)/columns),column=(n-1)%columns;return [left+column*cell+cell/2,top+row*cell+cell/2]};
     for(let n=1;n<=columns*rows;n++){const [cx,cy]=center(n);context.fillStyle=n===data.source?color:"#f4f7fb";context.strokeStyle=n===data.source?color:"#8795a8";context.fillRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.strokeRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.fillStyle=n===data.source?"#fff":"#52637b";context.font="700 12px Arial";context.textAlign="center";context.fillText(n,cx,cy+4)}
     context.setLineDash([5,4]);context.strokeStyle=color;context.beginPath();
-    if(data.kind==="translation"){const [fx,fy]=center(data.from),[tx,ty]=center(data.to);context.moveTo(fx,fy);context.lineTo(tx,ty)}
-    else if(data.axis==="horizontal"){context.moveTo(left-6,top+rows*cell/2);context.lineTo(left+columns*cell+4,top+rows*cell/2)}
-    else if(data.axis==="diagonal"){context.moveTo(left-4,top-3);context.lineTo(left+columns*cell+3,top+rows*cell+3)}
-    else{context.moveTo(left+columns*cell/2,top-4);context.lineTo(left+columns*cell/2,top+rows*cell+4)}
-    context.stroke();context.restore();return;
+    if(kind==="translation"){const [fx,fy]=center(data.from),[tx,ty]=center(data.to);context.moveTo(fx,fy);context.lineTo(tx,ty);context.stroke()}
+    else if(kind==="centrale"){
+      context.setLineDash([]);context.strokeStyle=color;const cx=left+columns*cell/2,cy=top+rows*cell/2;context.beginPath();context.arc(cx,cy,4,0,Math.PI*2);context.fillStyle=color;context.fill();context.stroke();context.font="700 12px Arial";context.textAlign="left";context.fillText("O",cx+7,cy+4);
+    }else{
+      if(data.axis==="horizontal"){context.moveTo(left-6,top+rows*cell/2);context.lineTo(left+columns*cell+4,top+rows*cell/2)}
+      else if(data.axis==="diagonal"){context.moveTo(left-4,top-3);context.lineTo(left+columns*cell+3,top+rows*cell+3)}
+      else{context.moveTo(left+columns*cell/2,top-4);context.lineTo(left+columns*cell/2,top+rows*cell+4)}
+      context.stroke();
+    }
+    context.restore();return;
   }
   const cx=x+width/2,cy=y+38;context.strokeStyle="#14213d";context.fillStyle="#eef2f7";
   if(exercise.transformType==="rotation"){
