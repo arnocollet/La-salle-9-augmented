@@ -1982,7 +1982,9 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
       ?(dense?`19px ${fontFamily}`:`${dyslexic?25:23}px ${fontFamily}`)
       :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
     const hasSideVisual=Boolean(exercise.transformType||exercise.scratchBlocks);
-    const contentWidth=boxWidth-64,sideGap=hasSideVisual?18:0,textWidth=hasSideVisual?Math.floor(contentWidth*.53):contentWidth;
+    const contentWidth=boxWidth-64,sideGap=hasSideVisual?18:0,textWidth=hasSideVisual
+      ?Math.floor(contentWidth*(exercise.transformType?.48:.53))
+      :contentWidth;
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,textWidth,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(exercise.transformType){
       const visualX=x+32+textWidth+sideGap,visualWidth=contentWidth-textWidth-sideGap;
