@@ -1969,7 +1969,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     const column=dense?i%columns:0;
     const row=dense?Math.floor(i/columns):i;
     const x=72+column*(boxWidth+columnGap);
-    const y=260+row*278;
+    const y=260+row*260;
     const dyslexicBoxFill=i%2===0?"#ffffff":"#f3f7fb";
     drawRoundedBox(context,x,y,boxWidth,246,18,isCorrection?"#f7f9fc":dyslexic?dyslexicBoxFill:"#ffffff","#dce5f1");
     drawRoundedBox(context,x+22,y+22,48,48,24,worksheetColor);
@@ -1990,7 +1990,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
         :Math.min(Math.floor(contentWidth*.42),Math.max(160,Math.ceil(measuredQuestionWidth+10))))
       :contentWidth;
     const questionLineHeight=dense&&exercise.transformType?24:dense?28:dyslexic?39:(isCorrection?31:34);
-    const questionMaxLines=dense&&exercise.transformType?5:dense?4:3;
+    const questionMaxLines=exercise.transformType?4:dense?4:3;
     const questionBottom=drawLines(context,questionText,x+32,y+111,textWidth,questionLineHeight,questionMaxLines);
     if(exercise.transformType){
       const visualX=x+32+textWidth+sideGap,visualWidth=contentWidth-textWidth-sideGap;
