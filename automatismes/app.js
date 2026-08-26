@@ -1895,11 +1895,11 @@ function drawBisectorTruthWorksheetVisual(context,exercise,x,y,width,color){
   context.fillStyle=color;context.fillText(`${data.angleValues[0]}°`,cx-22,cy-12);context.fillText(`${data.angleValues[1]}°`,cx-22,cy+24);context.textAlign="left";
 }
 function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
-  const blocks=exercise.scratchBlocks||[],blockHeight=19,blockWidth=Math.min(width-8,Math.max(150,width*.95));
+  const blocks=exercise.scratchBlocks||[],blockHeight=16,blockWidth=Math.min(width-8,Math.max(150,width*.95));
   const blockColors={event:"#ffbf00",motion:"#4c97ff",control:"#ffab19",variables:"#ff8c1a",looks:"#9966ff",sensing:"#5cb1d6"};
-  context.save();context.font="700 16px Arial";context.textBaseline="middle";
-  blocks.slice(0,5).forEach((block,index)=>{
-    const indent=Math.min(3,Number(block.indent)||0)*16,bx=x+indent,by=y+index*24,bw=Math.min(blockWidth-indent,width-indent-4);
+  context.save();context.font="700 14px Arial";context.textBaseline="middle";
+  blocks.slice(0,7).forEach((block,index)=>{
+    const indent=Math.min(3,Number(block.indent)||0)*16,bx=x+indent,by=y+index*18,bw=Math.min(blockWidth-indent,width-indent-4);
     drawRoundedBox(context,bx,by,bw,blockHeight,5,blockColors[block.type]||"#64748b");
     context.fillStyle=block.type==="event"||block.type==="control"?"#352600":"#ffffff";
     let label=String(block.text).replace(/\s+/g," ");
