@@ -1201,6 +1201,9 @@ const GENERATORS = {"6e":G6,"5e":G5,"4e":G4,"3e":G3};
 const LEVEL_SEQUENCE=["6e","5e","4e","3e"];
 Object.entries(GENERATORS).forEach(([level,generators])=>{
   generators.forEach(generator=>{generator.sourceLevel=level});
+  // Les programmes Scratch restent interactifs dans l'entraînement, mais
+  // doivent aussi pouvoir être reproduits sur une fiche papier.
+  generators.forEach(generator=>{generator.printable=!generator.interactiveOnly||generator.notion.includes("Scratch")});
 });
 const SIXTH_GRADE_THEME_EQUIVALENTS={
   "Nombres entiers et décimaux":"Nombres et calculs",
@@ -1652,7 +1655,7 @@ function matchesSelectedTheme(generator,theme){
   return generator.theme===theme||SIXTH_GRADE_THEME_EQUIVALENTS[generator.theme]===theme;
 }
 function prepareGeneratorPool(generators,{mode="random",theme=null,notions=[],printable=false}={}){
-  let pool=generators.filter(generator=>!printable||!generator.interactiveOnly);
+  let pool=generators.filter(generator=>!printable||generator.printable);
   if(mode==="theme")pool=pool.filter(generator=>matchesSelectedTheme(generator,theme));
   if(mode==="choice"){
     const selectedNotions=new Set(notions);
@@ -1866,6 +1869,42 @@ function drawBisectorTruthWorksheetVisual(context,exercise,x,y,width,color){
   [["B",bx,by-5],["E",ex,ey+13],["A",cx-24,cy-5],["C",cx+9,cy+13]].forEach(([label,px,py])=>context.fillText(label,px,py));
   context.fillStyle=color;context.fillText(`${data.angleValues[0]}°`,cx-22,cy-12);context.fillText(`${data.angleValues[1]}°`,cx-22,cy+24);context.textAlign="left";
 }
+function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
+  const blocks=exercise.scratchBlocks||[],blockHeight=16,blockWidth=Math.min(width-8,Math.max(250,width*.72));
+  const blockColors={event:"#ffbf00",motion:"#4c97ff",control:"#ffab19",variables:"#ff8c1a",looks:"#9966ff",sensing:"#5cb1d6"};
+  context.save();context.font="700 12px Arial";context.textBaseline="middle";
+  blocks.slice(0,5).forEach((block,index)=>{
+    const indent=Math.min(3,Number(block.indent)||0)*14,bx=x+indent,by=y+index*18,bw=Math.min(blockWidth-indent,width-indent-4);
+    drawRoundedBox(context,bx,by,bw,blockHeight,5,blockColors[block.type]||"#64748b");
+    context.fillStyle=block.type==="event"||block.type==="control"?"#352600":"#ffffff";
+    let label=String(block.text).replace(/\s+/g," ");
+    while(label.length>4&&context.measureText(label).width>bw-14)label=label.slice(0,-2)+"…";
+    context.fillText(label,bx+7,by+blockHeight/2);
+  });context.restore();
+}
+function drawTransformationWorksheetVisual(context,exercise,x,y,width,color){
+  const data=exercise.numberedTransform;context.save();context.lineWidth=2;
+  if(data){
+    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,68/rows),left=x+(width-cell*columns)/2,top=y+2;
+    const center=n=>{const row=Math.floor((n-1)/columns),column=(n-1)%columns;return [left+column*cell+cell/2,top+row*cell+cell/2]};
+    for(let n=1;n<=columns*rows;n++){const [cx,cy]=center(n);context.fillStyle=n===data.source?color:"#f4f7fb";context.strokeStyle=n===data.source?color:"#8795a8";context.fillRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.strokeRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.fillStyle=n===data.source?"#fff":"#52637b";context.font="700 12px Arial";context.textAlign="center";context.fillText(n,cx,cy+4)}
+    context.setLineDash([5,4]);context.strokeStyle=color;context.beginPath();
+    if(data.kind==="translation"){const [fx,fy]=center(data.from),[tx,ty]=center(data.to);context.moveTo(fx,fy);context.lineTo(tx,ty)}
+    else if(data.axis==="horizontal"){context.moveTo(left-6,top+rows*cell/2);context.lineTo(left+columns*cell+4,top+rows*cell/2)}
+    else if(data.axis==="diagonal"){context.moveTo(left-4,top-3);context.lineTo(left+columns*cell+3,top+rows*cell+3)}
+    else{context.moveTo(left+columns*cell/2,top-4);context.lineTo(left+columns*cell/2,top+rows*cell+4)}
+    context.stroke();context.restore();return;
+  }
+  const cx=x+width/2,cy=y+38;context.strokeStyle="#14213d";context.fillStyle="#eef2f7";
+  if(exercise.transformType==="rotation"){
+    const radius=Math.min(35,width/7),source=exercise.rotationSource||1;
+    for(let i=0;i<8;i++){const start=(-112.5+i*45)*Math.PI/180,end=start+45*Math.PI/180;context.beginPath();context.moveTo(cx,cy);context.arc(cx,cy,radius,start,end);context.closePath();context.fillStyle=i+1===source?color:"#eef2f7";context.fill();context.stroke()}
+    context.fillStyle=color;context.font="700 12px Arial";context.textAlign="center";context.fillText("O",cx,cy+4);
+  }else{
+    const points=exercise.transformType==="centrale"?[[cx-52,cy-20],[cx-25,cy-34],[cx-8,cy-6]]:[[cx-75,cy+27],[cx-50,cy-27],[cx-25,cy+27]],mirror=points.map(([px,py])=>exercise.transformType==="centrale"?[2*cx-px,2*cy-py]:[2*cx-px,py]);
+    drawCanvasPolygon(context,points,"#eef2f7");drawCanvasPolygon(context,mirror,color);context.strokeStyle=color;context.setLineDash([5,4]);context.beginPath();context.moveTo(cx,cy-43);context.lineTo(cx,cy+43);context.stroke();
+  }context.restore();
+}
 function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
   const {dyslexic=false,pageNumber=1,pageCount=1,startIndex=0}=options;
   const canvas=document.createElement("canvas");
@@ -1911,6 +1950,18 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
       ?(dense?`19px ${fontFamily}`:`${dyslexic?25:23}px ${fontFamily}`)
       :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,boxWidth-64,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
+    if(exercise.transformType){
+      drawTransformationWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
+      if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
+      else{context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([])}
+      return;
+    }
+    if(exercise.scratchBlocks){
+      drawScratchWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
+      if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
+      else{context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([])}
+      return;
+    }
     if(exercise.cubeStack){
       drawCubeWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
       if(isCorrection){
