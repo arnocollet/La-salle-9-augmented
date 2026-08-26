@@ -1261,7 +1261,7 @@ if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,his
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
 let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null,pointsMilestoneTimer=null;
-let printableSheets=[],printableLevel="";
+let printableSheets=[],printableLevel="",printableStartNumber=0;
 let selectedChoiceNotions=new Set();
 
 const AUTO_DYNAMIC_TEXT={
@@ -1599,6 +1599,8 @@ document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCou
 document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
 document.getElementById("worksheetCount").addEventListener("change",preparePrintableSheets);
 document.getElementById("worksheetCount").addEventListener("blur",preparePrintableSheets);
+document.getElementById("worksheetStartNumber").addEventListener("change",preparePrintableSheets);
+document.getElementById("worksheetStartNumber").addEventListener("blur",preparePrintableSheets);
 document.getElementById("dyslexicVersion").addEventListener("change",renderWorksheetPreview);
 document.getElementById("refreshWorksheet").onclick=preparePrintableSheets;
 document.getElementById("downloadWorksheets").onclick=downloadWorksheetsPdf;
@@ -1612,6 +1614,12 @@ document.getElementById("clearLocalData").onclick=()=>{
 function worksheetCount(){
   const input=document.getElementById("worksheetCount");
   const value=Math.min(30,Math.max(1,parseInt(input.value,10)||1));
+  input.value=value;
+  return value;
+}
+function worksheetStartNumber(){
+  const input=document.getElementById("worksheetStartNumber");
+  const value=Math.min(9999,Math.max(1,parseInt(input.value,10)||1));
   input.value=value;
   return value;
 }
@@ -1770,6 +1778,7 @@ function preparePrintableSheets(){
     ?(buildCoverageSheets(count)||Array.from({length:count},makeRandomRoutine))
     :Array.from({length:count},makeRandomRoutine);
   printableLevel=currentLevel;
+  printableStartNumber=worksheetStartNumber();
   renderWorksheetPreview();
   document.getElementById("pdfStatus").textContent="";
 }
@@ -1777,7 +1786,7 @@ function renderWorksheetPreview(){
   if(!printableSheets[0]) return;
   const preview=document.getElementById("worksheetPreview");
   const dyslexic=document.getElementById("dyslexicVersion").checked;
-  const renderedPage=renderWorksheetPages(printableSheets[0],1,false,dyslexic)[0];
+  const renderedPage=renderWorksheetPages(printableSheets[0],worksheetStartNumber(),false,dyslexic)[0];
   const context=preview.getContext("2d");
   context.clearRect(0,0,preview.width,preview.height);
   context.drawImage(renderedPage,0,0);
@@ -2111,7 +2120,7 @@ function makeImagePdf(images,{twoUp=true}={}){
 }
 async function downloadWorksheetsPdf(){
   const button=document.getElementById("downloadWorksheets"),status=document.getElementById("pdfStatus");
-  if(printableLevel!==currentLevel||printableSheets.length!==worksheetCount()) preparePrintableSheets();
+  if(printableLevel!==currentLevel||printableSheets.length!==worksheetCount()||printableStartNumber!==worksheetStartNumber()) preparePrintableSheets();
   const dyslexic=document.getElementById("dyslexicVersion").checked;
   button.disabled=true;status.textContent="Préparation du PDF…";
   await new Promise(resolve=>setTimeout(resolve,20));
@@ -2119,14 +2128,14 @@ async function downloadWorksheetsPdf(){
     const images=[];
     for(let i=0;i<printableSheets.length;i++){
       status.textContent=`Création de la fiche ${i+1} sur ${printableSheets.length}…`;
-      for(const page of renderWorksheetPages(printableSheets[i],i+1,false,dyslexic)){
+      for(const page of renderWorksheetPages(printableSheets[i],worksheetStartNumber()+i,false,dyslexic)){
         images.push(await canvasToJpegBytes(page));
       }
     }
     if(document.getElementById("includeAnswers").checked){
       for(let i=0;i<printableSheets.length;i++){
         status.textContent=`Création du corrigé ${i+1} sur ${printableSheets.length}…`;
-        for(const page of renderWorksheetPages(printableSheets[i],i+1,true,dyslexic)){
+        for(const page of renderWorksheetPages(printableSheets[i],worksheetStartNumber()+i,true,dyslexic)){
           images.push(await canvasToJpegBytes(page));
         }
       }
