@@ -1930,7 +1930,13 @@ function drawTransformationWorksheetVisual(context,exercise,x,y,width,color,larg
   const cx=x+width/2,cy=y+38;context.strokeStyle="#14213d";context.fillStyle="#eef2f7";
   if(exercise.transformType==="rotation"){
     const radius=Math.min(large?45:35,width/7),source=exercise.rotationSource||1;
-    for(let i=0;i<8;i++){const start=(-112.5+i*45)*Math.PI/180,end=start+45*Math.PI/180;context.beginPath();context.moveTo(cx,cy);context.arc(cx,cy,radius,start,end);context.closePath();context.fillStyle=i+1===source?color:"#eef2f7";context.fill();context.stroke()}
+    for(let i=0;i<8;i++){
+      const start=(-112.5+i*45)*Math.PI/180,end=start+45*Math.PI/180;
+      context.beginPath();context.moveTo(cx,cy);context.arc(cx,cy,radius,start,end);context.closePath();context.fillStyle=i+1===source?color:"#eef2f7";context.fill();context.stroke();
+      const labelRadius=radius*.64,labelAngle=(start+end)/2;
+      context.fillStyle=i+1===source?"#ffffff":"#52637b";context.font="700 11px Arial";context.textAlign="center";context.textBaseline="middle";
+      context.fillText(String(i+1),cx+Math.cos(labelAngle)*labelRadius,cy+Math.sin(labelAngle)*labelRadius);
+    }
     context.fillStyle=color;context.font="700 12px Arial";context.textAlign="center";context.fillText("O",cx,cy+4);
   }else{
     const points=exercise.transformType==="centrale"?[[cx-52,cy-20],[cx-25,cy-34],[cx-8,cy-6]]:[[cx-75,cy+27],[cx-50,cy-27],[cx-25,cy+27]],mirror=points.map(([px,py])=>exercise.transformType==="centrale"?[2*cx-px,2*cy-py]:[2*cx-px,py]);
