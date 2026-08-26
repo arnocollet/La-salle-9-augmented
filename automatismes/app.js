@@ -1895,11 +1895,11 @@ function drawBisectorTruthWorksheetVisual(context,exercise,x,y,width,color){
   context.fillStyle=color;context.fillText(`${data.angleValues[0]}°`,cx-22,cy-12);context.fillText(`${data.angleValues[1]}°`,cx-22,cy+24);context.textAlign="left";
 }
 function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
-  const blocks=exercise.scratchBlocks||[],blockHeight=16,blockWidth=Math.min(width-8,Math.max(220,width*.52));
+  const blocks=exercise.scratchBlocks||[],blockHeight=19,blockWidth=Math.min(width-8,Math.max(220,width*.52));
   const blockColors={event:"#ffbf00",motion:"#4c97ff",control:"#ffab19",variables:"#ff8c1a",looks:"#9966ff",sensing:"#5cb1d6"};
-  context.save();context.font="700 12px Arial";context.textBaseline="middle";
+  context.save();context.font="700 14px Arial";context.textBaseline="middle";
   blocks.slice(0,5).forEach((block,index)=>{
-    const indent=Math.min(3,Number(block.indent)||0)*14,bx=x+indent,by=y+index*18,bw=Math.min(blockWidth-indent,width-indent-4);
+    const indent=Math.min(3,Number(block.indent)||0)*16,bx=x+indent,by=y+index*21,bw=Math.min(blockWidth-indent,width-indent-4);
     drawRoundedBox(context,bx,by,bw,blockHeight,5,blockColors[block.type]||"#64748b");
     context.fillStyle=block.type==="event"||block.type==="control"?"#352600":"#ffffff";
     let label=String(block.text).replace(/\s+/g," ");
@@ -1907,12 +1907,12 @@ function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
     context.fillText(label,bx+7,by+blockHeight/2);
   });context.restore();
 }
-function drawTransformationWorksheetVisual(context,exercise,x,y,width,color){
+function drawTransformationWorksheetVisual(context,exercise,x,y,width,color,large=false){
   const data=exercise.numberedTransform||exercise.grid;context.save();context.lineWidth=2;
   if(data){
     // La ligne de réponse est réservée sous la figure : la hauteur du
     // quadrillage doit rester suffisamment compacte pour ne jamais la croiser.
-    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,76/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
+    const columns=data.columns||4,rows=data.rows||4,cell=Math.min(34,(width-30)/columns,(large?104:76)/rows),left=x+(width-cell*columns)/2,top=y+2,kind=data.kind||exercise.transformType;
     const center=n=>{const row=Math.floor((n-1)/columns),column=(n-1)%columns;return [left+column*cell+cell/2,top+row*cell+cell/2]};
     for(let n=1;n<=columns*rows;n++){const [cx,cy]=center(n);context.fillStyle=n===data.source?color:"#f4f7fb";context.strokeStyle=n===data.source?color:"#8795a8";context.fillRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.strokeRect(cx-cell/2,cy-cell/2,cell-2,cell-2);context.fillStyle=n===data.source?"#fff":"#52637b";context.font="700 12px Arial";context.textAlign="center";context.fillText(n,cx,cy+4)}
     context.setLineDash([5,4]);context.strokeStyle=color;context.beginPath();
@@ -1929,7 +1929,7 @@ function drawTransformationWorksheetVisual(context,exercise,x,y,width,color){
   }
   const cx=x+width/2,cy=y+38;context.strokeStyle="#14213d";context.fillStyle="#eef2f7";
   if(exercise.transformType==="rotation"){
-    const radius=Math.min(35,width/7),source=exercise.rotationSource||1;
+    const radius=Math.min(large?45:35,width/7),source=exercise.rotationSource||1;
     for(let i=0;i<8;i++){const start=(-112.5+i*45)*Math.PI/180,end=start+45*Math.PI/180;context.beginPath();context.moveTo(cx,cy);context.arc(cx,cy,radius,start,end);context.closePath();context.fillStyle=i+1===source?color:"#eef2f7";context.fill();context.stroke()}
     context.fillStyle=color;context.font="700 12px Arial";context.textAlign="center";context.fillText("O",cx,cy+4);
   }else{
@@ -1985,15 +1985,13 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     if(exercise.transformType){
       // La zone située sous l’énoncé est réservée à la figure : ne pas la
       // repousser selon la hauteur du texte, notamment en version dyslexique.
-      drawTransformationWorksheetVisual(context,exercise,x+32,y+142,boxWidth-64,worksheetColor);
+      drawTransformationWorksheetVisual(context,exercise,x+32,y+142,boxWidth-64,worksheetColor,!isCorrection);
       if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
-      else{context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([])}
       return;
     }
     if(exercise.scratchBlocks){
       drawScratchWorksheetVisual(context,exercise,x+32,Math.max(y+142,questionBottom+2),boxWidth-64,worksheetColor);
       if(isCorrection){context.fillStyle="#167333";context.font=`700 19px ${fontFamily}`;context.fillText(`Réponse : ${exercise.answer}`,x+32,y+229)}
-      else{context.strokeStyle="#8b98aa";context.lineWidth=2;context.setLineDash([4,7]);context.beginPath();context.moveTo(x+32,y+230);context.lineTo(x+boxWidth-32,y+230);context.stroke();context.setLineDash([])}
       return;
     }
     if(exercise.cubeStack){
