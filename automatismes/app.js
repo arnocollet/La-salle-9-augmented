@@ -1989,8 +1989,8 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
         ?Math.floor(contentWidth*(dense?.46:(dyslexic?.42:.30)))
         :Math.min(Math.floor(contentWidth*.42),Math.max(160,Math.ceil(measuredQuestionWidth+10))))
       :contentWidth;
-    const questionLineHeight=dense&&exercise.transformType?24:dense?28:dyslexic?39:(isCorrection?31:34);
-    const questionMaxLines=exercise.transformType?4:dense?4:3;
+    const questionLineHeight=exercise.transformType?(dense?24:29):dense?28:dyslexic?39:(isCorrection?31:34);
+    const questionMaxLines=exercise.transformType?5:dense?4:3;
     const questionBottom=drawLines(context,questionText,x+32,y+111,textWidth,questionLineHeight,questionMaxLines);
     if(exercise.transformType){
       const visualX=x+32+textWidth+sideGap,visualWidth=contentWidth-textWidth-sideGap;
