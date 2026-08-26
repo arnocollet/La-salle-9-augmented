@@ -1986,10 +1986,12 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
     const measuredQuestionWidth=context.measureText(questionText).width;
     const textWidth=hasSideVisual
       ?(exercise.transformType
-        ?Math.floor(contentWidth*.30)
+        ?Math.floor(contentWidth*(dense?.46:.30))
         :Math.min(Math.floor(contentWidth*.42),Math.max(160,Math.ceil(measuredQuestionWidth+10))))
       :contentWidth;
-    const questionBottom=drawLines(context,questionText,x+32,y+111,textWidth,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
+    const questionLineHeight=dense&&exercise.transformType?24:dense?28:dyslexic?39:(isCorrection?31:34);
+    const questionMaxLines=dense&&exercise.transformType?5:dense?4:3;
+    const questionBottom=drawLines(context,questionText,x+32,y+111,textWidth,questionLineHeight,questionMaxLines);
     if(exercise.transformType){
       const visualX=x+32+textWidth+sideGap,visualWidth=contentWidth-textWidth-sideGap;
       // Les formes utilisent un repère de 320 px : on centre cette zone
