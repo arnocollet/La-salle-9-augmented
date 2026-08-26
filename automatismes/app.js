@@ -1897,9 +1897,9 @@ function drawBisectorTruthWorksheetVisual(context,exercise,x,y,width,color){
 function drawScratchWorksheetVisual(context,exercise,x,y,width,color){
   const blocks=exercise.scratchBlocks||[],blockHeight=19,blockWidth=Math.min(width-8,Math.max(150,width*.95));
   const blockColors={event:"#ffbf00",motion:"#4c97ff",control:"#ffab19",variables:"#ff8c1a",looks:"#9966ff",sensing:"#5cb1d6"};
-  context.save();context.font="700 14px Arial";context.textBaseline="middle";
+  context.save();context.font="700 16px Arial";context.textBaseline="middle";
   blocks.slice(0,5).forEach((block,index)=>{
-    const indent=Math.min(3,Number(block.indent)||0)*16,bx=x+indent,by=y+index*21,bw=Math.min(blockWidth-indent,width-indent-4);
+    const indent=Math.min(3,Number(block.indent)||0)*16,bx=x+indent,by=y+index*24,bw=Math.min(blockWidth-indent,width-indent-4);
     drawRoundedBox(context,bx,by,bw,blockHeight,5,blockColors[block.type]||"#64748b");
     context.fillStyle=block.type==="event"||block.type==="control"?"#352600":"#ffffff";
     let label=String(block.text).replace(/\s+/g," ");
@@ -1983,7 +1983,7 @@ function renderWorksheetPage(sheet,sheetNumber,isCorrection,options={}){
       :(dense?`21px ${fontFamily}`:`${dyslexic?28:26}px ${fontFamily}`);
     const hasSideVisual=Boolean(exercise.transformType||exercise.scratchBlocks);
     const contentWidth=boxWidth-64,sideGap=hasSideVisual?18:0,textWidth=hasSideVisual
-      ?Math.floor(contentWidth*(exercise.transformType?.48:.53))
+      ?Math.floor(contentWidth*(exercise.transformType?.48:.42))
       :contentWidth;
     const questionBottom=drawLines(context,translateGeneratedText(exercise.text),x+32,y+111,textWidth,dense?28:dyslexic?39:(isCorrection?31:34),dense?4:3);
     if(exercise.transformType){
