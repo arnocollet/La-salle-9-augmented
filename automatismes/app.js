@@ -2125,7 +2125,8 @@ async function downloadWorksheetsPdf(){
         }
       }
     }
-    const pdf=makeImagePdf(images,{twoUp:!dyslexic}),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
+    const twoUpPrinting=!dyslexic&&!(["4e","3e"].includes(currentLevel));
+    const pdf=makeImagePdf(images,{twoUp:twoUpPrinting}),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
     const link=document.createElement("a");
     link.href=url;link.download=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}${dyslexic?"-dyslexique":""}.pdf`;
     document.body.appendChild(link);link.click();link.remove();
