@@ -1670,6 +1670,7 @@ function updateWorksheetExerciseCount(){
   const count=worksheetExerciseCount();
   const descriptionCount=document.getElementById("worksheetDescriptionCount");
   if(descriptionCount)descriptionCount.textContent=count;
+  document.querySelector(".worksheet-summary")?.style.setProperty("--level-color",WORKSHEET_COLORS[currentLevel]||WORKSHEET_COLORS["5e"]);
   document.getElementById("worksheetExerciseCount").textContent=`${count} exercices par fiche`;
 }
 function worksheetGeneratorOptions(){
