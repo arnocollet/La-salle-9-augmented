@@ -1561,6 +1561,7 @@ function updateWorksheetSelection(){
     ? `${count} type${count>1?"s":""} d’exercice${count>1?"s":""} sélectionné${count>1?"s":""}`
     : "Aucun type sélectionné : choisissez au moins une notion.";
   document.getElementById("downloadWorksheets").disabled=count===0;
+  document.getElementById("refreshWorksheet").disabled=count===0;
 }
 function makeWorksheetChoiceMenu(){
   const groups=choiceGroupsForCurrentLevel();
@@ -1582,9 +1583,9 @@ function makeWorksheetChoiceMenu(){
   });
   document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-category]").forEach(button=>button.onclick=()=>{
     const boxes=[...document.querySelectorAll(`#worksheetChoiceGroups [data-worksheet-choice-group="${button.dataset.worksheetChoiceCategory}"] [data-worksheet-choice-notion]`)];
-    const shouldCheck=boxes.some(box=>!box.checked); boxes.forEach(box=>box.checked=shouldCheck); updateWorksheetSelection(); preparePrintableSheets();
+    const shouldCheck=boxes.some(box=>!box.checked); boxes.forEach(box=>box.checked=shouldCheck); updateWorksheetSelection();
   });
-  document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]").forEach(box=>box.onchange=()=>{updateWorksheetSelection();preparePrintableSheets()});
+  document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]").forEach(box=>box.onchange=updateWorksheetSelection);
   updateWorksheetSelection();
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
@@ -1633,8 +1634,8 @@ document.querySelectorAll(".math-key").forEach(button=>button.addEventListener("
 }));
 document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCount(-1);
 document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
-document.getElementById("worksheetCount").addEventListener("change",preparePrintableSheets);
-document.getElementById("worksheetCount").addEventListener("blur",preparePrintableSheets);
+document.getElementById("worksheetCount").addEventListener("change",updateWorksheetExerciseCount);
+document.getElementById("worksheetCount").addEventListener("blur",updateWorksheetExerciseCount);
 document.getElementById("dyslexicVersion").addEventListener("change",renderWorksheetPreview);
 document.getElementById("refreshWorksheet").onclick=preparePrintableSheets;
 document.getElementById("downloadWorksheets").onclick=downloadWorksheetsPdf;
@@ -1653,7 +1654,7 @@ function worksheetCount(){
 }
 function changeWorksheetCount(change){
   document.getElementById("worksheetCount").value=worksheetCount()+change;
-  preparePrintableSheets();
+  updateWorksheetExerciseCount();
 }
 function worksheetExerciseCount(){
   return currentLevel==="4e"||currentLevel==="3e"?10:5;
@@ -1804,7 +1805,6 @@ function buildCoverageSheets(sheetCount){
   return Array.from({length:sheetCount},(_,index)=>allExercises.slice(index*exercisesPerSheet,(index+1)*exercisesPerSheet));
 }
 function preparePrintableSheets(){
-  if(!selectedWorksheetNotions.size)makeWorksheetChoiceMenu();
   updateWorksheetExerciseCount();
   const count=worksheetCount();
   printableSheets=count===30
@@ -2152,7 +2152,12 @@ function makeImagePdf(images,{twoUp=true}={}){
 }
 async function downloadWorksheetsPdf(){
   const button=document.getElementById("downloadWorksheets"),status=document.getElementById("pdfStatus");
-  if(printableLevel!==currentLevel||printableSheets.length!==worksheetCount()) preparePrintableSheets();
+  if(!selectedWorksheetNotions.size){
+    status.textContent="Choisissez au moins une notion avant de générer les fiches.";
+    return;
+  }
+  // La sélection et les options sont appliquées au moment exact de la génération.
+  preparePrintableSheets();
   const dyslexic=document.getElementById("dyslexicVersion").checked;
   button.disabled=true;status.textContent="Préparation du PDF…";
   await new Promise(resolve=>setTimeout(resolve,20));
