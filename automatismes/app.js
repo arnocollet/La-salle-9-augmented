@@ -1262,7 +1262,7 @@ if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,his
 let currentLevel=state.selectedLevel||"5e";
 let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null,pointsMilestoneTimer=null;
 let printableSheets=[],printableLevel="";
-let selectedChoiceNotions=new Set();
+let selectedChoiceNotions=new Set(),selectedWorksheetNotions=new Set();
 
 const AUTO_DYNAMIC_TEXT={
   fr:{level:"Niveau",question:"Question",days:"jour",daysPlural:"jours",available:"Disponible",currentStreak:"Série actuelle",mastered:"maîtrisées",inProgress:"en cours",toReview:"à revoir",choiceNone:"Aucun exercice sélectionné",choiceSelected:"type d’exercice sélectionné",choiceSelectedPlural:"types d’exercices sélectionnés",excellent:"Excellent travail !",good:"Bonne routine. Continue régulièrement.",review:"Certaines notions sont à revoir.",noHistory:"Aucune routine terminée pour le moment.",worksheet:"exercices par fiche",correct:"Réponse correcte",incorrect:"Réponse incorrecte"},
@@ -1470,8 +1470,10 @@ function selectLevel(level){
   document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("selected",b.dataset.level===level));
   document.getElementById("notionsLevelLabel").textContent=level;
   document.getElementById("worksheetLevelLabel").textContent=level;
+  makeChoiceMenu();
+  makeWorksheetChoiceMenu();
   preparePrintableSheets();
-  makeChoiceMenu(); renderNotions(); renderAll();
+  renderNotions(); renderAll();
 }
 function showView(id){
   if(id!=="training")cancelScheduledNextQuestion();
@@ -1551,6 +1553,40 @@ function makeChoiceMenu(){
   });
   updateChoiceSelection();
 }
+function updateWorksheetSelection(){
+  const checkboxes=[...document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]")];
+  selectedWorksheetNotions=new Set(checkboxes.filter(checkbox=>checkbox.checked).map(checkbox=>checkbox.dataset.worksheetChoiceNotion));
+  const count=selectedWorksheetNotions.size;
+  document.getElementById("worksheetChoiceStatus").textContent=count
+    ? `${count} type${count>1?"s":""} d’exercice${count>1?"s":""} sélectionné${count>1?"s":""}`
+    : "Aucun type sélectionné : choisissez au moins une notion.";
+  document.getElementById("downloadWorksheets").disabled=count===0;
+}
+function makeWorksheetChoiceMenu(){
+  const groups=choiceGroupsForCurrentLevel();
+  selectedWorksheetNotions=new Set(groups.flatMap(category=>category.notions));
+  document.getElementById("worksheetChoiceGroups").innerHTML=groups.map(category=>{
+    const panelId=`worksheet-choice-panel-${category.id}`;
+    const choices=category.notions.map((notion,notionIndex)=>{
+      const inputId=`worksheet-choice-${category.id}-${notionIndex}`;
+      return `<label class="choice-option" for="${inputId}"><input id="${inputId}" type="checkbox" data-worksheet-choice-notion="${escapeXml(notion)}" checked><span>${escapeXml(notion)}</span></label>`;
+    }).join("");
+    return `<section class="choice-group" data-worksheet-choice-group="${category.id}">
+      <button class="choice-group-toggle" type="button" aria-expanded="false" aria-controls="${panelId}"><span><span aria-hidden="true">${category.icon}</span> ${categoryT(category.id,category.label)}</span><span class="choice-arrow" aria-hidden="true">▼</span></button>
+      <div class="choice-panel" id="${panelId}" hidden><button class="choice-check-all" type="button" data-worksheet-choice-category="${category.id}">Tout cocher / décocher</button><div class="choice-options">${choices}</div></div>
+    </section>`;
+  }).join("");
+  document.querySelectorAll("#worksheetChoiceGroups .choice-group-toggle").forEach(button=>button.onclick=()=>{
+    const panel=document.getElementById(button.getAttribute("aria-controls")),isOpen=button.getAttribute("aria-expanded")==="true";
+    button.setAttribute("aria-expanded",String(!isOpen)); button.querySelector(".choice-arrow").textContent=isOpen?"▼":"▲"; panel.hidden=isOpen;
+  });
+  document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-category]").forEach(button=>button.onclick=()=>{
+    const boxes=[...document.querySelectorAll(`#worksheetChoiceGroups [data-worksheet-choice-group="${button.dataset.worksheetChoiceCategory}"] [data-worksheet-choice-notion]`)];
+    const shouldCheck=boxes.some(box=>!box.checked); boxes.forEach(box=>box.checked=shouldCheck); updateWorksheetSelection(); preparePrintableSheets();
+  });
+  document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]").forEach(box=>box.onchange=()=>{updateWorksheetSelection();preparePrintableSheets()});
+  updateWorksheetSelection();
+}
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=openReviewPlan;
 document.getElementById("openProgress").onclick=()=>showView("progress");
@@ -1626,6 +1662,10 @@ function updateWorksheetExerciseCount(){
   const count=worksheetExerciseCount();
   document.getElementById("worksheetDescriptionCount").textContent=count;
   document.getElementById("worksheetExerciseCount").textContent=`${count} exercices par fiche`;
+}
+function worksheetGeneratorOptions(){
+  const notions=selectedWorksheetNotions.size?[...selectedWorksheetNotions]:null;
+  return notions?{mode:"choice",notions,printable:true}:{mode:"random",printable:true};
 }
 function buildRoutineFromGenerators(generators,count,minimumFunctionQuestions=0){
   const source=[...generators],pool=[...source],selected=[];
@@ -1739,14 +1779,14 @@ function buildMixedLevelRoutine(count,options={}){
 }
 function makeRandomRoutine(){
   const count=worksheetExerciseCount();
-  return buildMixedLevelRoutine(count,{mode:"random",printable:true});
+  return buildMixedLevelRoutine(count,worksheetGeneratorOptions());
 }
 function materializePrintableGenerator(generator){
   return {...generator.make(),theme:generator.theme,notion:generator.notion,sourceLevel:generator.sourceLevel};
 }
 function buildCoverageSheets(sheetCount){
   const exercisesPerSheet=worksheetExerciseCount();
-  const printablePool=prepareGeneratorPool(GENERATORS[currentLevel],{mode:"random",printable:true});
+  const printablePool=prepareGeneratorPool(GENERATORS[currentLevel],worksheetGeneratorOptions());
   const byNotion=new Map();
   printablePool.forEach(generator=>{
     if(!byNotion.has(generator.notion))byNotion.set(generator.notion,generator);
@@ -1764,6 +1804,7 @@ function buildCoverageSheets(sheetCount){
   return Array.from({length:sheetCount},(_,index)=>allExercises.slice(index*exercisesPerSheet,(index+1)*exercisesPerSheet));
 }
 function preparePrintableSheets(){
+  if(!selectedWorksheetNotions.size)makeWorksheetChoiceMenu();
   updateWorksheetExerciseCount();
   const count=worksheetCount();
   printableSheets=count===30

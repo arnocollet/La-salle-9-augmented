@@ -239,7 +239,14 @@
             <span class="step">1</span>
             <h2>Créer des fiches d’entraînement</h2>
           </div>
-          <p class="muted">Chaque fiche reprend la routine aléatoire avec <span id="worksheetDescriptionCount">5</span> exercices du niveau sélectionné.</p>
+          <p class="muted">Chaque fiche contient <span id="worksheetDescriptionCount">5</span> exercices du niveau sélectionné, parmi les notions choisies.</p>
+
+          <div class="worksheet-choice-settings">
+            <span class="field-label">Types d’exercices</span>
+            <p class="muted">Choisis les notions à inclure dans les fiches.</p>
+            <div id="worksheetChoiceGroups" class="choice-groups" aria-label="Types d’exercices à imprimer"></div>
+            <p id="worksheetChoiceStatus" class="worksheet-choice-status" aria-live="polite"></p>
+          </div>
 
           <label class="field-label" for="worksheetCount">Nombre de fiches</label>
           <div class="count-control">
@@ -464,6 +471,6 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.js"
     integrity="sha384-LpGn2lk7TOLDOAQyf9Cu2w4SbGlD90sKeqiB5fOIRGdb46dR4SDki4prCSrx5OUl"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="app.js?v=96"></script>
+  <script src="app.js?v=97"></script>
 </body>
 </html>
