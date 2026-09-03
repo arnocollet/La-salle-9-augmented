@@ -1232,7 +1232,7 @@ const CHOICE_CATEGORIES=[
   {
     id:"geometry",
     icon:THEMES["Espace et géométrie"],
-    label:"Espace, géométrie et grandeurs",
+    label:"Espace, géométrie, grandeurs",
     themes:["Espace et géométrie","Longueurs et aires","Géométrie plane et espace"]
   },
   {
@@ -1287,7 +1287,7 @@ function modalT(key){
 const AUTO_CATEGORY_TEXT={
   numbers:{fr:"Nombres et calculs",en:"Numbers and calculation",es:"Números y cálculo",de:"Zahlen und Rechnen"},
   algebra:{fr:"Calcul littéral et fonctions",en:"Algebra and functions",es:"Álgebra y funciones",de:"Algebra und Funktionen"},
-  geometry:{fr:"Espace, géométrie et grandeurs",en:"Space, geometry and measures",es:"Espacio, geometría y magnitudes",de:"Raum, Geometrie und Größen"},
+  geometry:{fr:"Espace, géométrie, grandeurs",en:"Space, geometry and measures",es:"Espacio, geometría y magnitudes",de:"Raum, Geometrie und Größen"},
   statistics:{fr:"Probabilités et statistiques",en:"Probability and statistics",es:"Probabilidad y estadística",de:"Wahrscheinlichkeit und Statistik"},
   scratch:{fr:"Algorithmique Scratch",en:"Scratch algorithms",es:"Algoritmia Scratch",de:"Scratch-Algorithmen"}
 };
