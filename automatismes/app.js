@@ -1668,7 +1668,8 @@ function worksheetExerciseCount(){
 }
 function updateWorksheetExerciseCount(){
   const count=worksheetExerciseCount();
-  document.getElementById("worksheetDescriptionCount").textContent=count;
+  const descriptionCount=document.getElementById("worksheetDescriptionCount");
+  if(descriptionCount)descriptionCount.textContent=count;
   document.getElementById("worksheetExerciseCount").textContent=`${count} exercices par fiche`;
 }
 function worksheetGeneratorOptions(){
