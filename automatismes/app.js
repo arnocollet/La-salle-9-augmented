@@ -1586,6 +1586,12 @@ function makeWorksheetChoiceMenu(){
     const shouldCheck=boxes.some(box=>!box.checked); boxes.forEach(box=>box.checked=shouldCheck); updateWorksheetSelection();
   });
   document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]").forEach(box=>box.onchange=updateWorksheetSelection);
+  document.getElementById("worksheetClearSelection").onchange=event=>{
+    if(!event.target.checked)return;
+    document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]").forEach(box=>box.checked=false);
+    updateWorksheetSelection();
+    event.target.checked=false;
+  };
   updateWorksheetSelection();
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");

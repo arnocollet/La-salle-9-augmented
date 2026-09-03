@@ -118,7 +118,7 @@ const translations = {
     "auto.3e": "Classe de 3e",
     "auto.choose_level": "Je choisis mon niveau",
     "auto.progress": "Ma progression",
-    "auto.choose_routine": "Je choisis ma routine",
+    "auto.choose_routine": "Je m’entraîne en ligne",
     "auto.random_title": "Aléatoire",
     "auto.random_desc": "5 questions choisies parmi plusieurs domaines.",
     "auto.start": "Commencer",
