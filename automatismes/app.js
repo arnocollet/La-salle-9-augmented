@@ -1261,7 +1261,7 @@ if(!state.levels["6e"]) state.levels["6e"]={sessions:0,questions:0,correct:0,his
 if(!state.levels["3e"]) state.levels["3e"]={sessions:0,questions:0,correct:0,history:[],byTheme:{},byNotion:{},dates:[]};
 let currentLevel=state.selectedLevel||"5e";
 let currentQuiz=[],quizReview=[],index=0,score=0,answered=false,nextQuestionTimer=null,pointsMilestoneTimer=null;
-let printableSheets=[],printableLevel="";
+let printableSheets=[],printableLevel="",worksheetGenerated=false;
 let selectedChoiceNotions=new Set(),selectedWorksheetNotions=new Set();
 
 const AUTO_DYNAMIC_TEXT={
@@ -1379,10 +1379,8 @@ function refreshAutomationModals(){
   set("#notions .section-title h2","referenceTitle");
   set("#clearLocalData","clearData");
   set("#refreshWorksheet","newExercises");
-  set("#downloadWorksheets","downloadWorksheets");
   const text=(selector,key)=>{const node=document.querySelector(selector);if(node)node.textContent=toolT(key)};
   const aria=(selector,key)=>{const node=document.querySelector(selector);if(node)node.setAttribute("aria-label",toolT(key))};
-  text("#worksheets .worksheet-settings .section-title h2","worksheets");
   const worksheetDesc=document.querySelector("#worksheets .worksheet-settings > p.muted");
   if(worksheetDesc)worksheetDesc.innerHTML=`${toolT("worksheetDesc")} <span id="worksheetDescriptionCount">${worksheetExerciseCount()}</span> ${toolT("selected")}`;
   text("label[for='worksheetCount']","sheetCount");
@@ -1390,7 +1388,7 @@ function refreshAutomationModals(){
   setLastText("#includeAnswers + span",toolT("answers")); setLastText("#dyslexicVersion + span",toolT("dyslexic"));
   const summary=document.querySelectorAll("#worksheets .worksheet-summary > span");
   if(summary[0])summary[0].textContent=toolT("level"); if(summary[1])summary[1].textContent=toolT("content");
-  text("#downloadWorksheets","download"); text("#worksheets .preview-heading h2","preview");
+  text("#worksheets .preview-heading h2","preview");
   aria("#worksheetPreview","previewAria"); text("#worksheets .preview-note","previewNote");
   const statLabels=document.querySelectorAll("#progress .stats-grid > div > span");
   ["sessions","questions","success","days"].forEach((key,index)=>{if(statLabels[index])statLabels[index].textContent=toolT(key)});
@@ -1553,14 +1551,16 @@ function makeChoiceMenu(){
   });
   updateChoiceSelection();
 }
-function updateWorksheetSelection(){
+function updateWorksheetSelection({invalidate=true}={}){
   const checkboxes=[...document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]")];
   selectedWorksheetNotions=new Set(checkboxes.filter(checkbox=>checkbox.checked).map(checkbox=>checkbox.dataset.worksheetChoiceNotion));
   const count=selectedWorksheetNotions.size;
   document.getElementById("worksheetChoiceStatus").textContent=count
     ? `${count} type${count>1?"s":""} d’exercice${count>1?"s":""} sélectionné${count>1?"s":""}`
     : "Aucun type sélectionné : choisissez au moins une notion.";
-  document.getElementById("downloadWorksheets").disabled=count===0;
+  if(invalidate)worksheetGenerated=false;
+  document.getElementById("createWorksheets").disabled=count===0;
+  document.getElementById("downloadWorksheets").disabled=count===0||!worksheetGenerated;
   document.getElementById("refreshWorksheet").disabled=count===0;
 }
 function makeWorksheetChoiceMenu(){
@@ -1591,7 +1591,7 @@ function makeWorksheetChoiceMenu(){
     document.querySelectorAll("#worksheetChoiceGroups [data-worksheet-choice-notion]").forEach(box=>box.checked=false);
     updateWorksheetSelection();
   };
-  updateWorksheetSelection();
+  updateWorksheetSelection({invalidate:false});
 }
 document.getElementById("startRandom").onclick=()=>startQuiz("random");
 document.getElementById("startReview").onclick=openReviewPlan;
@@ -1639,10 +1639,12 @@ document.querySelectorAll(".math-key").forEach(button=>button.addEventListener("
 }));
 document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCount(-1);
 document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
-document.getElementById("worksheetCount").addEventListener("change",updateWorksheetExerciseCount);
-document.getElementById("worksheetCount").addEventListener("blur",updateWorksheetExerciseCount);
+document.getElementById("worksheetCount").addEventListener("change",()=>{updateWorksheetExerciseCount();worksheetGenerated=false;updateWorksheetSelection()});
+document.getElementById("worksheetCount").addEventListener("blur",()=>{updateWorksheetExerciseCount();worksheetGenerated=false;updateWorksheetSelection()});
+document.getElementById("includeAnswers").addEventListener("change",()=>{worksheetGenerated=false;updateWorksheetSelection()});
 document.getElementById("dyslexicVersion").addEventListener("change",renderWorksheetPreview);
-document.getElementById("refreshWorksheet").onclick=preparePrintableSheets;
+document.getElementById("createWorksheets").onclick=()=>preparePrintableSheets({generated:true});
+document.getElementById("refreshWorksheet").onclick=()=>preparePrintableSheets({generated:true});
 document.getElementById("downloadWorksheets").onclick=downloadWorksheetsPdf;
 document.getElementById("clearLocalData").onclick=()=>{
   const confirmed=window.confirm("Effacer définitivement vos points, votre progression et votre historique sur tous les niveaux dans ce navigateur ?");
@@ -1659,7 +1661,7 @@ function worksheetCount(){
 }
 function changeWorksheetCount(change){
   document.getElementById("worksheetCount").value=worksheetCount()+change;
-  updateWorksheetExerciseCount();
+  updateWorksheetExerciseCount(); worksheetGenerated=false; updateWorksheetSelection();
 }
 function worksheetExerciseCount(){
   return currentLevel==="4e"||currentLevel==="3e"?10:5;
@@ -1809,13 +1811,15 @@ function buildCoverageSheets(sheetCount){
   shuffleQuestions(allExercises);
   return Array.from({length:sheetCount},(_,index)=>allExercises.slice(index*exercisesPerSheet,(index+1)*exercisesPerSheet));
 }
-function preparePrintableSheets(){
+function preparePrintableSheets({generated=false}={}){
   updateWorksheetExerciseCount();
   const count=worksheetCount();
   printableSheets=count===30
     ?(buildCoverageSheets(count)||Array.from({length:count},makeRandomRoutine))
     :Array.from({length:count},makeRandomRoutine);
   printableLevel=currentLevel;
+  worksheetGenerated=generated;
+  updateWorksheetSelection({invalidate:false});
   renderWorksheetPreview();
   document.getElementById("pdfStatus").textContent="";
 }
@@ -2161,8 +2165,10 @@ async function downloadWorksheetsPdf(){
     status.textContent="Choisissez au moins une notion avant de générer les fiches.";
     return;
   }
-  // La sélection et les options sont appliquées au moment exact de la génération.
-  preparePrintableSheets();
+  if(!worksheetGenerated){
+    status.textContent="Cliquez d’abord sur « Créer » pour générer les fiches.";
+    return;
+  }
   const dyslexic=document.getElementById("dyslexicVersion").checked;
   button.disabled=true;status.textContent="Préparation du PDF…";
   await new Promise(resolve=>setTimeout(resolve,20));

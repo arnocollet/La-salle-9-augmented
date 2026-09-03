@@ -237,7 +237,7 @@
         <article class="card worksheet-settings">
           <div class="section-title">
             <span class="step">1</span>
-            <h2>Créer des fiches d’entraînement</h2>
+            <h2>Types d’exercices</h2>
           </div>
           <p class="muted">Chaque fiche contient <span id="worksheetDescriptionCount">5</span> exercices du niveau sélectionné, parmi les notions choisies.</p>
 
@@ -252,6 +252,10 @@
             <p id="worksheetChoiceStatus" class="worksheet-choice-status" aria-live="polite"></p>
           </div>
 
+          <div class="section-title worksheet-step-title">
+            <span class="step">2</span>
+            <h2>Options</h2>
+          </div>
           <label class="field-label" for="worksheetCount">Nombre de fiches</label>
           <div class="count-control">
             <button id="decreaseWorksheetCount" type="button" aria-label="Retirer une fiche">−</button>
@@ -277,8 +281,17 @@
             <strong id="worksheetExerciseCount">5 exercices par fiche</strong>
           </div>
 
-          <button id="downloadWorksheets" class="primary worksheet-download">
-            <span aria-hidden="true">⇩</span> Créer et télécharger le PDF
+          <div class="section-title worksheet-step-title">
+            <span class="step">3</span>
+            <h2>Créer</h2>
+          </div>
+          <button id="createWorksheets" class="primary worksheet-download" type="button">Créer</button>
+          <div class="section-title worksheet-step-title">
+            <span class="step">4</span>
+            <h2>Télécharger</h2>
+          </div>
+          <button id="downloadWorksheets" class="primary worksheet-download" type="button">
+            <span aria-hidden="true">⇩</span> Télécharger
           </button>
           <p id="pdfStatus" class="pdf-status" role="status" aria-live="polite"></p>
         </article>
@@ -286,7 +299,7 @@
         <article class="card preview-card">
           <div class="preview-heading">
             <div class="section-title">
-              <span class="step">2</span>
+              <span class="step preview-step" aria-hidden="true">Aperçu</span>
               <h2>Aperçu de la fiche 1</h2>
             </div>
             <button id="refreshWorksheet" class="refresh-button" type="button">↻ Nouveaux exercices</button>
