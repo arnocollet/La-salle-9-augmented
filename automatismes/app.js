@@ -1386,7 +1386,7 @@ function refreshAutomationModals(){
   if(worksheetDesc)worksheetDesc.innerHTML=`${toolT("worksheetDesc")} <span id="worksheetDescriptionCount">${worksheetExerciseCount()}</span> ${toolT("selected")}`;
   text("label[for='worksheetCount']","sheetCount");
   aria("#decreaseWorksheetCount","remove"); aria("#increaseWorksheetCount","add");
-  setLastText("#includeAnswers + span",toolT("answers")); setLastText("#dyslexicVersion + span",toolT("dyslexic"));
+  setLastText("#dyslexicVersion + span",toolT("dyslexic"));
   const summary=document.querySelectorAll("#worksheets .worksheet-summary > span");
   if(summary[0])summary[0].textContent=toolT("level"); if(summary[1])summary[1].textContent=toolT("content");
   text("#worksheets .preview-heading h2","preview");
@@ -1642,6 +1642,7 @@ document.getElementById("decreaseWorksheetCount").onclick=()=>changeWorksheetCou
 document.getElementById("increaseWorksheetCount").onclick=()=>changeWorksheetCount(1);
 document.getElementById("worksheetCount").addEventListener("change",()=>{updateWorksheetExerciseCount();worksheetGenerated=false;updateWorksheetSelection()});
 document.getElementById("worksheetCount").addEventListener("blur",()=>{updateWorksheetExerciseCount();worksheetGenerated=false;updateWorksheetSelection()});
+document.getElementById("includeStatements").addEventListener("change",()=>{worksheetGenerated=false;updateWorksheetSelection()});
 document.getElementById("includeAnswers").addEventListener("change",()=>{worksheetGenerated=false;updateWorksheetSelection()});
 document.getElementById("dyslexicVersion").addEventListener("change",renderWorksheetPreview);
 document.getElementById("createWorksheets").onclick=()=>preparePrintableSheets({generated:true});
@@ -2172,32 +2173,36 @@ async function downloadWorksheetsPdf(){
     status.textContent="Cliquez d’abord sur « Créer » pour générer les fiches.";
     return;
   }
+  const includeStatements=document.getElementById("includeStatements").checked;
+  const includeAnswers=document.getElementById("includeAnswers").checked;
+  if(!includeStatements&&!includeAnswers){
+    status.textContent="Sélectionnez le fichier énoncés et/ou le fichier corrections.";
+    return;
+  }
   const dyslexic=document.getElementById("dyslexicVersion").checked;
   button.disabled=true;status.textContent="Préparation du PDF…";
   await new Promise(resolve=>setTimeout(resolve,20));
   try{
-    const images=[];
-    for(let i=0;i<printableSheets.length;i++){
-      status.textContent=`Création de la fiche ${i+1} sur ${printableSheets.length}…`;
-      for(const page of renderWorksheetPages(printableSheets[i],i+1,false,dyslexic)){
-        images.push(await canvasToJpegBytes(page));
-      }
-    }
-    if(document.getElementById("includeAnswers").checked){
+    const twoUpPrinting=!dyslexic&&!["4e","3e"].includes(currentLevel);
+    const baseName=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}${dyslexic?"-dyslexique":""}`;
+    const downloadPdf=async(isCorrection,label,suffix)=>{
+      const images=[];
       for(let i=0;i<printableSheets.length;i++){
-        status.textContent=`Création du corrigé ${i+1} sur ${printableSheets.length}…`;
-        for(const page of renderWorksheetPages(printableSheets[i],i+1,true,dyslexic)){
+        status.textContent=`Création du fichier ${label} : fiche ${i+1} sur ${printableSheets.length}…`;
+        for(const page of renderWorksheetPages(printableSheets[i],i+1,isCorrection,dyslexic)){
           images.push(await canvasToJpegBytes(page));
         }
       }
-    }
-    const twoUpPrinting=!dyslexic&&!(["4e","3e"].includes(currentLevel));
-    const pdf=makeImagePdf(images,{twoUp:twoUpPrinting}),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
-    const link=document.createElement("a");
-    link.href=url;link.download=`automatismes-${currentLevel}-${printableSheets.length}-fiche${printableSheets.length>1?"s":""}${dyslexic?"-dyslexique":""}.pdf`;
-    document.body.appendChild(link);link.click();link.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),30000);
-    status.textContent=`PDF prêt : ${printableSheets.length} fiche${printableSheets.length>1?"s":""}${dyslexic?" en version dyslexique":""}${document.getElementById("includeAnswers").checked?" avec corrigé":""}.`;
+      const pdf=makeImagePdf(images,{twoUp:twoUpPrinting}),url=URL.createObjectURL(new Blob([pdf],{type:"application/pdf"}));
+      const link=document.createElement("a");
+      link.href=url;link.download=`${baseName}-${suffix}.pdf`;
+      document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+    };
+    if(includeStatements)await downloadPdf(false,"énoncés","enonces");
+    if(includeAnswers)await downloadPdf(true,"corrections","corrections");
+    const fileCount=(includeStatements?1:0)+(includeAnswers?1:0);
+    status.textContent=`${fileCount===1?"Fichier PDF prêt":"Fichiers PDF prêts"} : ${includeStatements&&includeAnswers?"énoncés et corrections":includeStatements?"énoncés":"corrections"}.`;
   }catch(error){
     console.error(error);status.textContent="Le PDF n’a pas pu être créé. Réessaie avec moins de fiches.";
   }finally{button.disabled=false}
