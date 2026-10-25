@@ -22,7 +22,7 @@
     "grade": "3e",
     "title": "Liste des diviseurs et nombres premiers",
     "emoji": "🔢",
-    "pdfUrl": "https://drive.google.com/file/d/1iXXxpGACUV-oa3RKr_z5v6xqrEqxWF4j/view?usp=sharing",
+    "pdfUrl": "https://drive.google.com/file/d/1iXXxpGACUV-oa3RKr_z5v6xqrEqxWF4j/view?usp=drive_link",
     "pdfName": "Consignes.pdf",
     "pdfEmbedUrl": "https://drive.google.com/file/d/1iXXxpGACUV-oa3RKr_z5v6xqrEqxWF4j/preview",
     "pdfDownloadUrl": "https://drive.google.com/uc?id=1iXXxpGACUV-oa3RKr_z5v6xqrEqxWF4j&export=download",
@@ -33,7 +33,7 @@
     "active": true,
     "displayOrder": 1,
     "createdAt": "2026-01-01T08:00:00.000Z",
-    "updatedAt": "2026-10-25T15:41:55.327Z"
+    "updatedAt": "2026-10-25T15:43:42.276Z"
   },
   {
     "id": "act-3e-images",
