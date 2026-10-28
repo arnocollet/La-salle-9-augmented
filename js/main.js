@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         .filter(activity => activity.grade === grade && activity.active !== false)
         .sort((a, b) => (Number(a.displayOrder) || Number.MAX_SAFE_INTEGER) - (Number(b.displayOrder) || Number.MAX_SAFE_INTEGER)
           || (a.createdAt || '').localeCompare(b.createdAt || ''))
-        .map(activity => document.getElementById(activity.id) || createActivityCard(activity))
+        .map(activity => createActivityCard(activity) || document.getElementById(activity.id))
         .filter(Boolean);
       list.replaceChildren(...orderedCards);
     } catch (error) {
